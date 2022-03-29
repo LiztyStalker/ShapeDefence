@@ -571,10 +571,10 @@ namespace TestFrameworks
         [Test]
         public void DurableTest_BattleEntity_HealthOperate()
         {
-            var attack = new TestAttackRawData("20", "0", "0");
-            var recovery = new TestRecoveryRawData();
-
+            var attack = new TestAttackRawData("20", "0", "0"); 
             var attackUsable = attack.GetUsableData();
+
+            var recovery = new TestRecoveryRawData();
             var recoveryUsable = recovery.GetUsableData();
             ((TestRecoveryUsableData)recoveryUsable).SetDurableKey(typeof(HealthDurableUsableData).Name);
 
@@ -722,6 +722,90 @@ namespace TestFrameworks
 
             Debug.Log($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}");
             Assert.AreEqual($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}", "40 / 100");
+        }
+
+        
+
+        [Test]
+        public void DurableTest_BattleEntity_RecShieldOperate()
+        {
+            var attack = new TestAttackRawData("90", "0", "0");
+            var attackUsable = attack.GetUsableData();
+
+            var recovery = new TestRecoveryRawData("50", "0", "0");
+            var recoveryUsable = recovery.GetUsableData();
+            ((TestRecoveryUsableData)recoveryUsable).SetDurableKey(typeof(ShieldDurableUsableData).Name);
+
+            var health = new TestDurableRawData(typeof(HealthDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
+            var shield = new TestDurableRawData(typeof(ShieldDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
+
+            var healthUsable = health.GetUsableData();
+            var shieldUsable = shield.GetUsableData();
+
+            var usableEntity = DurableUsableEntity.Create();
+
+            usableEntity.Set(healthUsable);
+            usableEntity.Set(shieldUsable);
+
+            var battleEntity = usableEntity.CreateDurableBattleEntity();
+
+            Debug.Log($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}");
+            Assert.AreEqual($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}", "100 / 100");
+
+            battleEntity.Subject(attackUsable);
+
+            Debug.Log($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}");
+            Assert.AreEqual($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}", "10 / 100");
+
+            battleEntity.Add(recoveryUsable);
+
+            Debug.Log($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}");
+            Assert.AreEqual($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}", "60 / 100");
+
+            battleEntity.Add(recoveryUsable);
+
+            Debug.Log($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}");
+            Assert.AreEqual($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}", "100 / 100");
+
+        }
+
+        [Test]
+        public void DurableTest_BattleEntity_RecHealthOperate()
+        {
+            var attack = new TestAttackRawData("90", "0", "0");
+            var attackUsable = attack.GetUsableData();
+
+            var recovery = new TestRecoveryRawData("50", "0", "0");
+            var recoveryUsable = recovery.GetUsableData();
+            ((TestRecoveryUsableData)recoveryUsable).SetDurableKey(typeof(HealthDurableUsableData).Name);
+
+            var health = new TestDurableRawData(typeof(HealthDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
+
+            var healthUsable = health.GetUsableData();
+
+            var usableEntity = DurableUsableEntity.Create();
+
+            usableEntity.Set(healthUsable);
+
+            var battleEntity = usableEntity.CreateDurableBattleEntity();
+
+            Debug.Log($"{battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}");
+            Assert.AreEqual($"{battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}", "100 / 100");
+
+            battleEntity.Subject(attackUsable);
+
+            Debug.Log($"{battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}");
+            Assert.AreEqual($"{battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}", "10 / 100");
+
+            battleEntity.Add(recoveryUsable);
+
+            Debug.Log($"{battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}");
+            Assert.AreEqual($"{battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}", "60 / 100");
+
+            battleEntity.Add(recoveryUsable);
+
+            Debug.Log($"{battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}");
+            Assert.AreEqual($"{battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}", "100 / 100");
         }
     }
 }
