@@ -23,48 +23,49 @@ namespace TestFrameworks
         #region ##### Test Attack #####
         private class TestAttackRawData
         {
-            private string type;
             public string StartValue;
             public string IncreaseValue;
             public string IncreaseRate;
+            public string StartAttackDelayValue;
+            public string DecreaseAttackDelayValue;
+            public string DecreaseAttackDelayRate;
+
 
             internal TestAttackRawData()
             {
-                type = "TestFrameworks.DurableTest+TestAttackUsableData";
                 StartValue = "10";
                 IncreaseValue = "1";
                 IncreaseRate = "0.1";
+                StartAttackDelayValue = "1";
+                DecreaseAttackDelayValue = "0";
+                DecreaseAttackDelayRate = "0.1";
             }
 
             internal TestAttackRawData(string startValue, string increaseValue, string increaseRate)
             {
-                type = "TestFrameworks.DurableTest+TestAttackUsableData";
                 StartValue = startValue;
                 IncreaseValue = increaseValue;
                 IncreaseRate = increaseRate;
+                StartAttackDelayValue = "1";
+                DecreaseAttackDelayValue = "0";
+                DecreaseAttackDelayRate = "0.1";
             }
 
-            internal TestAttackRawData(string type, string startValue, string increaseValue, string increaseRate)
+            internal TestAttackRawData(string startValue, string increaseValue, string increaseRate, string startDelayValue, string decreaseDelayValue, string decreaseDelayRate)
             {
-                this.type = type;
                 StartValue = startValue;
                 IncreaseValue = increaseValue;
                 IncreaseRate = increaseRate;
+                StartAttackDelayValue = startDelayValue;
+                DecreaseAttackDelayValue = decreaseDelayValue;
+                DecreaseAttackDelayRate = decreaseDelayRate;
             }
 
             internal IAttackUsableData GetUsableData(int upgrade = 0)
             {
-                var type = System.Type.GetType(this.type);
-                if (type != null)
-                {
-                    var data = (IAttackUsableData)System.Activator.CreateInstance(type);
-                    data.SetData(StartValue, IncreaseValue, IncreaseRate, upgrade);
-                    return data;
-                }
-                else
-                {
-                    throw new System.Exception($"{this.type} is not found Type");
-                }
+                var data = System.Activator.CreateInstance<TestAttackUsableData>();
+                data.SetData(StartValue, IncreaseValue, IncreaseRate, "0", "0", "0", upgrade);
+                return data;
             }
         }
 
@@ -73,7 +74,7 @@ namespace TestFrameworks
         {
             public BigDecimal Value;
 
-            private string durableKey;
+            public float Delay;
 
             public bool IsZero => Value.IsZero;
 
@@ -81,24 +82,29 @@ namespace TestFrameworks
 
             public override string ToString() => Value.ToString();
 
-            public void SetData(string startValue, string increaseValue, string increaseRate, int length)
+            public void SetData(string startValue, string increaseValue, string increaseRate, string startDelayValue, string decreaseDelayValue, string decreaseDelayRate, int upgrade)
             {
                 var sVal = long.Parse(startValue);
                 var incVal = int.Parse(increaseValue);
                 var incRate = float.Parse(increaseRate);
 
                 Value = new BigDecimal(sVal);
-                Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, length);
+                Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, upgrade);
+
+
+                var sDelay = float.Parse(startDelayValue);
+                var decVal = float.Parse(decreaseDelayValue);
+                var decRate = float.Parse(decreaseDelayRate);
+
+                Delay = sDelay;
+                Delay = NumberDataUtility.GetIsolationInterest(Delay, decVal, decRate, upgrade);
             }
 
             public void Set(IAttackUsableData value)
             {
                 Value = ((TestAttackUsableData)value).Value;
             }
-            public void Set(int value)
-            {
-                Value = value;
-            }
+
             public IAttackUsableData Clone()
             {
                 var data = new TestAttackUsableData();

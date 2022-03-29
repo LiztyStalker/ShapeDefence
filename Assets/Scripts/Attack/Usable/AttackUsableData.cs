@@ -1,5 +1,3 @@
-
-
 namespace SDefence.Attack.Usable
 {
     using System.Numerics;
@@ -7,13 +5,25 @@ namespace SDefence.Attack.Usable
 
     public class AttackUsableData : IAttackUsableData
     {
+        
         private BigDecimal _value;
-        public BigDecimal Value { get => _value; protected set => _value = value; }
-        public bool IsZero => Value.IsZero;
-        public virtual void Set(int value) => Value = value;
-        public virtual void Set(IAttackUsableData value) => Value = ((AttackUsableData)value).Value;
+        public BigDecimal Value { get => _value; private set => _value = value; }
+                
 
-        public void SetData(string startValue, string increaseValue, string increaseRate, int upgrade)
+        private float _delay;
+        public float Delay { get => _delay; private set => _delay = value; }
+        
+
+        public bool IsZero => Value.IsZero;
+
+
+        public virtual void Set(IAttackUsableData value)
+        {
+            Value = ((AttackUsableData)value).Value;
+            Delay = ((AttackUsableData)value).Delay;
+        }
+
+        public void SetData(string startValue, string increaseValue, string increaseRate, string startDelayValue, string decreaseDelayValue, string decreaseDelayRate, int upgrade)
         {
             var sVal = long.Parse(startValue);
             var incVal = int.Parse(increaseValue);
@@ -21,6 +31,15 @@ namespace SDefence.Attack.Usable
 
             Value = new BigDecimal(sVal);
             Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, upgrade);
+
+
+            var sDelay = float.Parse(startDelayValue);
+            var decVal = float.Parse(decreaseDelayValue);
+            var decRate = float.Parse(decreaseDelayRate);
+
+            Delay = sDelay;
+            Delay = NumberDataUtility.GetIsolationInterest(Delay, decVal, decRate, upgrade);
+
         }
 
 
@@ -34,9 +53,13 @@ namespace SDefence.Attack.Usable
             return (IAttackUsableData)System.Activator.CreateInstance(type);
         }
 
+
+
         public string ToString(string format) => Value.ToString(format);
         public override string ToString() => Value.ToString();
-
+        
+        
+        public UniversalUsableData CreateUniversalUsableData() => new UniversalUsableData(Value);
 
         public IAttackUsableData Clone()
         {
@@ -45,6 +68,5 @@ namespace SDefence.Attack.Usable
             return data;
         }
 
-        public UniversalUsableData CreateUniversalUsableData() => new UniversalUsableData(Value);
     }
 }

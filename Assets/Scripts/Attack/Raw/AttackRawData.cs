@@ -1,21 +1,28 @@
 namespace SDefence.Attack.Raw {
 
     using UnityEngine;
+    using Usable;
 
     [System.Serializable]
     public class AttackRawData : ScriptableObject
     {
-        [SerializeField] //DurablePopup
-        private string _type;
+        [SerializeField]
+        private string _startAttackValue;
 
         [SerializeField]
-        private string _startValue;
+        private string _increaseAttackValue;
 
         [SerializeField]
-        private string _increaseValue;
+        private string _increaseAttackRate;
 
         [SerializeField]
-        private string _increaseRate;
+        private string _startAttackDelayValue;
+
+        [SerializeField]
+        private string _decreaseAttackDelayValue;
+
+        [SerializeField]
+        private string _decreaseAttackDelayRate;
 
 
 #if UNITY_EDITOR
@@ -26,26 +33,20 @@ namespace SDefence.Attack.Raw {
         }
         private AttackRawData()
         {
-            _type = "SDefence.Attack.Usable.AttackUsableData";
-            _startValue = "10";
-            _increaseValue = "1";
-            _increaseRate = "0.1";
+            _startAttackValue = "10";
+            _increaseAttackValue = "1";
+            _increaseAttackRate = "0.1";
+            _startAttackDelayValue = "1";
+            _decreaseAttackDelayValue = "0";
+            _decreaseAttackDelayRate = "0.1";
         }
 #endif
 
         internal IAttackUsableData GetUsableData(int upgrade = 0)
         {
-            var type = System.Type.GetType(_type);
-            if (type != null)
-            {
-                var data = (IAttackUsableData)System.Activator.CreateInstance(type);
-                data.SetData(_startValue, _increaseValue, _increaseRate, upgrade);
-                return data;
-            }
-            else
-            {
-                throw new System.Exception($"{_type} is not found Type");
-            }
+            var data = System.Activator.CreateInstance<AttackUsableData>();
+            data.SetData(_startAttackValue, _increaseAttackValue, _increaseAttackRate, _startAttackDelayValue, _decreaseAttackDelayValue, _decreaseAttackDelayRate, upgrade);
+            return data;
         }
     }
 }
