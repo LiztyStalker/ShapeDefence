@@ -1,10 +1,10 @@
 {
-    "name": "ScriptsAsmdef",
+    "name": "GoogleSheetAsmdef",
     "rootNamespace": "",
-    "references": [
-        "GUID:7239944d93e43d44ab259dc8eefbffd5"
+    "references": [],
+    "includePlatforms": [
+        "Editor"
     ],
-    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
