@@ -4,7 +4,7 @@ namespace SDefence.Attack.Raw {
     using Usable;
 
     [System.Serializable]
-    public class AttackRawData : ScriptableObject
+    public class AttackRawData
     {
         [SerializeField]
         private string _startAttackValue;

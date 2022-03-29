@@ -3,7 +3,7 @@ namespace SDefence.Durable.Raw {
     using UnityEngine;
 
     [System.Serializable]
-    public class DurableRawData : ScriptableObject
+    public class DurableRawData
     {
         [SerializeField] //DurablePopup
         private string _typeData;
