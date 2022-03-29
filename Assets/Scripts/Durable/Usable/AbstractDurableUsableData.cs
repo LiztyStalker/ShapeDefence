@@ -1,5 +1,9 @@
 namespace SDefence.Durable.Usable
 {
+    using SDefence.Attack;
+    using SDefence.Attack.Usable;
+    using SDefence.Recovery;
+    using SDefence.Recovery.Usable;
     using System.Numerics;
     using Utility.Number;
 
@@ -9,19 +13,25 @@ namespace SDefence.Durable.Usable
         public BigDecimal Value { get => _value; protected set => _value = value; }
         public bool IsZero => Value.IsZero;
         public virtual void Add(int value) => Value += value;
-        public virtual void Add(IDurableUsableData dData) => Value += ((AbstractDurableUsableData)dData).Value;        
+        public virtual void Add(UniversalUsableData dData) => Value += dData.Value;
         public virtual void Subject(int value) => Value -= value;
-        public virtual void Subject(IDurableUsableData dData)
-        {
-            if (dData is DurableUsableCase)
-            {
-                var durable = ((DurableUsableCase)dData);
-                var val = ((AbstractDurableUsableData)durable.NowDurableUsableData).Value;
-                Value -= val;
-            }
-            else
-                Value -= ((AbstractDurableUsableData)dData).Value;
-        }
+        public virtual void Subject(UniversalUsableData dData) => Value -= dData.Value;
+        //{
+        //    if (dData is DurableUsableCase)
+        //    {
+        //        var durable = ((DurableUsableCase)dData);
+        //        var val = ((AbstractDurableUsableData)durable.NowDurableUsableData).Value;
+        //        Value -= val;
+        //    }
+        //    else
+        //        Value -= ((AbstractDurableUsableData)dData).Value;
+        //}
+
+
+
+
+
+
         public virtual void Set(int value) => Value = value;
         public virtual void Set(IDurableUsableData value) => Value = ((AbstractDurableUsableData)value).Value;
         public void SetZero() => Value = 0;
@@ -37,26 +47,27 @@ namespace SDefence.Durable.Usable
 
 
 
-        public bool IsOverflowMaxValue(IDurableUsableData maxValue, IDurableUsableData value)
+        public bool IsOverflowMaxValue(IDurableUsableData maxValue, UniversalUsableData value)
         {
             var maxVal = ((AbstractDurableUsableData)maxValue).Value;
-            var val = ((AbstractDurableUsableData)value).Value;
+            var val = value.Value;
             return (Value + val > maxVal);
         }
 
-        public bool IsUnderflowZero(IDurableUsableData value)
+        public bool IsUnderflowZero(UniversalUsableData value)
         {
-            var val = ((AbstractDurableUsableData)value).Value;
+            var val = value.Value;
             return (Value - val < 0);
         }
 
-        public int Compare(IDurableUsableData value)
+        public int Compare(UniversalUsableData value)
         {
-            if (Value - ((AbstractDurableUsableData)value).Value > 0) return -1;
-            else if (Value - ((AbstractDurableUsableData)value).Value < 0) return 1;
+            if (Value - value.Value > 0) return -1;
+            else if (Value - value.Value < 0) return 1;
             return 0;
         }
 
+        public UniversalUsableData CreateUniversalUsableData() => new UniversalUsableData(Value);
 
 
         protected static T Create<T>() where T : IDurableUsableData
@@ -70,7 +81,6 @@ namespace SDefence.Durable.Usable
         }
 
 
-
         public string ToString(string format) => Value.ToString(format);
         public override string ToString() => Value.ToString();
 
@@ -81,5 +91,6 @@ namespace SDefence.Durable.Usable
             data.Set(this);
             return data;
         }
+
     }
 }

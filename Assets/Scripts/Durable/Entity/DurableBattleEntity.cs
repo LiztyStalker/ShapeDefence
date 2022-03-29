@@ -2,6 +2,8 @@ namespace SDefence.Durable.Entity
 {
     using System.Collections.Generic;
     using Usable;
+    using Recovery;
+    using Attack;
 
     public class DurableBattleEntity
     {
@@ -39,19 +41,21 @@ namespace SDefence.Durable.Entity
 
         }
 
-        //RecoveryUsableData 변경 필요
-        public void Add(IDurableUsableData dData)
+        public void Add(IRecoveryUsableData data)
         {
-            if (HasDurableUsableData<HealthDurableUsableData>())
+            var key = data.DurableKey();
+
+            //DurableUsableCase는 내부에서 Over Under 검사 진행
+            if (_dic.ContainsKey(key))
             {
-                _dic[GetKey<HealthDurableUsableData>()].Add(dData);
+                _dic[key].Add(data.CreateUniversalUsableData());
             }
         }
 
-        //AttackUsableData 변경 필요
-        public void Subject(IDurableUsableData dData)
+
+        public void Subject(IAttackUsableData dData)
         {
-            var value = dData;
+            var value = dData.CreateUniversalUsableData();
 
             //실드
             if (HasDurableUsableData<ShieldDurableUsableData>())
@@ -62,19 +66,21 @@ namespace SDefence.Durable.Entity
                     var limit = _dic[GetKey<LimitDamageShieldDurableUsableData>()];
                     if (value.Compare(limit) < 0)
                     {
-                        value = limit;
+                        value = limit.CreateUniversalUsableData();
                     }
                 }
 
-                
-                if (_dic[GetKey<ShieldDurableUsableData>()].IsUnderflowZero(value))
+                var shield = _dic[GetKey<ShieldDurableUsableData>()];
+
+
+                if (shield.IsUnderflowZero(value))
                 {
-                    value.Subject(_dic[GetKey<ShieldDurableUsableData>()]);
-                    _dic[GetKey<ShieldDurableUsableData>()].SetZero();
+                    value.Subject(shield.CreateUniversalUsableData());
+                    shield.SetZero();
                     //빼고 남은 값 만들기
                 }
                 else {
-                    _dic[GetKey<ShieldDurableUsableData>()].Subject(value);
+                    shield.Subject(value);
                     value.SetZero();
                 }
 
@@ -87,11 +93,13 @@ namespace SDefence.Durable.Entity
                 //방어력 감소
                 if (HasDurableUsableData<ArmorDurableUsableData>())
                 {
+                    var armor = _dic[GetKey<ArmorDurableUsableData>()];
+
                     //공격력이 더 높음
                     //방어력만큼 감소
-                    if (!value.IsUnderflowZero(_dic[GetKey<ArmorDurableUsableData>()]))
+                    if (value.Compare(armor) < 0)
                     {
-                        value.Subject(_dic[GetKey<ArmorDurableUsableData>()]);
+                        value.Subject(armor);
                     }
                     //방어력이 더 높음
                     //공격력 1

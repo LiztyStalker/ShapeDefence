@@ -1,6 +1,7 @@
 #if UNITY_EDITOR && UNITY_INCLUDE_TESTS
 namespace TestFrameworks
 {
+    using SDefence;
     using System.Collections;
     using NUnit.Framework;
     using UnityEngine;
@@ -10,9 +11,202 @@ namespace TestFrameworks
     using System.Numerics;
     using Utility.Number;
     using SDefence.Durable.Entity;
+    using SDefence.Recovery;
+    using SDefence.Attack.Usable;
+    using SDefence.Attack;
 
     public class DurableTest
     {
+
+        #region ##### Test Attack #####
+        private class TestAttackRawData
+        {
+            private string type;
+            public string StartValue;
+            public string IncreaseValue;
+            public string IncreaseRate;
+
+            internal TestAttackRawData()
+            {
+                type = "TestFrameworks.DurableTest+TestAttackUsableData";
+                StartValue = "10";
+                IncreaseValue = "1";
+                IncreaseRate = "0.1";
+            }
+
+            internal TestAttackRawData(string startValue, string increaseValue, string increaseRate)
+            {
+                type = "TestFrameworks.DurableTest+TestAttackUsableData";
+                StartValue = startValue;
+                IncreaseValue = increaseValue;
+                IncreaseRate = increaseRate;
+            }
+
+            internal TestAttackRawData(string type, string startValue, string increaseValue, string increaseRate)
+            {
+                this.type = type;
+                StartValue = startValue;
+                IncreaseValue = increaseValue;
+                IncreaseRate = increaseRate;
+            }
+
+            internal IAttackUsableData GetUsableData(int upgrade = 0)
+            {
+                var type = System.Type.GetType(this.type);
+                if (type != null)
+                {
+                    var data = (IAttackUsableData)System.Activator.CreateInstance(type);
+                    data.SetData(StartValue, IncreaseValue, IncreaseRate, upgrade);
+                    return data;
+                }
+                else
+                {
+                    throw new System.Exception($"{this.type} is not found Type");
+                }
+            }
+        }
+
+
+        private class TestAttackUsableData : IAttackUsableData
+        {
+            public BigDecimal Value;
+
+            private string durableKey;
+
+            public bool IsZero => Value.IsZero;
+
+            public string ToString(string format) => Value.ToString(format);
+
+            public override string ToString() => Value.ToString();
+
+            public void SetData(string startValue, string increaseValue, string increaseRate, int length)
+            {
+                var sVal = long.Parse(startValue);
+                var incVal = int.Parse(increaseValue);
+                var incRate = float.Parse(increaseRate);
+
+                Value = new BigDecimal(sVal);
+                Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, length);
+            }
+
+            public void Set(IAttackUsableData value)
+            {
+                Value = ((TestAttackUsableData)value).Value;
+            }
+            public void Set(int value)
+            {
+                Value = value;
+            }
+            public IAttackUsableData Clone()
+            {
+                var data = new TestAttackUsableData();
+                data.Set(this);
+                return data;
+            }
+            public UniversalUsableData CreateUniversalUsableData() => new UniversalUsableData(Value);
+        }
+        #endregion
+
+        #region ##### Test Recovery #####
+        private class TestRecoveryRawData
+        {
+            private string typeDurable;
+            public string StartValue;
+            public string IncreaseValue;
+            public string IncreaseRate;
+
+            internal TestRecoveryRawData()
+            {
+                typeDurable = "TestFrameworks.DurableTest+TestRecoveryUsableData";
+                StartValue = "10";
+                IncreaseValue = "1";
+                IncreaseRate = "0.1";
+            }
+
+            internal TestRecoveryRawData(string startValue, string increaseValue, string increaseRate)
+            {
+                typeDurable = "TestFrameworks.DurableTest+TestRecoveryUsableData";
+                StartValue = startValue;
+                IncreaseValue = increaseValue;
+                IncreaseRate = increaseRate;
+            }
+
+            internal TestRecoveryRawData(string type, string startValue, string increaseValue, string increaseRate)
+            {
+                typeDurable = type;
+                StartValue = startValue;
+                IncreaseValue = increaseValue;
+                IncreaseRate = increaseRate;
+            }
+
+            internal IRecoveryUsableData GetUsableData(int upgrade = 0)
+            {
+                var type = System.Type.GetType(typeDurable);
+                if (type != null)
+                {
+                    var data = (IRecoveryUsableData)System.Activator.CreateInstance(type);
+                    data.SetData(StartValue, IncreaseValue, IncreaseRate, upgrade);
+                    return data;
+                }
+                else
+                {
+                    throw new System.Exception($"{typeDurable} is not found Type");
+                }
+            }
+        }
+
+
+        private class TestRecoveryUsableData : IRecoveryUsableData
+        {
+            public BigDecimal Value;
+
+            private string durableKey;
+
+            public bool IsZero => Value.IsZero;
+
+            public string ToString(string format) => Value.ToString(format);
+
+            public override string ToString() => Value.ToString();
+
+            public void SetData(string startValue, string increaseValue, string increaseRate, int length)
+            {
+                var sVal = long.Parse(startValue);
+                var incVal = int.Parse(increaseValue);
+                var incRate = float.Parse(increaseRate);
+
+                Value = new BigDecimal(sVal);
+                Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, length);
+            }
+
+            public void Set(IRecoveryUsableData value)
+            {
+                Value = ((TestDurableUsableData)value).Value;
+            }
+            public void Set(int value)
+            {
+                Value = value;
+            }
+            public IRecoveryUsableData Clone()
+            {
+                var data = new TestRecoveryUsableData();
+                data.Set(this);
+                return data;
+            }
+
+            public void SetDurableKey(string key) => durableKey = key;
+
+            public string DurableKey() => durableKey;
+
+            public UniversalUsableData CreateUniversalUsableData() => new UniversalUsableData(Value);
+        }
+
+        #endregion
+
+
+
+        #region ##### Test Durable #####
+
+
         private class TestDurableRawData
         {
             private string typeDurable;
@@ -26,6 +220,14 @@ namespace TestFrameworks
                 StartValue = "100";
                 IncreaseValue = "1";
                 IncreaseRate = "0.1";
+            }
+
+            internal TestDurableRawData(string startValue, string increaseValue, string increaseRate)
+            {
+                typeDurable = "TestFrameworks.DurableTest+TestDurableUsableData";
+                StartValue = startValue;
+                IncreaseValue = increaseValue;
+                IncreaseRate = increaseRate;
             }
 
             internal TestDurableRawData(string type, string startValue, string increaseValue, string increaseRate)
@@ -82,32 +284,32 @@ namespace TestFrameworks
                 Value += value;
             }
 
-            public void Add(IDurableUsableData value)
+            public void Add(UniversalUsableData value)
             {
-                Value += ((TestDurableUsableData)value).Value;
+                Value += value.Value;
             }
 
             public void Subject(int value)
             {
                 Value -= value;
             }
-            public void Subject(IDurableUsableData value)
+            public void Subject(UniversalUsableData value)
             {
-                Value -= ((TestDurableUsableData)value).Value;
+                Value -= value.Value;
             }
 
             public void SetZero() => Value = 0;
 
-            public bool IsOverflowMaxValue(IDurableUsableData maxValue, IDurableUsableData value)
+            public bool IsOverflowMaxValue(IDurableUsableData maxValue, UniversalUsableData value)
             {
                 var maxVal = ((TestDurableUsableData)maxValue).Value;
-                var val = ((TestDurableUsableData)value).Value;
+                var val = value.Value;
                 return (Value + val > maxVal);
             }
 
-            public bool IsUnderflowZero(IDurableUsableData value)
+            public bool IsUnderflowZero(UniversalUsableData value)
             {
-                var val = ((AbstractDurableUsableData)value).Value;
+                var val = value.Value;
                 return (Value - val < 0);
             }
 
@@ -123,13 +325,17 @@ namespace TestFrameworks
                 Value = value;
             }
 
-            public int Compare(IDurableUsableData value)
+            public int Compare(UniversalUsableData data)
             {
-                if (Value - ((AbstractDurableUsableData)value).Value > 0) return -1;
-                else if (Value - ((AbstractDurableUsableData)value).Value < 0) return 1;
+                if (Value - data.Value > 0) return -1;
+                else if (Value - data.Value < 0) return 1;
                 return 0;
             }
+
+            public UniversalUsableData CreateUniversalUsableData() => new UniversalUsableData(Value);
         }
+
+        #endregion
 
 
         [Test]
@@ -166,25 +372,25 @@ namespace TestFrameworks
             var health = new TestDurableRawData(typeof(HealthDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
             var armor = new TestDurableRawData(typeof(ArmorDurableUsableData).AssemblyQualifiedName, "1", "1", "0.1");
             var shield = new TestDurableRawData(typeof(ShieldDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
-            var recShield = new TestDurableRawData(typeof(RecoveryShieldDurableUsableData).AssemblyQualifiedName, "10", "1", "0.1");
+            //var recShield = new TestDurableRawData(typeof(RecoveryShieldDurableUsableData).AssemblyQualifiedName, "10", "1", "0.1");
             var limShield = new TestDurableRawData(typeof(LimitDamageShieldDurableUsableData).AssemblyQualifiedName, "50", "1", "0.1");
 
             var healthUsable = health.GetUsableData();
             var armorUsable = armor.GetUsableData();
             var shieldUsable = shield.GetUsableData();
-            var recShieldUsable = recShield.GetUsableData();
+            //var recShieldUsable = recShield.GetUsableData();
             var limShieldUsable = limShield.GetUsableData();
 
             Debug.Log(healthUsable.ToString("{0:0}"));
             Debug.Log(armorUsable.ToString("{0:0}"));
             Debug.Log(shieldUsable.ToString("{0:0}"));
-            Debug.Log(recShieldUsable.ToString("{0:0}"));
+            //Debug.Log(recShieldUsable.ToString("{0:0}"));
             Debug.Log(limShieldUsable.ToString("{0:0}"));
 
             Assert.AreEqual(healthUsable.ToString("{0:0}"), "100");
             Assert.AreEqual(armorUsable.ToString("{0:0}"), "1");
             Assert.AreEqual(shieldUsable.ToString("{0:0}"), "100");
-            Assert.AreEqual(recShieldUsable.ToString("{0:0}"), "10");
+            //Assert.AreEqual(recShieldUsable.ToString("{0:0}"), "10");
             Assert.AreEqual(limShieldUsable.ToString("{0:0}"), "50");
 
         }
@@ -210,78 +416,75 @@ namespace TestFrameworks
             usable.Set(usable2);
             Debug.Log(usable.ToString("{0:0}"));
             Assert.AreEqual(usable.ToString("{0:0}"), "100");
+        }
 
-            //var health = new TestDurableRawData(typeof(HealthDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
-            //var armor = new TestDurableRawData(typeof(ArmorDurableUsableData).AssemblyQualifiedName, "1", "1", "0.1");
-            //var shield = new TestDurableRawData(typeof(ShieldDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
-            //var recShield = new TestDurableRawData(typeof(RecoveryShieldDurableUsableData).AssemblyQualifiedName, "10", "1", "0.1");
-            //var limShield = new TestDurableRawData(typeof(LimitDamageShieldDurableUsableData).AssemblyQualifiedName, "50", "1", "0.1");
+        [Test]
+        public void DurableTest_Usable_IsOverflowMaxValue()
+        {
+            var nowRaw = new TestDurableRawData("50", "1", "0.1");
+            var addRaw = new TestDurableRawData("60", "1", "0.1");
+            var maxRaw = new TestDurableRawData("100", "1", "0.1");
+            var nowUsable = nowRaw.GetUsableData();
+            var addUsable = addRaw.GetUsableData();
+            var maxUsable = maxRaw.GetUsableData();
 
-            //var healthUsable = health.GetUsableData();
-            //var armorUsable = armor.GetUsableData();
-            //var shieldUsable = shield.GetUsableData();
-            //var recShieldUsable = recShield.GetUsableData();
-            //var limShieldUsable = limShield.GetUsableData();
+            UnityEngine.Debug.Log(nowUsable.IsOverflowMaxValue(maxUsable, addUsable.CreateUniversalUsableData()));
+            Assert.IsTrue(nowUsable.IsOverflowMaxValue(maxUsable, addUsable.CreateUniversalUsableData()));
 
-            //var healthUsable2 = health.GetUsableData();
-            //var armorUsable2 = armor.GetUsableData();
-            //var shieldUsable2 = shield.GetUsableData();
-            //var recShieldUsable2 = recShield.GetUsableData();
-            //var limShieldUsable2 = limShield.GetUsableData();
+            nowRaw = new TestDurableRawData("50", "1", "0.1");
+            addRaw = new TestDurableRawData("40", "1", "0.1");
+            maxRaw = new TestDurableRawData("100", "1", "0.1");
+            nowUsable = nowRaw.GetUsableData();
+            addUsable = addRaw.GetUsableData();
+            maxUsable = maxRaw.GetUsableData();
 
-            //healthUsable.Add(10);
-            //armorUsable.Add(10);
-            //shieldUsable.Add(10);
-            //recShieldUsable.Add(10);
-            //limShieldUsable.Add(10);
+            UnityEngine.Debug.Log(nowUsable.IsOverflowMaxValue(maxUsable, addUsable.CreateUniversalUsableData()));
+            Assert.IsFalse(nowUsable.IsOverflowMaxValue(maxUsable, addUsable.CreateUniversalUsableData()));
+        }
 
-            //Debug.Log(healthUsable.ToString("{0:0}"));
-            //Debug.Log(armorUsable.ToString("{0:0}"));
-            //Debug.Log(shieldUsable.ToString("{0:0}"));
-            //Debug.Log(recShieldUsable.ToString("{0:0}"));
-            //Debug.Log(limShieldUsable.ToString("{0:0}"));
+        [Test]
+        public void DurableTest_Usable_IsUnderflowZero()
+        {
+            var nowRaw = new TestDurableRawData("50", "1", "0.1");
+            var subjectRaw = new TestDurableRawData("60", "1", "0.1");
+            var nowUsable = nowRaw.GetUsableData();
+            var subjectUsable = subjectRaw.GetUsableData();
 
-            //Assert.AreEqual(healthUsable.ToString("{0:0}"), "100");
-            //Assert.AreEqual(armorUsable.ToString("{0:0}"), "1");
-            //Assert.AreEqual(shieldUsable.ToString("{0:0}"), "100");
-            //Assert.AreEqual(recShieldUsable.ToString("{0:0}"), "10");
-            //Assert.AreEqual(limShieldUsable.ToString("{0:0}"), "50");
+            UnityEngine.Debug.Log(nowUsable.IsUnderflowZero(subjectUsable.CreateUniversalUsableData()));
+            Assert.IsTrue(nowUsable.IsUnderflowZero(subjectUsable.CreateUniversalUsableData()));
 
-            //healthUsable.Subject(10);
-            //armorUsable.Subject(10);
-            //shieldUsable.Subject(10);
-            //recShieldUsable.Subject(10);
-            //limShieldUsable.Subject(10);
+            nowRaw = new TestDurableRawData("50", "1", "0.1");
+            subjectRaw = new TestDurableRawData("40", "1", "0.1");
+            nowUsable = nowRaw.GetUsableData();
+            subjectUsable = subjectRaw.GetUsableData();
 
-            //Debug.Log(healthUsable.ToString("{0:0}"));
-            //Debug.Log(armorUsable.ToString("{0:0}"));
-            //Debug.Log(shieldUsable.ToString("{0:0}"));
-            //Debug.Log(recShieldUsable.ToString("{0:0}"));
-            //Debug.Log(limShieldUsable.ToString("{0:0}"));
+            UnityEngine.Debug.Log(nowUsable.IsUnderflowZero(subjectUsable.CreateUniversalUsableData()));
+            Assert.IsFalse(nowUsable.IsUnderflowZero(subjectUsable.CreateUniversalUsableData()));
 
-            //Assert.AreEqual(healthUsable.ToString("{0:0}"), "100");
-            //Assert.AreEqual(armorUsable.ToString("{0:0}"), "1");
-            //Assert.AreEqual(shieldUsable.ToString("{0:0}"), "100");
-            //Assert.AreEqual(recShieldUsable.ToString("{0:0}"), "10");
-            //Assert.AreEqual(limShieldUsable.ToString("{0:0}"), "50");
+        }
 
-            //healthUsable.Set(healthUsable2);
-            //armorUsable.Set(armorUsable2);
-            //shieldUsable.Set(shieldUsable2);
-            //recShieldUsable.Set(recShieldUsable2);
-            //limShieldUsable.Set(limShieldUsable2);
+        [Test]
+        public void DurableTest_Usable_IsZero()
+        {
+            var nowRaw = new TestDurableRawData("50", "1", "0.1");
+            var subjectRaw = new TestDurableRawData("50", "1", "0.1");
+            var nowUsable = nowRaw.GetUsableData();
+            var subjectUsable = subjectRaw.GetUsableData();
 
-            //Debug.Log(healthUsable.ToString("{0:0}"));
-            //Debug.Log(armorUsable.ToString("{0:0}"));
-            //Debug.Log(shieldUsable.ToString("{0:0}"));
-            //Debug.Log(recShieldUsable.ToString("{0:0}"));
-            //Debug.Log(limShieldUsable.ToString("{0:0}"));
+            nowUsable.Subject(subjectUsable.CreateUniversalUsableData());
 
-            //Assert.AreEqual(healthUsable.ToString("{0:0}"), "100");
-            //Assert.AreEqual(armorUsable.ToString("{0:0}"), "1");
-            //Assert.AreEqual(shieldUsable.ToString("{0:0}"), "100");
-            //Assert.AreEqual(recShieldUsable.ToString("{0:0}"), "10");
-            //Assert.AreEqual(limShieldUsable.ToString("{0:0}"), "50");
+            UnityEngine.Debug.Log(nowUsable.IsZero);
+            Assert.IsTrue(nowUsable.IsZero);
+
+            nowRaw = new TestDurableRawData("50", "1", "0.1");
+            subjectRaw = new TestDurableRawData("40", "1", "0.1");
+            nowUsable = nowRaw.GetUsableData();
+            subjectUsable = subjectRaw.GetUsableData();
+
+            nowUsable.Subject(subjectUsable.CreateUniversalUsableData());
+
+            UnityEngine.Debug.Log(nowUsable.IsZero);
+            Assert.IsFalse(nowUsable.IsZero);
 
         }
 
@@ -293,13 +496,13 @@ namespace TestFrameworks
             var health = new TestDurableRawData(typeof(HealthDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
             var armor = new TestDurableRawData(typeof(ArmorDurableUsableData).AssemblyQualifiedName, "1", "1", "0.1");
             var shield = new TestDurableRawData(typeof(ShieldDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
-            var recShield = new TestDurableRawData(typeof(RecoveryShieldDurableUsableData).AssemblyQualifiedName, "10", "1", "0.1");
+            //var recShield = new TestDurableRawData(typeof(RecoveryShieldDurableUsableData).AssemblyQualifiedName, "10", "1", "0.1");
             var limShield = new TestDurableRawData(typeof(LimitDamageShieldDurableUsableData).AssemblyQualifiedName, "50", "1", "0.1");
 
             var healthUsable = health.GetUsableData();
             var armorUsable = armor.GetUsableData();
             var shieldUsable = shield.GetUsableData();
-            var recShieldUsable = recShield.GetUsableData();
+            //var recShieldUsable = recShield.GetUsableData();
             var limShieldUsable = limShield.GetUsableData();
 
 
@@ -308,21 +511,23 @@ namespace TestFrameworks
             usableEntity.Set(healthUsable);
             usableEntity.Set(armorUsable);
             usableEntity.Set(shieldUsable);
-            usableEntity.Set(recShieldUsable);
+            //usableEntity.Set(recShieldUsable);
             usableEntity.Set(limShieldUsable);
 
             Debug.Log(usableEntity.GetValue<HealthDurableUsableData>("{0:0}"));
             Debug.Log(usableEntity.GetValue<ArmorDurableUsableData>("{0:0}"));
             Debug.Log(usableEntity.GetValue<ShieldDurableUsableData>("{0:0}"));
-            Debug.Log(usableEntity.GetValue<RecoveryShieldDurableUsableData>("{0:0}"));
+            //Debug.Log(usableEntity.GetValue<RecoveryShieldDurableUsableData>("{0:0}"));
             Debug.Log(usableEntity.GetValue<LimitDamageShieldDurableUsableData>("{0:0}"));
 
             Assert.AreEqual(usableEntity.GetValue<HealthDurableUsableData>("{0:0}"), "100");
             Assert.AreEqual(usableEntity.GetValue<ArmorDurableUsableData>("{0:0}"), "1");
             Assert.AreEqual(usableEntity.GetValue<ShieldDurableUsableData>("{0:0}"), "100");
-            Assert.AreEqual(usableEntity.GetValue<RecoveryShieldDurableUsableData>("{0:0}"), "10");
+            //Assert.AreEqual(usableEntity.GetValue<RecoveryShieldDurableUsableData>("{0:0}"), "10");
             Assert.AreEqual(usableEntity.GetValue<LimitDamageShieldDurableUsableData>("{0:0}"), "50");
         }
+
+
 
         [Test]
         public void DurableTest_BattleEntity_ToString()
@@ -330,13 +535,13 @@ namespace TestFrameworks
             var health = new TestDurableRawData(typeof(HealthDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
             var armor = new TestDurableRawData(typeof(ArmorDurableUsableData).AssemblyQualifiedName, "1", "1", "0.1");
             var shield = new TestDurableRawData(typeof(ShieldDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
-            var recShield = new TestDurableRawData(typeof(RecoveryShieldDurableUsableData).AssemblyQualifiedName, "10", "1", "0.1");
+            //var recShield = new TestDurableRawData(typeof(RecoveryShieldDurableUsableData).AssemblyQualifiedName, "10", "1", "0.1");
             var limShield = new TestDurableRawData(typeof(LimitDamageShieldDurableUsableData).AssemblyQualifiedName, "50", "1", "0.1");
 
             var healthUsable = health.GetUsableData();
             var armorUsable = armor.GetUsableData();
             var shieldUsable = shield.GetUsableData();
-            var recShieldUsable = recShield.GetUsableData();
+            //var recShieldUsable = recShield.GetUsableData();
             var limShieldUsable = limShield.GetUsableData();
 
 
@@ -345,7 +550,7 @@ namespace TestFrameworks
             usableEntity.Set(healthUsable);
             usableEntity.Set(armorUsable);
             usableEntity.Set(shieldUsable);
-            usableEntity.Set(recShieldUsable);
+            //usableEntity.Set(recShieldUsable);
             usableEntity.Set(limShieldUsable);
 
             var battleEntity = usableEntity.CreateDurableBattleEntity();
@@ -353,19 +558,28 @@ namespace TestFrameworks
             Debug.Log(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"));
             Debug.Log(battleEntity.GetValue<ArmorDurableUsableData>("{0:0}"));
             Debug.Log(battleEntity.GetValue<ShieldDurableUsableData>("{0:0}"));
-            Debug.Log(battleEntity.GetValue<RecoveryShieldDurableUsableData>("{0:0}"));
+            //Debug.Log(battleEntity.GetValue<RecoveryShieldDurableUsableData>("{0:0}"));
             Debug.Log(battleEntity.GetValue<LimitDamageShieldDurableUsableData>("{0:0}"));
 
             Assert.AreEqual(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"), "100 / 100");
             Assert.AreEqual(battleEntity.GetValue<ArmorDurableUsableData>("{0:0}"), "1");
             Assert.AreEqual(battleEntity.GetValue<ShieldDurableUsableData>("{0:0}"), "100 / 100");
-            Assert.AreEqual(battleEntity.GetValue<RecoveryShieldDurableUsableData>("{0:0}"), "10");
+            //Assert.AreEqual(battleEntity.GetValue<RecoveryShieldDurableUsableData>("{0:0}"), "10");
             Assert.AreEqual(battleEntity.GetValue<LimitDamageShieldDurableUsableData>("{0:0}"), "50");
         }
 
         [Test]
         public void DurableTest_BattleEntity_HealthOperate()
         {
+            var attack = new TestAttackRawData("20", "0", "0");
+            var recovery = new TestRecoveryRawData();
+
+            var attackUsable = attack.GetUsableData();
+            var recoveryUsable = recovery.GetUsableData();
+            ((TestRecoveryUsableData)recoveryUsable).SetDurableKey(typeof(HealthDurableUsableData).Name);
+
+
+
             var health = new TestDurableRawData(typeof(HealthDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
             var healthUsable = health.GetUsableData();
 
@@ -378,17 +592,20 @@ namespace TestFrameworks
             Debug.Log(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"));
             Assert.AreEqual(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"), "100 / 100");
 
-            battleEntity.Subject(UniversalDurableUsableData.Create(20));
+            battleEntity.Subject(attackUsable);
 
             Debug.Log(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"));
             Assert.AreEqual(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"), "80 / 100");
 
-            battleEntity.Add(UniversalDurableUsableData.Create(10));
+            battleEntity.Add(recoveryUsable);
 
             Debug.Log(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"));
             Assert.AreEqual(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"), "90 / 100");
 
-            battleEntity.Subject(UniversalDurableUsableData.Create(100));
+            attack = new TestAttackRawData("100", "0", "0");
+            attackUsable = attack.GetUsableData();
+
+            battleEntity.Subject(attackUsable);
 
             Debug.Log(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"));
             Assert.AreEqual(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"), "0 / 100");
@@ -399,6 +616,9 @@ namespace TestFrameworks
         [Test]
         public void DurableTest_BattleEntity_ArmorOperate()
         {
+            var attack = new TestAttackRawData();
+            var attackUsable = attack.GetUsableData();
+
             var health = new TestDurableRawData(typeof(HealthDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
             var armor = new TestDurableRawData(typeof(ArmorDurableUsableData).AssemblyQualifiedName, "1", "1", "0.1");
             var healthUsable = health.GetUsableData();
@@ -414,7 +634,7 @@ namespace TestFrameworks
             Debug.Log(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"));
             Assert.AreEqual(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"), "100 / 100");
 
-            battleEntity.Subject(UniversalDurableUsableData.Create(10));
+            battleEntity.Subject(attackUsable);
 
             Debug.Log(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"));
             Assert.AreEqual(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"), "91 / 100");
@@ -424,6 +644,9 @@ namespace TestFrameworks
         [Test]
         public void DurableTest_BattleEntity_ShieldOperate()
         {
+            var attack = new TestAttackRawData();
+            var attackUsable = attack.GetUsableData();
+
             var health = new TestDurableRawData(typeof(HealthDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
             var armor = new TestDurableRawData(typeof(ArmorDurableUsableData).AssemblyQualifiedName, "1", "1", "0.1");
             var shield = new TestDurableRawData(typeof(ShieldDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
@@ -443,12 +666,16 @@ namespace TestFrameworks
             Debug.Log($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")} - {battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}");
             Assert.AreEqual($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")} - {battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}", "100 / 100 - 100 / 100");
 
-            battleEntity.Subject(UniversalDurableUsableData.Create(10));
+            battleEntity.Subject(attackUsable);
 
             Debug.Log($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")} - {battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}");
             Assert.AreEqual($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")} - {battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}", "90 / 100 - 100 / 100");
 
-            battleEntity.Subject(UniversalDurableUsableData.Create(100));
+            attack = new TestAttackRawData("100", "0", "0");
+            attackUsable = attack.GetUsableData();
+
+
+            battleEntity.Subject(attackUsable);
 
             Debug.Log($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")} - {battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}");
             Assert.AreEqual($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")} - {battleEntity.GetValue<HealthDurableUsableData>("{0:0}")}", "0 / 100 - 91 / 100");
@@ -458,6 +685,9 @@ namespace TestFrameworks
         [Test]
         public void DurableTest_BattleEntity_LimitShieldOperate()
         {
+            var attack = new TestAttackRawData();
+            var attackUsable = attack.GetUsableData();
+
             var health = new TestDurableRawData(typeof(HealthDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
             var armor = new TestDurableRawData(typeof(ArmorDurableUsableData).AssemblyQualifiedName, "1", "1", "0.1");
             var shield = new TestDurableRawData(typeof(ShieldDurableUsableData).AssemblyQualifiedName, "100", "1", "0.1");
@@ -480,17 +710,19 @@ namespace TestFrameworks
             Debug.Log($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}");
             Assert.AreEqual($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}", "100 / 100");
 
-            battleEntity.Subject(UniversalDurableUsableData.Create(10));
+            battleEntity.Subject(attackUsable);
 
             Debug.Log($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}");
             Assert.AreEqual($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}", "90 / 100");
 
-            battleEntity.Subject(UniversalDurableUsableData.Create(100));
+            attack = new TestAttackRawData("100", "0", "0");
+            attackUsable = attack.GetUsableData();
+
+            battleEntity.Subject(attackUsable);
 
             Debug.Log($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}");
             Assert.AreEqual($"{battleEntity.GetValue<ShieldDurableUsableData>("{0:0}")}", "40 / 100");
         }
-
     }
 }
 #endif

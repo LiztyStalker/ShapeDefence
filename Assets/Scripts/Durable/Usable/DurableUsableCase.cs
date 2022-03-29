@@ -1,3 +1,6 @@
+using SDefence.Attack;
+using SDefence.Recovery;
+
 namespace SDefence.Durable.Usable
 {
     public class DurableUsableCase : IDurableUsableData
@@ -23,8 +26,9 @@ namespace SDefence.Durable.Usable
             _maxDurableUsableData = null;
             _nowDurableUsableData = null;
         }
+        public void Add(int value) => _nowDurableUsableData.Add(value);
 
-        public void Add(IDurableUsableData dData)
+        public void Add(UniversalUsableData dData)
         {
             if (_nowDurableUsableData.IsOverflowMaxValue(_maxDurableUsableData, dData))
             {
@@ -36,7 +40,10 @@ namespace SDefence.Durable.Usable
             }
         }
 
-        public void Subject(IDurableUsableData dData)
+
+        public void Subject(int value) => _nowDurableUsableData.Subject(value);
+
+        public void Subject(UniversalUsableData dData)
         {
             if (_nowDurableUsableData.IsUnderflowZero(dData))
             {
@@ -47,10 +54,13 @@ namespace SDefence.Durable.Usable
                 _nowDurableUsableData.Subject(dData);
             }
         }
+     
+
+
 
         public void Set(int value)
         {
-            var dData = UniversalDurableUsableData.Create(value);
+            var dData = new UniversalUsableData(value);
             if (_nowDurableUsableData.IsOverflowMaxValue(_maxDurableUsableData, dData))
             {
                 _nowDurableUsableData.Set(_maxDurableUsableData.Clone());
@@ -61,18 +71,18 @@ namespace SDefence.Durable.Usable
             }
             else
             {
-                _nowDurableUsableData.Set(dData);
+                _nowDurableUsableData.Set(value);
             }
 
         }
 
         public void Set(IDurableUsableData dData)
         {
-            if (_nowDurableUsableData.IsOverflowMaxValue(_maxDurableUsableData, dData))
+            if (_nowDurableUsableData.IsOverflowMaxValue(_maxDurableUsableData, dData.CreateUniversalUsableData()))
             {
                 _nowDurableUsableData.Set(_maxDurableUsableData.Clone());
             }
-            else if (_maxDurableUsableData.IsUnderflowZero(dData))
+            else if (_maxDurableUsableData.IsUnderflowZero(dData.CreateUniversalUsableData()))
             {
                 _nowDurableUsableData.SetZero();
             }
@@ -82,15 +92,9 @@ namespace SDefence.Durable.Usable
             }
         }
 
-        public void Add(int value)
-        {
-            _nowDurableUsableData.Add(value);
-        }
+      
+       
 
-        public void Subject(int value)
-        {
-            _nowDurableUsableData.Subject(value);
-        }
 
         public void SetData(string startValue, string increaseValue, string increaseRate, int upgrade) => _nowDurableUsableData.SetData(startValue, increaseValue, increaseRate, upgrade);
 
@@ -106,8 +110,12 @@ namespace SDefence.Durable.Usable
 
         public void SetZero() => _nowDurableUsableData.SetZero();
 
-        public bool IsOverflowMaxValue(IDurableUsableData maxValue, IDurableUsableData value) => _nowDurableUsableData.IsOverflowMaxValue(maxValue, value);
-        public bool IsUnderflowZero(IDurableUsableData value) => _nowDurableUsableData.IsUnderflowZero(value);
-        public int Compare(IDurableUsableData value) => _nowDurableUsableData.Compare(value);
+        public bool IsOverflowMaxValue(IDurableUsableData maxValue, UniversalUsableData value) => _nowDurableUsableData.IsOverflowMaxValue(maxValue, value);
+
+        public bool IsUnderflowZero(UniversalUsableData value) => _nowDurableUsableData.IsUnderflowZero(value);
+
+        public int Compare(UniversalUsableData value) => _nowDurableUsableData.Compare(value);
+
+        public UniversalUsableData CreateUniversalUsableData() => _nowDurableUsableData.CreateUniversalUsableData();
     }
 }
