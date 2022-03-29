@@ -118,14 +118,14 @@ namespace TestFrameworks
         #region ##### Test Recovery #####
         private class TestRecoveryRawData
         {
-            private string typeDurable;
+            private string typeData;
             public string StartValue;
             public string IncreaseValue;
             public string IncreaseRate;
 
             internal TestRecoveryRawData()
             {
-                typeDurable = "TestFrameworks.DurableTest+TestRecoveryUsableData";
+                typeData = "TestFrameworks.DurableTest+TestRecoveryUsableData";
                 StartValue = "10";
                 IncreaseValue = "1";
                 IncreaseRate = "0.1";
@@ -133,7 +133,7 @@ namespace TestFrameworks
 
             internal TestRecoveryRawData(string startValue, string increaseValue, string increaseRate)
             {
-                typeDurable = "TestFrameworks.DurableTest+TestRecoveryUsableData";
+                typeData = "TestFrameworks.DurableTest+TestRecoveryUsableData";
                 StartValue = startValue;
                 IncreaseValue = increaseValue;
                 IncreaseRate = increaseRate;
@@ -141,7 +141,7 @@ namespace TestFrameworks
 
             internal TestRecoveryRawData(string type, string startValue, string increaseValue, string increaseRate)
             {
-                typeDurable = type;
+                typeData = type;
                 StartValue = startValue;
                 IncreaseValue = increaseValue;
                 IncreaseRate = increaseRate;
@@ -149,7 +149,7 @@ namespace TestFrameworks
 
             internal IRecoveryUsableData GetUsableData(int upgrade = 0)
             {
-                var type = System.Type.GetType(typeDurable);
+                var type = System.Type.GetType(typeData);
                 if (type != null)
                 {
                     var data = (IRecoveryUsableData)System.Activator.CreateInstance(type);
@@ -158,7 +158,7 @@ namespace TestFrameworks
                 }
                 else
                 {
-                    throw new System.Exception($"{typeDurable} is not found Type");
+                    throw new System.Exception($"{typeData} is not found Type");
                 }
             }
         }

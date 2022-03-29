@@ -1,12 +1,12 @@
-namespace SDefence.Recovery.Raw {
-
+namespace SDefence.Recovery.Raw 
+{
     using UnityEngine;
 
     [System.Serializable]
-    public class RecoveryRawData : ScriptableObject
+    public class RecoveryRawData
     {
-        [SerializeField] //DurablePopup
-        private string _typeRecovery;
+        [SerializeField] //RecoveryUsablePopup
+        private string _typeData;
 
         [SerializeField]
         private string _startValue;
@@ -26,7 +26,7 @@ namespace SDefence.Recovery.Raw {
         }
         private RecoveryRawData()
         {
-            _typeRecovery = "SDefence.Recovery.Raw.ShieldRecoveryUsableData";
+            _typeData = "SDefence.Recovery.Raw.ShieldRecoveryUsableData";
             _startValue = "10";
             _increaseValue = "1";
             _increaseRate = "0.1";
@@ -35,17 +35,19 @@ namespace SDefence.Recovery.Raw {
 
         internal IRecoveryUsableData GetUsableData(int upgrade = 0)
         {
-            var type = System.Type.GetType(_typeRecovery);
+            var type = System.Type.GetType(_typeData);
             if (type != null)
             {
                 var data = (IRecoveryUsableData)System.Activator.CreateInstance(type);
                 data.SetData(_startValue, _increaseValue, _increaseRate, upgrade);
                 return data;
             }
+#if UNITY_EDITOR
             else
             {
-                throw new System.Exception($"{_typeRecovery} is not found Type");
+                throw new System.Exception($"{_typeData} is not found Type");
             }
+#endif
         }
     }
 }
