@@ -2,7 +2,6 @@ namespace SDefence.Durable.Entity
 {
     using System.Collections.Generic;
     using Usable;
-
     public class DurableUsableEntity
     {
         private Dictionary<string, IDurableUsableData> _dic;

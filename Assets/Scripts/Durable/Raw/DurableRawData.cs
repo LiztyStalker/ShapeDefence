@@ -6,7 +6,7 @@ namespace SDefence.Durable.Raw {
     public class DurableRawData : ScriptableObject
     {
         [SerializeField] //DurablePopup
-        private string _typeDurable;
+        private string _typeData;
 
         [SerializeField]
         private string _startValue;
@@ -26,26 +26,37 @@ namespace SDefence.Durable.Raw {
         }
         private DurableRawData()
         {
-            _typeDurable = "SDefence.Durable.Raw.HealthDurableUsableData";
+            _typeData = "SDefence.Durable.Raw.HealthDurableUsableData";
             _startValue = "100";
             _increaseValue = "1";
             _increaseRate = "0.1";
+        }
+
+        public void SetData(string typeData, string startValue, string increaseValue, string increaseRate)
+        {
+            _typeData = typeData;
+            _startValue = startValue;
+            _increaseValue = increaseValue;
+            _increaseRate = increaseRate;
         }
 #endif
 
         internal IDurableUsableData GetUsableData(int upgrade = 0)
         {
-            var type = System.Type.GetType(_typeDurable);
+            var type = System.Type.GetType(_typeData);
             if (type != null)
             {
                 var data = (IDurableUsableData)System.Activator.CreateInstance(type);
                 data.SetData(_startValue, _increaseValue, _increaseRate, upgrade);
                 return data;
             }
+#if UNITY_EDITOR
             else
             {
-                throw new System.Exception($"{_typeDurable} is not found Type");
+                throw new System.Exception($"{_typeData} is not found Type");
             }
+#endif
         }
+
     }
 }

@@ -1,9 +1,5 @@
 namespace SDefence.Durable.Usable
 {
-    using SDefence.Attack;
-    using SDefence.Attack.Usable;
-    using SDefence.Recovery;
-    using SDefence.Recovery.Usable;
     using System.Numerics;
     using Utility.Number;
 
@@ -11,30 +7,18 @@ namespace SDefence.Durable.Usable
     {
         private BigDecimal _value;
         public BigDecimal Value { get => _value; protected set => _value = value; }
+
+
         public bool IsZero => Value.IsZero;
+        public void SetZero() => Value = 0;
+
+
         public virtual void Add(int value) => Value += value;
         public virtual void Add(UniversalUsableData dData) => Value += dData.Value;
         public virtual void Subject(int value) => Value -= value;
-        public virtual void Subject(UniversalUsableData dData) => Value -= dData.Value;
-        //{
-        //    if (dData is DurableUsableCase)
-        //    {
-        //        var durable = ((DurableUsableCase)dData);
-        //        var val = ((AbstractDurableUsableData)durable.NowDurableUsableData).Value;
-        //        Value -= val;
-        //    }
-        //    else
-        //        Value -= ((AbstractDurableUsableData)dData).Value;
-        //}
-
-
-
-
-
-
+        public virtual void Subject(UniversalUsableData dData) => Value -= dData.Value;     
         public virtual void Set(int value) => Value = value;
         public virtual void Set(IDurableUsableData value) => Value = ((AbstractDurableUsableData)value).Value;
-        public void SetZero() => Value = 0;
         public void SetData(string startValue, string increaseValue, string increaseRate, int upgrade)
         {
             var sVal = long.Parse(startValue);

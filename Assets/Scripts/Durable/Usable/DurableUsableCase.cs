@@ -1,6 +1,3 @@
-using SDefence.Attack;
-using SDefence.Recovery;
-
 namespace SDefence.Durable.Usable
 {
     public class DurableUsableCase : IDurableUsableData
@@ -8,8 +5,11 @@ namespace SDefence.Durable.Usable
         private IDurableUsableData _maxDurableUsableData;
         private IDurableUsableData _nowDurableUsableData;
 
-        public bool IsZero => _nowDurableUsableData.IsZero;
         public new System.Type GetType() => _nowDurableUsableData.GetType();
+
+        public bool IsZero => _nowDurableUsableData.IsZero;
+        public void SetZero() => _nowDurableUsableData.SetZero();
+
 
         public IDurableUsableData NowDurableUsableData => _nowDurableUsableData;
 
@@ -108,7 +108,6 @@ namespace SDefence.Durable.Usable
             return null;
         }
 
-        public void SetZero() => _nowDurableUsableData.SetZero();
 
         public bool IsOverflowMaxValue(IDurableUsableData maxValue, UniversalUsableData value) => _nowDurableUsableData.IsOverflowMaxValue(maxValue, value);
 
