@@ -52,6 +52,25 @@ namespace System.Numerics
             _value = ConvertToBigInteger(value);
         }
 
+        public BigDecimal(string value)
+        {
+            var split = value.Split('.');
+            if (split.Length == 1)
+            {
+                _value = BigInteger.Parse(value);
+                _decimalPoint = 0;
+            }
+            else if (split.Length == 2)
+            {
+                _value = BigInteger.Parse(value);
+                _decimalPoint = (byte)split[1].Length;
+            }
+            else
+            {
+                throw new Exception($"{value}는 BigDecimal에 대응할 수 없습니다");
+            }
+        }
+
         public BigDecimal(BigDecimal bigdec)
         {
             _value = bigdec._value;
@@ -85,7 +104,7 @@ namespace System.Numerics
             return string.Format(format, GetDecimalValue());
         }
 
-        public override string ToString() => GetDecimalValue().ToString();
+        public override string ToString() => Utility.Number.NumberDataUtility.GetSummaryValue(this, 3, "", "K", "M", "G", "T", "P", "Z", "Y");
 
         private BigInteger ConvertToBigInteger(decimal value)
         {

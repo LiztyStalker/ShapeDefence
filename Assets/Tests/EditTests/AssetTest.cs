@@ -80,11 +80,10 @@ namespace TestFrameworks
 
             public void SetData(string startValue, string increaseValue, string increaseRate, int length)
             {
-                var sVal = long.Parse(startValue);
                 var incVal = int.Parse(increaseValue);
                 var incRate = float.Parse(increaseRate);
 
-                Value = new BigDecimal(sVal);
+                Value = new BigDecimal(startValue);
                 Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, length);
             }
 
@@ -203,12 +202,104 @@ namespace TestFrameworks
 
         [Test]
         public void AssetTest_Usable_ToString_Digit()
-        { }
+        {
+
+            var raw = new TestAssetRawData("1", "0", "0");
+            var usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1");
+
+            raw = new TestAssetRawData("1000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1.000K");
+
+            raw = new TestAssetRawData("1000000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1.000M");
+
+            raw = new TestAssetRawData("1000000000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1.000G");
+
+            raw = new TestAssetRawData("1000000000000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1.000T");
+
+            raw = new TestAssetRawData("1000000000000000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1.000P");
+
+            raw = new TestAssetRawData("1000000000000000000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1.000Z");
+
+            raw = new TestAssetRawData("1000000000000000000000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1.000Y");
+
+        }
 
         [Test]
         public void AssetTest_Usable_ToString_Digit_Dot()
         {
-           
+            var raw = new TestAssetRawData("1", "0", "0");
+            var usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1");
+
+            raw = new TestAssetRawData("10", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "10");
+
+            raw = new TestAssetRawData("100", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "100");
+
+            raw = new TestAssetRawData("1000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1.000K");
+
+            raw = new TestAssetRawData("10000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "10.00K");
+
+            raw = new TestAssetRawData("100000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "100.0K");
+
+            raw = new TestAssetRawData("1000000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1.000M");
+
+
         }
 
 

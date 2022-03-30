@@ -85,11 +85,10 @@ namespace TestFrameworks
 
             public void SetData(string startValue, string increaseValue, string increaseRate, string startDelayValue, string decreaseDelayValue, string decreaseDelayRate, int upgrade)
             {
-                var sVal = long.Parse(startValue);
                 var incVal = int.Parse(increaseValue);
                 var incRate = float.Parse(increaseRate);
 
-                Value = new BigDecimal(sVal);
+                Value = new BigDecimal(startValue);
                 Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, upgrade);
 
 
@@ -179,11 +178,10 @@ namespace TestFrameworks
 
             public void SetData(string startValue, string increaseValue, string increaseRate, int length)
             {
-                var sVal = long.Parse(startValue);
                 var incVal = int.Parse(increaseValue);
                 var incRate = float.Parse(increaseRate);
 
-                Value = new BigDecimal(sVal);
+                Value = new BigDecimal(startValue);
                 Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, length);
             }
 
@@ -275,11 +273,10 @@ namespace TestFrameworks
 
             public void SetData(string startValue, string increaseValue, string increaseRate, int length)
             {
-                var sVal = long.Parse(startValue);
                 var incVal = int.Parse(increaseValue);
                 var incRate = float.Parse(increaseRate);
 
-                Value = new BigDecimal(sVal);
+                Value = new BigDecimal(startValue);
                 Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, length);
             }
 

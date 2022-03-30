@@ -13,11 +13,10 @@ namespace SDefence.Recovery.Usable
 
         public void SetData(string startValue, string increaseValue, string increaseRate, int upgrade)
         {
-            var sVal = long.Parse(startValue);
             var incVal = int.Parse(increaseValue);
             var incRate = float.Parse(increaseRate);
 
-            Value = new BigDecimal(sVal);
+            Value = new BigDecimal(startValue);
             Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, upgrade);
         }
 

@@ -22,11 +22,10 @@ namespace SDefence.Asset.Usable
         public virtual void Set(IAssetUsableData value) => Value = ((AbstractAssetUsableData)value).Value;
         public void SetData(string startValue, string increaseValue, string increaseRate, int upgrade)
         {
-            var sVal = long.Parse(startValue);
             var incVal = int.Parse(increaseValue);
             var incRate = float.Parse(increaseRate);
 
-            Value = new BigDecimal(sVal);
+            Value = new BigDecimal(startValue);
             Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, upgrade);
         }
 
@@ -58,7 +57,6 @@ namespace SDefence.Asset.Usable
         {
             return (IAssetUsableData)System.Activator.CreateInstance(type);
         }
-
 
         public string ToString(string format) => Value.ToString(format);
         public override string ToString() => Value.ToString();
