@@ -6,7 +6,7 @@ namespace Utility.Number
 
     public class NumberDataUtility
     {
-        private const int NUMBER_ALPHABET = 'Z' - 'A'; //26
+        private const int NUMBER_ALPHABET = 'Z' - 'A' + 1; //26
 
         public static T Create<T>() where T : INumberData
         {
@@ -81,11 +81,19 @@ namespace Utility.Number
             return value;
         }
 
-
+        /// <summary>
+        /// 요약 값 출력
+        /// </summary>
+        /// <param name="bigdec">값</param>
+        /// <param name="digitLength">자리수 분할</param>
+        /// <param name="digitUnits">자리수 단위</param>
+        /// <returns></returns>
         public static string GetSummaryValue(BigDecimal bigdec, int digitLength = 3, params string[] digitUnits)
         {
             var str = bigdec.Value.ToString();
-            int capacity = GetDigitCapacity(bigdec);
+            int capacity = GetDigitCapacity(bigdec, digitLength);
+            //UnityEngine.Debug.Log(capacity);
+
 
             if (capacity > 0)
             {
@@ -105,22 +113,28 @@ namespace Utility.Number
                     //출력
                     return $"{str1}.{str2}{digit}";
                 }
-                else
+                else 
                 {
-                    //넘으면 A-Z 형식
-                    return GetSummaryValue(bigdec, digitLength, digitUnits.Length);
+                    //지정된 자리수가 넘으면 AA-ZZ 자리수 출력
+                    return GetSummaryValue(bigdec, digitLength, NUMBER_ALPHABET - digitUnits.Length);
                 }
             }
             //출력
             return str;
         }
 
-
+        /// <summary>
+        /// 요약 값 출력
+        /// </summary>
+        /// <param name="bigdec">값</param>
+        /// <param name="digitLength">자리수 분할</param>
+        /// <param name="offsetDigitLength">자리수 분할 오프셋</param>
+        /// <returns></returns>
         public static string GetSummaryValue(BigDecimal bigdec, int digitLength = 3, int offsetDigitLength = 0)
         {
             var str = bigdec.Value.ToString();
-            //Debug.Log(str);
-            int capacity = GetDigitCapacity(bigdec);
+            int capacity = GetDigitCapacity(bigdec, digitLength) + offsetDigitLength;
+            //UnityEngine.Debug.Log(capacity);
 
             if (capacity > 0)
             {
@@ -140,13 +154,13 @@ namespace Utility.Number
             return str;
         }
 
-        private static int GetDigitCapacity(BigDecimal bigInt)
+        private static int GetDigitCapacity(BigDecimal bigdec, int digitLength)
         {
-            var value = bigInt.Value;
+            var value = bigdec.Value;
             var capacity = 0;
             while (true)
             {
-                value /= 1000;
+                value /= (int)UnityEngine.Mathf.Pow(10, digitLength);
                 if (value == 0)
                 {
                     break;
@@ -156,56 +170,33 @@ namespace Utility.Number
             return capacity;
         }
 
-        public static string GetDigitValue(BigDecimal bigInt)
-        {
-            Stack<string> stack = new Stack<string>();
-            var value = bigInt.Value;
-            while (true)
-            {
-                var digit = GetDigit(stack.Count);
-                var str = value % 1000;
-                stack.Push(string.Format("{0:d3}{1}", str, digit));
-                value /= 1000;
-                if (value == 0)
-                    break;
-            }
-
-            StringBuilder builder = new StringBuilder();
-
-            while (true)
-            {
-                builder.Append(stack.Pop());
-                if (stack.Count == 0)
-                    break;
-            }
-            return builder.ToString();
-        }
-
-
         private static string GetDigit(int capacity)
         {
-            if (capacity == 0)
-            {
-                return "";
-            }
-
-            capacity--;
-
             StringBuilder builder = new StringBuilder();
 
-            var digit = capacity;
+            int digit = capacity;
+            int mod = digit;
 
             while (true)
             {
+                //UnityEngine.Debug.Log(digit);
+                //1자리수
                 if (digit / NUMBER_ALPHABET == 0)
                 {
-                    builder.Append(GetAlphabet(digit));
+                    builder.Append(GetAlphabet(mod));
                     break;
                 }
+                //2자리수
                 else
                 {
-                    digit = (digit / NUMBER_ALPHABET) - 1;
-                    builder.Append(GetAlphabet(digit % NUMBER_ALPHABET));
+                    int alpha = digit;
+                    while (alpha / NUMBER_ALPHABET != 0)
+                    {
+                        alpha /= NUMBER_ALPHABET;
+                    }
+                    builder.Append(GetAlphabet(alpha - 1));
+                    mod = digit % NUMBER_ALPHABET;
+                    digit /= NUMBER_ALPHABET;
                 }
             }
             return builder.ToString();

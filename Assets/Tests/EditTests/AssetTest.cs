@@ -14,6 +14,7 @@ namespace TestFrameworks
     using Utility.IO;
     using GoogleSheetsToUnity;
     using SDefence.Asset.Raw;
+    using System.Text;
 
     public class AssetTest
     {
@@ -203,7 +204,7 @@ namespace TestFrameworks
         [Test]
         public void AssetTest_Usable_ToString_Digit()
         {
-
+           
             var raw = new TestAssetRawData("1", "0", "0");
             var usable = raw.GetUsableData(0);
 
@@ -251,6 +252,18 @@ namespace TestFrameworks
 
             Debug.Log(usable.ToString());
             Assert.AreEqual(usable.ToString(), "1.000Y");
+
+            raw = new TestAssetRawData("1000000000000000000000000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1.000AA");
+
+            raw = new TestAssetRawData("1000000000000000000000000000", "0", "0");
+            usable = raw.GetUsableData(0);
+
+            Debug.Log(usable.ToString());
+            Assert.AreEqual(usable.ToString(), "1.000AB");
 
         }
 
