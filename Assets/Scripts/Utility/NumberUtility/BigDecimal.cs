@@ -15,7 +15,7 @@ namespace System.Numerics
         [SerializeField] private BigInteger _value;
 
         [SerializeField] private byte _decimalPoint;
-        internal byte DecimalPoint => _decimalPoint;
+        public byte DecimalPoint => _decimalPoint;
 
         public bool IsZero => (_value.IsZero && _decimalPoint == 0);
 

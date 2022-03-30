@@ -16,6 +16,7 @@ namespace TestFrameworks
     using SDefence.Attack;
     using GoogleSheetsToUnity;
     using GoogleSheetsToUnity.Utils;
+    using SDefence.Durable.Raw;
 
     public class DurableTest
     {
@@ -844,37 +845,38 @@ namespace TestFrameworks
         }
 
         [UnityTest]
-        public IEnumerator DurableTest_Generator_CreateDurableData()
+        public IEnumerator DurableTest_Generator_CreateData()
         {
             bool isRun = true;
 
-            var search = new GSTU_Search("1SzGjvMX1kac6LzvmQHXQRmNj_7MYDjspwF-wpWJuWks", "Test_Durable_Data");
+            var search = new GSTU_Search("1SzGjvMX1kac6LzvmQHXQRmNj_7MYDjspwF-wpWJuWks", "Test_Data");
 
             SpreadsheetManager.Read(search, sheet =>
             {
-                var health = new TestDurableRawData(typeof(HealthDurableUsableData).AssemblyQualifiedName, sheet["HQ1", "StartHealthValue"].value, sheet["HQ1", "IncreaseHealthValue"].value, sheet["HQ1", "IncreaseHealthRate"].value);
-                var armor = new TestDurableRawData(typeof(ArmorDurableUsableData).AssemblyQualifiedName, sheet["HQ1", "StartArmorValue"].value, sheet["HQ1", "IncreaseArmorValue"].value, sheet["HQ1", "IncreaseArmorRate"].value);
-                var shield = new TestDurableRawData(typeof(ShieldDurableUsableData).AssemblyQualifiedName, sheet["HQ1", "StartShieldValue"].value, sheet["HQ1", "IncreaseShieldValue"].value, sheet["HQ1", "IncreaseShieldRate"].value);
-                var limShield = new TestDurableRawData(typeof(LimitDamageShieldDurableUsableData).AssemblyQualifiedName, sheet["HQ1", "StartFloorShieldValue"].value, sheet["HQ1", "DecreaseFloorShieldValue"].value, sheet["HQ1", "DecreaseFloorShieldRate"].value);
-                var recShield = new TestRecoveryRawData(sheet["HQ1", "StartRecoveryShieldValue"].value, sheet["HQ1", "IncreaseRecoveryShieldValue"].value, sheet["HQ1", "IncreaseRecoveryShieldRate"].value);
+                var health = DurableRawData.Create();
+                var armor = DurableRawData.Create();
+                var shield = DurableRawData.Create();
+                var limShield = DurableRawData.Create();
+
+                health.SetData(typeof(HealthDurableUsableData).AssemblyQualifiedName, sheet["HQ1", "StartHealthValue"].value, sheet["HQ1", "IncreaseHealthValue"].value, sheet["HQ1", "IncreaseHealthRate"].value);
+                armor.SetData(typeof(ArmorDurableUsableData).AssemblyQualifiedName, sheet["HQ1", "StartArmorValue"].value, sheet["HQ1", "IncreaseArmorValue"].value, sheet["HQ1", "IncreaseArmorRate"].value);
+                shield.SetData(typeof(ShieldDurableUsableData).AssemblyQualifiedName, sheet["HQ1", "StartShieldValue"].value, sheet["HQ1", "IncreaseShieldValue"].value, sheet["HQ1", "IncreaseShieldRate"].value);
+                limShield.SetData(typeof(LimitDamageShieldDurableUsableData).AssemblyQualifiedName, sheet["HQ1", "StartFloorShieldValue"].value, sheet["HQ1", "DecreaseFloorShieldValue"].value, sheet["HQ1", "DecreaseFloorShieldRate"].value);
 
                 var healthUsable = health.GetUsableData();
                 var armorUsable = armor.GetUsableData();
                 var shieldUsable = shield.GetUsableData();
                 var limShieldUsable = limShield.GetUsableData();
-                var recShieldUsable = recShield.GetUsableData();
 
                 Debug.Log(healthUsable.ToString("{0:0}"));
                 Debug.Log(armorUsable.ToString("{0:0}"));
                 Debug.Log(shieldUsable.ToString("{0:0}"));
                 Debug.Log(limShieldUsable.ToString("{0:0}"));
-                Debug.Log(recShieldUsable.ToString("{0:0}"));
 
                 Assert.AreEqual(healthUsable.ToString("{0:0}"), "100");
                 Assert.AreEqual(armorUsable.ToString("{0:0}"), "1");
                 Assert.AreEqual(shieldUsable.ToString("{0:0}"), "100");
                 Assert.AreEqual(limShieldUsable.ToString("{0:0}"), "10");
-                Assert.AreEqual(recShieldUsable.ToString("{0:0}"), "10");
 
                 isRun = false;
 

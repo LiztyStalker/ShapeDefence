@@ -41,7 +41,7 @@ namespace SDefence.Durable.Raw {
         }
 #endif
 
-        internal IDurableUsableData GetUsableData(int upgrade = 0)
+        public IDurableUsableData GetUsableData(int upgrade = 0)
         {
             var type = System.Type.GetType(_typeData);
             if (type != null)
