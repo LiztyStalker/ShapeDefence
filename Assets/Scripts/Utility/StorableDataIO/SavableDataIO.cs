@@ -20,18 +20,18 @@ namespace Utility.IO
 
 
 
-    public class StorableDataIO
+    public class SavableDataIO
     {
         private readonly string FILE_EXTENTION = "txt";
 
-        private static StorableDataIO _current;
+        private static SavableDataIO _current;
 
-        public static StorableDataIO Current
+        public static SavableDataIO Current
         {
             get
             {
                 if (_current == null)
-                    _current = new StorableDataIO();
+                    _current = new SavableDataIO();
                 return _current;
             }
         }
@@ -47,7 +47,7 @@ namespace Utility.IO
         private ICryptoTransform _decryptor;
 
 
-        private StorableDataIO()
+        private SavableDataIO()
         {            
             //암호제공 제작
             AssembleCryptoServiceProvider();
@@ -136,7 +136,7 @@ namespace Utility.IO
         /// </summary>
         /// <param name="dataString"></param>
         /// <returns></returns>
-        public StorableData DataConvertStringToSerial(string dataString)
+        public SavableData DataConvertStringToSerial(string dataString)
         {
             try
             {
@@ -153,7 +153,7 @@ namespace Utility.IO
                     string str = Convert.ToBase64String(memory.ToArray());
                     Debug.Log("convert : " + str);
 
-                    StorableData accountData = (StorableData)bf.Deserialize(memory);
+                    SavableData accountData = (SavableData)bf.Deserialize(memory);
 
                     memory.Close();
                     return accountData;
@@ -178,7 +178,7 @@ namespace Utility.IO
         /// <param name="dataByte"></param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public StorableData DataConvertByteToSerial(byte[] data)
+        public SavableData DataConvertByteToSerial(byte[] data)
         {
             try
             {
@@ -192,7 +192,7 @@ namespace Utility.IO
                     string str = Convert.ToBase64String(memory.ToArray());
                     Debug.Log("convert : " + str);
 
-                    StorableData accountData = (StorableData)bf.Deserialize(memory);
+                    SavableData accountData = (SavableData)bf.Deserialize(memory);
 
                     memory.Close();
                     return accountData;
