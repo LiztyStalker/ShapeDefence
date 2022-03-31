@@ -77,15 +77,7 @@ namespace SDefence.Asset.Entity
                 _dic[key] = uData;
             }
         }
-
-        public bool IsZero(string key)
-        {
-            if (_dic.ContainsKey(key))
-            {
-                return _dic[key].IsZero;
-            }
-            return true;
-        }
+              
 
         public bool IsEnough(IAssetUsableData uData)
         {

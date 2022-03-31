@@ -5,7 +5,7 @@ namespace SDefence.Asset.Raw {
     [System.Serializable]
     public class AssetRawData
     {
-        [SerializeField] //DurablePopup
+        [SerializeField] //AssetUsablePopup
         private string _typeData;
 
         [SerializeField]
