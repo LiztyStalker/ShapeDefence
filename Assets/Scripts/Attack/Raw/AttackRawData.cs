@@ -40,13 +40,25 @@ namespace SDefence.Attack.Raw {
             _decreaseAttackDelayValue = "0";
             _decreaseAttackDelayRate = "0.1";
         }
+
+        public void SetData(string startValue, string increaseValue, string increaseRate, string startDelayValue, string decreaseDelayValue, string decreaseDelayRate)
+        {
+            _startAttackValue = startValue;
+            _increaseAttackValue = increaseValue;
+            _increaseAttackRate = increaseRate;
+            _startAttackDelayValue = startDelayValue;
+            _decreaseAttackDelayValue = decreaseDelayValue;
+            _decreaseAttackDelayRate = decreaseDelayRate;
+        }
+
 #endif
 
-        internal IAttackUsableData GetUsableData(int upgrade = 0)
+        public IAttackUsableData GetUsableData(int upgrade = 0)
         {
             var data = System.Activator.CreateInstance<AttackUsableData>();
             data.SetData(_startAttackValue, _increaseAttackValue, _increaseAttackRate, _startAttackDelayValue, _decreaseAttackDelayValue, _decreaseAttackDelayRate, upgrade);
             return data;
         }
+
     }
 }
