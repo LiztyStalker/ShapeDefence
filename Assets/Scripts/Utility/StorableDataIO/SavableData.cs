@@ -34,12 +34,12 @@ namespace Utility.IO
         {
             if (_children != null)
             {
-                if (!_children.ContainsKey(key))
+                if (_children.ContainsKey(key))
                 {
                     return (T)_children[key];
                 }
             }
-            throw new System.Exception("Type을 찾을 수 없음");
+            throw new System.Exception($"{typeof(T).Name}을 찾을 수 없음");
         }
 
         public override string ToString()
