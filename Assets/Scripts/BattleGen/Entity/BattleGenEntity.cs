@@ -6,7 +6,7 @@ namespace SDefence.BattleGen.Entity
     public class BattleGenEntity
     {
         private BattleGenLevelData _battleGenLevelData;
-        private BattleGenWaveData _battleGenWaveData;
+        private BattleGenWaveData? _battleGenWaveData;
 
         private float _nowTime = 0;
         private int _nowIndex = 0;
@@ -31,12 +31,14 @@ namespace SDefence.BattleGen.Entity
         {
             _nowTime += deltaTime;
             //Wave¿¡ µµ´Þ
-
-            if (_battleGenWaveData.HasWaveData(_nowIndex, _nowTime))
+            if (HasBattleGenWaveData())
             {
-                OnBattleGenWaveEvent(_battleGenWaveData.GetBattleGenWaveElement(_nowIndex));
-                _nowIndex++;
-            }            
+                if (_battleGenWaveData.Value.HasWaveData(_nowIndex, _nowTime))
+                {
+                    OnBattleGenWaveEvent(_battleGenWaveData.Value.GetBattleGenWaveElement(_nowIndex));
+                    _nowIndex++;
+                }
+            }
         }
 
         /// <summary>
@@ -53,9 +55,9 @@ namespace SDefence.BattleGen.Entity
 
         #region ##### Listener #####
 
-        private System.Action<BattleGenWaveElement> _waveEvent;
-        public void SetOnBattleGenListener(System.Action<BattleGenWaveElement> act) => _waveEvent = act;
-        private void OnBattleGenWaveEvent(BattleGenWaveElement data) => _waveEvent?.Invoke(data);
+        private System.Action<BattleGenWaveElement?> _waveEvent;
+        public void SetOnBattleGenListener(System.Action<BattleGenWaveElement?> act) => _waveEvent = act;
+        private void OnBattleGenWaveEvent(BattleGenWaveElement? data) => _waveEvent?.Invoke(data);
 
         #endregion
     }

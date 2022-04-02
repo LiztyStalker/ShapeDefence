@@ -16,7 +16,7 @@ namespace SDefence.BattleGen.Data
         private BattleGenWaveData[] _waveDataArray;
 
 
-        public BattleGenWaveData GetBattleGenWaveData(int wave) 
+        public BattleGenWaveData? GetBattleGenWaveData(int wave) 
         {
             if(wave < _waveDataArray.Length)
             {
@@ -26,7 +26,7 @@ namespace SDefence.BattleGen.Data
         }
 
 #if UNITY_EDITOR
-        public static BattleGenLevelData Create_Test() => new BattleGenLevelData();
+        public static BattleGenLevelData Create() => new BattleGenLevelData();
 
         private BattleGenLevelData()
         {
@@ -35,7 +35,21 @@ namespace SDefence.BattleGen.Data
             _waveDataArray = new BattleGenWaveData[5];
             for (int i = 0; i < _waveDataArray.Length; i++)
             {
-                _waveDataArray[i] = BattleGenWaveData.Create_Test();
+                _waveDataArray[i] = BattleGenWaveData.Create();
+            }
+        }
+
+        public void SetData(string key, string level)
+        {
+            _key = key;
+            _level = int.Parse(level);
+        }
+
+        public void SetWaveData(BattleGenWaveData data, int index)
+        {
+            if (index <= _waveDataArray.Length)
+            {
+                _waveDataArray[index] = data;
             }
         }
 #endif
