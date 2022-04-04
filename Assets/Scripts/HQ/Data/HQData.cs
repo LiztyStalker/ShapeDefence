@@ -37,7 +37,38 @@ namespace SDefence.HQ
         public RecoveryRawData RecoveryRawData => _recoveryRawData;
         public int OrbitCount => _orbitCount;
 
+
+
 #if UNITY_EDITOR
+        public static HQData Create() => new HQData();
+
+        private HQData()
+        {
+            Key = "Test";
+            IconKey = "Test";
+            _graphicObjectKey = "Test";
+
+            _durableRawDataArray = new DurableRawData[4];
+            var health = DurableRawData.Create();
+            _durableRawDataArray[0] = health;
+            var armor = DurableRawData.Create();
+            _durableRawDataArray[1] = armor;
+            var shield = DurableRawData.Create();
+            _durableRawDataArray[2] = shield;
+            var limShield = DurableRawData.Create();
+            _durableRawDataArray[3] = limShield;
+
+            var recovery = RecoveryRawData.Create();
+            _recoveryRawData = recovery;
+
+            var asset = AssetRawData.Create();
+            _upgradeRawData = asset;
+
+            _maxUpgradeCount = 10;
+
+            _orbitCount = 1;
+        }
+
         public override void AddData(string[] arr) { }
 
         public override bool HasDataArray() => false;
