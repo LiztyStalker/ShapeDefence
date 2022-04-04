@@ -31,6 +31,14 @@ namespace SDefence.Recovery.Raw
             _increaseValue = "1";
             _increaseRate = "0.1";
         }
+
+        public void SetData(string typeData, string startValue, string increaseValue, string increaseRate)
+        {
+            _typeData = typeData;
+            _startValue = startValue;
+            _increaseValue = increaseValue;
+            _increaseRate = increaseRate;
+        }
 #endif
 
         internal IRecoveryUsableData GetUsableData(int upgrade = 0)
