@@ -39,7 +39,23 @@ namespace Utility.IO
                     return (T)_children[key];
                 }
             }
+#if UNITY_EDITOR
             throw new System.Exception($"{typeof(T).Name}을 찾을 수 없음");
+#endif
+        }
+
+        public SavableData GetValue(string key)
+        {
+            if (_children != null)
+            {
+                if (_children.ContainsKey(key))
+                {
+                    return (SavableData)_children[key];
+                }
+            }
+#if UNITY_EDITOR
+            throw new System.Exception($"{typeof(SavableData).Name}을 찾을 수 없음");
+#endif
         }
 
         public override string ToString()
