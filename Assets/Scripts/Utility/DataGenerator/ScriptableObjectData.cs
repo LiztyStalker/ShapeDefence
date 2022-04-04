@@ -8,6 +8,10 @@ namespace Utility.ScriptableObjectData
         private string _key;
         public string Key { get => _key; protected set => _key = value; }
 
+        [SerializeField]
+        private string _iconKey;
+        public string IconKey { get => _iconKey; protected set => _iconKey = value; }
+
 #if UNITY_EDITOR
 
         [SerializeField]
@@ -18,8 +22,8 @@ namespace Utility.ScriptableObjectData
         public abstract void SetData(string[] arr);
         public abstract void AddData(string[] arr);
         public abstract bool HasDataArray();
-        public abstract string[] GetData();
-        public abstract string[][] GetDataArray();
+        //public abstract string[] GetData();
+        //public abstract string[][] GetDataArray();
         public virtual void SetAssetBundle(string bundleName)
         {
             var path = UnityEditor.AssetDatabase.GetAssetPath(this);

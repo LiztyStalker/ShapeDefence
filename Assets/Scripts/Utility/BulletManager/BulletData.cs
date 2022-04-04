@@ -76,25 +76,25 @@ namespace Utility.Bullet.Data
             return false;
         }
 
-        public override string[] GetData()
-        {
-            string[] arr = new string[System.Enum.GetValues(typeof(BulletDataGenerator.TYPE_SHEET_COLUMNS)).Length];
+        //public override string[] GetData()
+        //{
+        //    string[] arr = new string[System.Enum.GetValues(typeof(BulletDataGenerator.TYPE_SHEET_COLUMNS)).Length];
 
-            arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.TypeBulletAction] = _typeBulletAction.ToString();
-            arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.MoveSpeed] = _movementSpeed.ToString();
-            arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.Height] = _height.ToString();
-            arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.IsRotate] = _isRotate.ToString();
-            arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.BulletSpriteKey] = _bulletPrefabKey;
-            arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.BulletHitKey] = _arriveEffectDataKey;
+        //    arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.TypeBulletAction] = _typeBulletAction.ToString();
+        //    arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.MoveSpeed] = _movementSpeed.ToString();
+        //    arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.Height] = _height.ToString();
+        //    arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.IsRotate] = _isRotate.ToString();
+        //    arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.BulletSpriteKey] = _bulletPrefabKey;
+        //    arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.BulletHitKey] = _arriveEffectDataKey;
 
-            return arr;
-        }
+        //    return arr;
+        //}
 
-        public override string[][] GetDataArray()
-        {
-            Debug.LogWarning("사용하지 않음");
-            return null;
-        }
+        //public override string[][] GetDataArray()
+        //{
+        //    Debug.LogWarning("사용하지 않음");
+        //    return null;
+        //}
 
         private static Sprite _instanceSprite;
 
