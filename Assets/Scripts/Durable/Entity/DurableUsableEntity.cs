@@ -1,5 +1,6 @@
 namespace SDefence.Durable.Entity
 {
+    using Raw;
     using System.Collections.Generic;
     using Usable;
     public class DurableUsableEntity
@@ -21,6 +22,13 @@ namespace SDefence.Durable.Entity
 
         private string GetKey(IDurableUsableData dData) => dData.GetType().Name;
 
+        public void Set(DurableRawData[] arr, int upgrade)
+        {
+            for(int i = 0; i < arr.Length; i++)
+            {
+                Set(arr[i].GetUsableData(upgrade));
+            }
+        }
         public void Set(IDurableUsableData dData)
         {
             string key = GetKey(dData);

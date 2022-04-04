@@ -26,7 +26,7 @@ namespace SDefence.Durable.Raw {
         }
         private DurableRawData()
         {
-            _typeData = "SDefence.Durable.Raw.HealthDurableUsableData";
+            _typeData = "SDefence.Durable.Usable.HealthDurableUsableData";
             _startValue = "100";
             _increaseValue = "1";
             _increaseRate = "0.1";

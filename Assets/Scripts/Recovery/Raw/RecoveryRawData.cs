@@ -26,7 +26,7 @@ namespace SDefence.Recovery.Raw
         }
         private RecoveryRawData()
         {
-            _typeData = "SDefence.Recovery.Raw.ShieldRecoveryUsableData";
+            _typeData = "SDefence.Recovery.Usable.ShieldRecoveryUsableData";
             _startValue = "10";
             _increaseValue = "1";
             _increaseRate = "0.1";
