@@ -56,7 +56,7 @@ namespace SDefence.BattleGen.Entity
         #region ##### Listener #####
 
         private System.Action<BattleGenWaveElement?> _waveEvent;
-        public void SetOnBattleGenListener(System.Action<BattleGenWaveElement?> act) => _waveEvent = act;
+        public void SetOnBattleGenWaveElementListener(System.Action<BattleGenWaveElement?> act) => _waveEvent = act;
         private void OnBattleGenWaveEvent(BattleGenWaveElement? data) => _waveEvent?.Invoke(data);
 
         #endregion
