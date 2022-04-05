@@ -25,39 +25,41 @@ namespace Storage
         private Dictionary<string, Dictionary<string, Object>> _dataDic = new Dictionary<string, Dictionary<string, Object>>();
         private DataStorage()
         {
-//#if UNITY_EDITOR
-//            InitializeDatasFromAssetDatabase<Sprite>("Images/Icons/Assets");
-//            InitializeDatasFromAssetDatabase<SkeletonDataAsset>("Data/Spine");
-//            InitializeDatasFromAssetDatabase<BulletData>("Data/Bullets");
-//            InitializeDatasFromAssetDatabase<EnemyData>("Data/Enemies");
-//            InitializeDatasFromAssetDatabase<UnitData>("Data/Units");
-//            InitializeDatasFromAssetDatabase<MineData>("Data/Mines");
-//            InitializeDatasFromAssetDatabase<SmithyData>("Data/Smithy");
-//            InitializeDatasFromAssetDatabase<VillageData>("Data/Villages");
-//            InitializeDatasFromAssetDatabase<QuestData>("Data/Quests/Daily");
-//            InitializeDatasFromAssetDatabase<QuestData>("Data/Quests/Weekly");
-//            InitializeDatasFromAssetDatabase<QuestData>("Data/Quests/Goal");
-//            InitializeDatasFromAssetDatabase<QuestData>("Data/Quests/Challenge");
-//            InitializeDatasFromAssetDatabase<GameObject>("Prefabs/UI");
-//            InitializeDatasFromAssetDatabase<TextAsset>("TextAssets");
-//            InitializeDatasFromAssetDatabase<GameLanguageData>("Data/GameLanguage");
-//#else
-//            InitializeDataFromAssetBundle<Sprite>("sprites", null);
-//            InitializeDataFromAssetBundle<SkeletonDataAsset>("spines", null);
-//            InitializeDataFromAssetBundle<BulletData>("bullets", "data");
-//            InitializeDataFromAssetBundle<EnemyData>("enemies", "data");
-//            InitializeDataFromAssetBundle<UnitData>("units", "data");
-//            InitializeDataFromAssetBundle<MineData>("mines", "data");
-//            InitializeDataFromAssetBundle<SmithyData>("smithies", "data");
-//            InitializeDataFromAssetBundle<VillageData>("villages", "data");
-//            InitializeDataFromAssetBundle<QuestData>("daily", "data/quests");
-//            InitializeDataFromAssetBundle<QuestData>("weekly", "data/quests");
-//            InitializeDataFromAssetBundle<QuestData>("goal", "data/quests");
-//            InitializeDataFromAssetBundle<QuestData>("challenge", "data/quests");
-//            InitializeDataFromAssetBundle<GameObject>("ui", null);
-//            InitializeDataFromAssetBundle<TextAsset>("textassets", null);
-//            InitializeDataFromAssetBundle<GameLanguageData>("language", "data");
-//#endif
+            InitializeDatasFromAssetDatabaseDirectory<Sprite>("Images");
+            InitializeDatasFromAssetDatabaseDirectory<GameObject>("Prefabs");
+            //#if UNITY_EDITOR
+            //            InitializeDatasFromAssetDatabase<Sprite>("Images/Icons/Assets");
+            //            InitializeDatasFromAssetDatabase<SkeletonDataAsset>("Data/Spine");
+            //            InitializeDatasFromAssetDatabase<BulletData>("Data/Bullets");
+            //            InitializeDatasFromAssetDatabase<EnemyData>("Data/Enemies");
+            //            InitializeDatasFromAssetDatabase<UnitData>("Data/Units");
+            //            InitializeDatasFromAssetDatabase<MineData>("Data/Mines");
+            //            InitializeDatasFromAssetDatabase<SmithyData>("Data/Smithy");
+            //            InitializeDatasFromAssetDatabase<VillageData>("Data/Villages");
+            //            InitializeDatasFromAssetDatabase<QuestData>("Data/Quests/Daily");
+            //            InitializeDatasFromAssetDatabase<QuestData>("Data/Quests/Weekly");
+            //            InitializeDatasFromAssetDatabase<QuestData>("Data/Quests/Goal");
+            //            InitializeDatasFromAssetDatabase<QuestData>("Data/Quests/Challenge");
+            //            InitializeDatasFromAssetDatabase<GameObject>("Prefabs/UI");
+            //            InitializeDatasFromAssetDatabase<TextAsset>("TextAssets");
+            //            InitializeDatasFromAssetDatabase<GameLanguageData>("Data/GameLanguage");
+            //#else
+            //            InitializeDataFromAssetBundle<Sprite>("sprites", null);
+            //            InitializeDataFromAssetBundle<SkeletonDataAsset>("spines", null);
+            //            InitializeDataFromAssetBundle<BulletData>("bullets", "data");
+            //            InitializeDataFromAssetBundle<EnemyData>("enemies", "data");
+            //            InitializeDataFromAssetBundle<UnitData>("units", "data");
+            //            InitializeDataFromAssetBundle<MineData>("mines", "data");
+            //            InitializeDataFromAssetBundle<SmithyData>("smithies", "data");
+            //            InitializeDataFromAssetBundle<VillageData>("villages", "data");
+            //            InitializeDataFromAssetBundle<QuestData>("daily", "data/quests");
+            //            InitializeDataFromAssetBundle<QuestData>("weekly", "data/quests");
+            //            InitializeDataFromAssetBundle<QuestData>("goal", "data/quests");
+            //            InitializeDataFromAssetBundle<QuestData>("challenge", "data/quests");
+            //            InitializeDataFromAssetBundle<GameObject>("ui", null);
+            //            InitializeDataFromAssetBundle<TextAsset>("textassets", null);
+            //            InitializeDataFromAssetBundle<GameLanguageData>("language", "data");
+            //#endif
         }
 
 
@@ -125,6 +127,33 @@ namespace Storage
                     AddDirectoryInData(data.name, data);
                 }
             }
+
+            Debug.Log($"{typeof(T)} : {GetDataCount<T>()}");
+        }
+        private void InitializeDatasFromAssetDatabaseDirectory<T>(string path) where T : Object
+        {
+            var files = System.IO.Directory.GetFiles($"Assets/{path}");
+            for (int i = 0; i < files.Length; i++)
+            {
+                var data = AssetDatabase.LoadAssetAtPath<T>(files[i]);
+                Debug.Log(files[i]);
+                if (data != null)
+                {
+                    AddDirectoryInData(data.name, data);
+                }
+            }
+
+            var directories = System.IO.Directory.GetDirectories($"Assets/{path}");
+            for (int i = 0; i < directories.Length; i++)
+            {
+                Debug.Log(directories[i]);
+                if (Directory.Exists(directories[i]))
+                {
+                    InitializeDatasFromAssetDatabaseDirectory<T>(directories[i].Replace("Assets/", ""));
+                }
+            }
+
+
 
             Debug.Log($"{typeof(T)} : {GetDataCount<T>()}");
         }
@@ -243,17 +272,6 @@ namespace Storage
 
         public static string ToTypeString<T>() => typeof(T).Name.ToString();
 
-
-        /// <summary>
-        /// 데이터 가져오기 
-        /// ex) GetDataOrNull<UnitData>() => return [UnitData_Data]
-        /// 없으면 null
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public T GetDataOrNull<T>(string key) where T : Object => GetDataOrNull<T>(key, ToTypeString<T>(), null);
-
         /// <summary>
         /// 데이터 가져오기
         /// 없으면 null
@@ -261,7 +279,7 @@ namespace Storage
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns></returns>
-        public T GetDataOrNull<T>(string key, string firstVerb, string lastVerb) where T : Object
+        public T GetDataOrNull<T>(string key, string firstVerb = null, string lastVerb = null) where T : Object
         {
             if (IsHasDataType<T>())
             {
