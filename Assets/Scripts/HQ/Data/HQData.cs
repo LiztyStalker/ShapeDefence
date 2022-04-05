@@ -4,7 +4,7 @@ namespace SDefence.HQ
     using Durable.Raw;
     using Recovery.Raw;
     using Asset.Raw;
-    using Tech.Raw;
+    using Tech;
     using Utility.ScriptableObjectData;
 #if UNITY_EDITOR
     using Generator;
@@ -25,12 +25,12 @@ namespace SDefence.HQ
         [SerializeField]
         private int _maxUpgradeCount;
         [SerializeField]
-        private TechRawData _techRawData;
+        private string _techDataKey;
         [SerializeField]
         private int _orbitCount;
 
         public string GraphicObjectKey => _graphicObjectKey;
-        public TechRawData TechRawData => _techRawData;
+        public string TechDataKey => _techDataKey;
         public AssetRawData UpgradeRawData => _upgradeRawData;
         public int MaxUpgradeCount => _maxUpgradeCount;
         public DurableRawData[] DurableRawDataArray => _durableRawDataArray;
@@ -110,6 +110,8 @@ namespace SDefence.HQ
             _maxUpgradeCount = int.Parse(arr[(int)HQDataGenerator.TYPE_SHEET_COLUMNS.MaxUpgradeCount]);
 
             _orbitCount = int.Parse(arr[(int)HQDataGenerator.TYPE_SHEET_COLUMNS.OrbitCount]);
+
+            _techDataKey = arr[(int)HQDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey];
         }
 
 #endif

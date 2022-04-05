@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdd619485666aa240814dddfdd1d2c1d, type: 3}
+  m_Name: HQData_HQ1
+  m_EditorClassIdentifier: 
+  _key: 
+  _iconKey: HQ1
+  _sortIndex: 0
+  _isTest: 0
+  _graphicObjectKey: HQ1
+  _durableRawDataArray:
+  - _typeData: SDefence.Durable.Usable.HealthDurableUsableData
+    _startValue: 10
+    _increaseValue: 1
+    _increaseRate: 0.1
+  - _typeData: SDefence.Durable.Usable.ArmorDurableUsableData
+    _startValue: 0
+    _increaseValue: 0
+    _increaseRate: 0
+  - _typeData: SDefence.Durable.Usable.ShieldDurableUsableData
+    _startValue: 0
+    _increaseValue: 0
+    _increaseRate: 0
+  - _typeData: SDefence.Durable.Usable.LimitDamageShieldDurableUsableData
+    _startValue: 0
+    _increaseValue: 0
+    _increaseRate: 0
+  _recoveryRawData:
+    _typeData: SDefence.Recovery.Usable.HealthRecoveryUsableData
+    _startValue: 0
+    _increaseValue: 0
+    _increaseRate: 0
+  _upgradeRawData:
+    _typeData: SDefence.Asset.Usable.NeutralAssetUsableData
+    _startValue: 10
+    _increaseValue: 1
+    _increaseRate: 0.2
+  _maxUpgradeCount: 10
+  _orbitCount: 1

@@ -8,7 +8,7 @@ namespace SDefence.HQ.Entity
     using Perk.Entity;
     using SDefence.Data;
     using Utility.IO;
-    using Tech.Raw;
+    using Tech;
     using SDefence.Entity;
 
     public class HQEntity : ISavable, IEntity
@@ -46,6 +46,8 @@ namespace SDefence.HQ.Entity
         
         //Translate
         public string Description => _data.Key;
+
+        public string TechDataKey => _data.TechDataKey;
 
         public int UpgradeValue => _upgradeData.GetValue();
 
@@ -93,9 +95,6 @@ namespace SDefence.HQ.Entity
             SetData(data);
             ClearUpgrade();
         }
-
-        public TechRawData Tech() => _data.TechRawData;
-
 
         public DurableBattleEntity GetDurableBattleEntity() => _durableEntity.CreateDurableBattleEntity();
 
