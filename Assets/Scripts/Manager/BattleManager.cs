@@ -2,6 +2,7 @@ namespace SDefence.Manager
 {
     using Actor;
     using Packet;
+    using Storage;
     using UnityEngine;
 
     public class BattleManager
@@ -40,8 +41,11 @@ namespace SDefence.Manager
                         _hqActor.AddOnBattlePacketListener(OnBattlePacketEvent);
                     }
 
-                    _hqActor.SetEntity(hqPacket.Entity);
-                    //_hqActor.SetGraphicObject();
+                    var entity = hqPacket.Entity;
+                    _hqActor.SetEntity(entity);
+
+                    var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
+                    if(obj != null) _hqActor.SetGraphicObject(obj);
                     break;
             }
         }

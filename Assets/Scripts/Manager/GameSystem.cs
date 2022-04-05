@@ -15,6 +15,11 @@ namespace SDefence.Manager
             _hqMgr.AddOnEntityPacketListener(OnEntityPacketEvent);
         }
 
+        public void Initialize()
+        {
+            _hqMgr.Initialize();
+        }
+
         public void CleanUp()
         {
             _hqMgr.RemoveOnEntityPacketListener(OnEntityPacketEvent);

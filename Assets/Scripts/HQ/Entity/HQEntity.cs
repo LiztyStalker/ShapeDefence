@@ -47,6 +47,10 @@ namespace SDefence.HQ.Entity
         //Translate
         public string Description => _data.Key;
 
+        public string IconKey => _data.IconKey;
+
+        public string GraphicObjectKey => _data.GraphicObjectKey;
+
         public string TechDataKey => _data.TechDataKey;
 
         public int UpgradeValue => _upgradeData.GetValue();

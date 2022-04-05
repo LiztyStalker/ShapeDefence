@@ -38,7 +38,7 @@ namespace SDefence.Actor
 
         public void SetGraphicObject(GameObject graphicObject)
         {
-            _graphicObject = graphicObject;
+            _graphicObject = Instantiate(graphicObject);
             _graphicObject.transform.SetParent(transform);
             _graphicObject.transform.position = Vector3.zero;
             _graphicObject.transform.localScale = Vector3.one;
