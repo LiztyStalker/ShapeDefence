@@ -36,13 +36,21 @@ namespace SDefence.Actor
             _entity = entity;
         }
 
+        public void SetGraphicObject(GameObject graphicObject)
+        {
+            _graphicObject = graphicObject;
+            _graphicObject.transform.SetParent(transform);
+            _graphicObject.transform.position = Vector3.zero;
+            _graphicObject.transform.localScale = Vector3.one;
+        }
+
         /// <summary>
         /// 전투 돌입
         /// </summary>
         public void SetDurableBattleEntity()
         {
             _durableEntity = _entity.GetDurableBattleEntity();
-            OnActorPacketEvent();
+            OnBattlePacketEvent();
         }
 
         /// <summary>
@@ -62,7 +70,7 @@ namespace SDefence.Actor
         {
             //현재 실드만
             _durableEntity.Add(_entity.GetRecoveryUsableData<ShieldRecoveryUsableData>());
-            OnActorPacketEvent();
+            OnBattlePacketEvent();
         }
 
         /// <summary>
@@ -72,7 +80,7 @@ namespace SDefence.Actor
         public void SetDamage(IAttackUsableData data)
         {
             _durableEntity.Subject(data);
-            OnActorPacketEvent();
+            OnBattlePacketEvent();
         }
 
 
@@ -87,14 +95,14 @@ namespace SDefence.Actor
 
         #region ##### Listener #####
 
-        private System.Action<IBattlePacket> _actorEvent;
-        public void AddOnActorPacketListener(System.Action<IBattlePacket> act) => _actorEvent += act;
-        public void RemoveOnActorPacketListener(System.Action<IBattlePacket> act) => _actorEvent -= act;
-        private void OnActorPacketEvent()
+        private System.Action<IBattlePacket> _battleEvent;
+        public void AddOnBattlePacketListener(System.Action<IBattlePacket> act) => _battleEvent += act;
+        public void RemoveOnBattlePacketListener(System.Action<IBattlePacket> act) => _battleEvent -= act;
+        private void OnBattlePacketEvent()
         {
             var packet = new HQBattlePacket();
             packet.SetData(this);
-            _actorEvent?.Invoke(packet);
+            _battleEvent?.Invoke(packet);
         }
         #endregion
     }

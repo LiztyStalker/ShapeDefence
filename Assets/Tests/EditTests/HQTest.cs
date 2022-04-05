@@ -193,7 +193,7 @@ namespace TestFrameworks
             actor.SetEntity(entity);
             actor.SetDurableBattleEntity();
 
-            actor.AddOnActorPacketListener(packet =>
+            actor.AddOnBattlePacketListener(packet =>
             {
                 var hqPacket = (HQBattlePacket)packet;
                 Debug.Log(hqPacket.Actor.GetDurableValue<HealthDurableUsableData>());
@@ -218,7 +218,7 @@ namespace TestFrameworks
             actor.SetEntity(entity);
             actor.SetDurableBattleEntity();
 
-            actor.AddOnActorPacketListener(packet =>
+            actor.AddOnBattlePacketListener(packet =>
             {
                 var hqPacket = (HQBattlePacket)packet;
                 Debug.Log(hqPacket.Actor.GetDurableValue<HealthDurableUsableData>());
@@ -242,7 +242,7 @@ namespace TestFrameworks
             actor.SetEntity(entity);
             actor.SetDurableBattleEntity();
 
-            actor.AddOnActorPacketListener(packet =>
+            actor.AddOnBattlePacketListener(packet =>
             {
                 Debug.Log("Next");
             });
