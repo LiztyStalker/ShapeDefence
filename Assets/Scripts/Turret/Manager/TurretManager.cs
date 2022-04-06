@@ -73,6 +73,12 @@ namespace SDefence.Turret
         }
 
 
+        public void OnCommandPacketEvent(TurretCommandPacket packet)
+        {
+            if (packet.IsUpgrade) Upgrade(packet.Index);
+            if (packet.IsExpand) Expand(1);
+        }
+
 
         #region ##### Listener #####
 

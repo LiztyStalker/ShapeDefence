@@ -1,39 +1,51 @@
 namespace SDefence.Manager
 {
     using HQ;
+    using Turret;
     using Packet;
 
     public class GameSystem
     {
         private HQManager _hqMgr;
+        private TurretManager _turretMgr;
 
         public static GameSystem Create() => new GameSystem();
 
         private GameSystem()
         {
             _hqMgr = HQManager.Create();
+            _turretMgr = TurretManager.Create();
+
             _hqMgr.AddOnEntityPacketListener(OnEntityPacketEvent);
+            _turretMgr.AddOnEntityPacketListener(OnEntityPacketEvent);
         }
 
         public void Initialize()
         {
             _hqMgr.Initialize();
+            _turretMgr.Initialize();
         }
 
         public void CleanUp()
         {
             _hqMgr.RemoveOnEntityPacketListener(OnEntityPacketEvent);
+            _turretMgr.RemoveOnEntityPacketListener(OnEntityPacketEvent);
         }
         public void RefreshAll()
         {
             _hqMgr.Refresh();
+            _turretMgr.Refresh();
         }
 
         public void OnCommandPacketEvent(ICommandPacket packet)
         {
             switch (packet)
             {
-                default:
+                case HQCommandPacket hqPacket:
+                    _hqMgr.OnCommandPacketEvent(hqPacket);
+                    break;
+                case TurretCommandPacket trPacket:
+                    _turretMgr.OnCommandPacketEvent(trPacket);
                     break;
             }
 

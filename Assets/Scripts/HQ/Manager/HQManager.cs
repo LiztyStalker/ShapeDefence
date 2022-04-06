@@ -38,6 +38,10 @@ namespace SDefence.HQ
             OnEntityPacketEvent();
         }
 
+        public void OnCommandPacketEvent(HQCommandPacket packet)
+        {
+            if (packet.IsUpgrade) Upgrade();
+        }
 
 
         #region ##### Listener #####

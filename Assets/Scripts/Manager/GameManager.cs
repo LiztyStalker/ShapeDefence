@@ -34,5 +34,14 @@ namespace SDefence.Manager
             _battleManager = null;
             _system = null;
         }
+
+
+#if UNITY_EDITOR
+        public void OnCommandPacketEvent(Packet.ICommandPacket packet)
+        {
+            _system.OnCommandPacketEvent(packet);
+        }
+#endif
+
     }
 }
