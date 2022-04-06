@@ -84,6 +84,8 @@ namespace SDefence.Actor
             OnBattlePacketEvent();
         }
 
+        public bool IsDamagable => true;
+
 
 #if UNITY_EDITOR
         public static HQActor Create()
