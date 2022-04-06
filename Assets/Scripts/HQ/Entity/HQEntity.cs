@@ -69,7 +69,17 @@ namespace SDefence.HQ.Entity
             SetData(data);
             _durableEntity.Set(_data.DurableRawDataArray, _upgradeData.GetValue());
         }
-        
+
+        public void CleanUp()
+        {
+            _data = null;
+            _perkEntity = null;
+            _upgradeAssetData = null;
+            _upgradeData = null;
+            _recoveryData = null;
+            _durableEntity.CleanUp();
+        }
+
         public void SetData(HQData data)
         {
             _data = data;

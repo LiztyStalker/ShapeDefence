@@ -4,7 +4,6 @@ namespace SDefence.HQ
     using Durable.Raw;
     using Recovery.Raw;
     using Asset.Raw;
-    using Tech;
     using Utility.ScriptableObjectData;
 #if UNITY_EDITOR
     using Generator;

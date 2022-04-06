@@ -263,7 +263,9 @@ namespace TestFrameworks
 
         private class TestDurableUsableData : IDurableUsableData
         {
-            public BigDecimal Value;
+            private BigDecimal _value;
+
+            public BigDecimal Value { get => _value; set => _value = value; }
 
             public bool IsZero => Value.IsZero;
 
@@ -279,6 +281,8 @@ namespace TestFrameworks
                 Value = new BigDecimal(startValue);
                 Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, length);
             }
+
+            public float GetRate() => 0f;
 
             public void Set(IDurableUsableData value)
             {
@@ -596,17 +600,23 @@ namespace TestFrameworks
             var battleEntity = usableEntity.CreateDurableBattleEntity();
 
             Debug.Log(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"));
+            Debug.Log(battleEntity.GetRate<HealthDurableUsableData>());
             Assert.AreEqual(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"), "100 / 100");
+            Assert.AreEqual(battleEntity.GetRate<HealthDurableUsableData>(), 1f);
 
             battleEntity.Subject(attackUsable);
 
             Debug.Log(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"));
+            Debug.Log(battleEntity.GetRate<HealthDurableUsableData>());
             Assert.AreEqual(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"), "80 / 100");
+            Assert.AreEqual(battleEntity.GetRate<HealthDurableUsableData>(), 0.8f);
 
             battleEntity.Add(recoveryUsable);
 
             Debug.Log(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"));
+            Debug.Log(battleEntity.GetRate<HealthDurableUsableData>());
             Assert.AreEqual(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"), "90 / 100");
+            Assert.AreEqual(battleEntity.GetRate<HealthDurableUsableData>(), 0.9f);
 
             attack = new TestAttackRawData("100", "0", "0");
             attackUsable = attack.GetUsableData();
@@ -614,7 +624,9 @@ namespace TestFrameworks
             battleEntity.Subject(attackUsable);
 
             Debug.Log(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"));
+            Debug.Log(battleEntity.GetRate<HealthDurableUsableData>());
             Assert.AreEqual(battleEntity.GetValue<HealthDurableUsableData>("{0:0}"), "0 / 100");
+            Assert.AreEqual(battleEntity.GetRate<HealthDurableUsableData>(), 0f);
 
         }
 

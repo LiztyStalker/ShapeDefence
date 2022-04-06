@@ -62,6 +62,7 @@ namespace SDefence.Actor
         }
 
         public string GetDurableValue<T>() where T : IDurableUsableData => _durableEntity.GetValue<T>();
+        public float GetDurableRate<T>() where T : IDurableUsableData => _durableEntity.GetRate<T>();
 
         /// <summary>
         /// 다음 웨이브

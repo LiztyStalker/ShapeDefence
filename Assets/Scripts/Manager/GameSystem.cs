@@ -31,6 +31,11 @@ namespace SDefence.Manager
 
         public void OnCommandPacketEvent(ICommandPacket packet)
         {
+            switch (packet)
+            {
+                default:
+                    break;
+            }
 
         }
 
