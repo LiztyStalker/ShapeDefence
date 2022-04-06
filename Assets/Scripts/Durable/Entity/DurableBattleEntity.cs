@@ -145,13 +145,14 @@ namespace SDefence.Durable.Entity
             }
         }
 
-        public bool IsZero(string key)
+        public bool IsZero<T>() where T : IDurableUsableData
         {
+            string key = typeof(T).Name;
             if (_dic.ContainsKey(key))
             {
                 return _dic[key].IsZero;
             }
-            return true;
+            return false;
         }
 
         private bool HasDurableUsableData<T>()
