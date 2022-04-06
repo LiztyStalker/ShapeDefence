@@ -19,6 +19,7 @@ namespace SDefence.Durable.Usable
         public virtual void Subject(UniversalUsableData dData) => Value -= dData.Value;     
         public virtual void Set(int value) => Value = value;
         public virtual void Set(IDurableUsableData value) => Value = ((AbstractDurableUsableData)value).Value;
+        public float GetRate() => 0f;
         public void SetData(string startValue, string increaseValue, string increaseRate, int upgrade)
         {
             var incVal = int.Parse(increaseValue);

@@ -1,10 +1,10 @@
 namespace SDefence.Durable
 {
-    using Recovery;
-    using Attack;
+    using System.Numerics;
 
     public interface IDurableUsableData
     {
+        public BigDecimal Value { get; }
         public bool IsZero { get; }
         public void Add(int value);
         public void Add(UniversalUsableData value);
@@ -15,6 +15,7 @@ namespace SDefence.Durable
         public void SetZero();
         public void SetData(string startValue, string increaseValue, string increaseRate, int upgrade);
         public string ToString(string format);
+        public float GetRate();
         public bool IsOverflowMaxValue(IDurableUsableData maxValue, UniversalUsableData value);
         public bool IsUnderflowZero(UniversalUsableData value);
         public int Compare(UniversalUsableData value);

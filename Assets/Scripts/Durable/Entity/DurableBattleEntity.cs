@@ -38,7 +38,16 @@ namespace SDefence.Durable.Entity
 #else
             return "";
 #endif
+        }
 
+        public float GetRate<T>() where T : IDurableUsableData
+        {
+            string key = typeof(T).Name;
+            if (_dic.ContainsKey(key))
+            {
+                return _dic[key].GetRate();
+            }
+            return 0f;
         }
 
         public void Add(IRecoveryUsableData data)

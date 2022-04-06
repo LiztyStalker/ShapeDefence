@@ -1,10 +1,13 @@
+
 namespace SDefence.Durable.Usable
 {
+    using System.Numerics;
     public class DurableUsableCase : IDurableUsableData
     {
         private IDurableUsableData _maxDurableUsableData;
         private IDurableUsableData _nowDurableUsableData;
 
+        public BigDecimal Value => _nowDurableUsableData.Value;
         public new System.Type GetType() => _nowDurableUsableData.GetType();
 
         public bool IsZero => _nowDurableUsableData.IsZero;
@@ -93,7 +96,7 @@ namespace SDefence.Durable.Usable
         }
 
       
-       
+        public float GetRate() => (float)(_nowDurableUsableData.Value / _maxDurableUsableData.Value);
 
 
         public void SetData(string startValue, string increaseValue, string increaseRate, int upgrade) => _nowDurableUsableData.SetData(startValue, increaseValue, increaseRate, upgrade);
