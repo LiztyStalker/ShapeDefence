@@ -8,6 +8,7 @@ namespace SDefence.Manager
     using Utility.Bullet;
     using Utility.Effect;
     using UtilityManager;
+    using System.Collections.Generic;
 
     public class BattleManager
     {
@@ -15,6 +16,7 @@ namespace SDefence.Manager
         private LevelWaveData _levelWaveData;
 
         private HQActor _hqActor;
+        private Dictionary<int, TurretActor> _turretDic;
         private float _waveTime;
 
         private BulletManager _bulletMgr;
@@ -30,9 +32,13 @@ namespace SDefence.Manager
             _gameObject.transform.position = Vector3.zero;
             _gameObject.transform.localScale = Vector3.one;
 
+            _turretDic = new Dictionary<int, TurretActor>();
+
+
             _bulletMgr = BulletManager.Current;
             _effectMgr = EffectManager.Current;
             _audioMgr = AudioManager.Current;
+
         }
 
         public void CleanUp()
@@ -47,6 +53,10 @@ namespace SDefence.Manager
         public void RunProcess(float deltaTime)
         {
             _waveTime += deltaTime;
+            foreach(var value in _turretDic.Values) 
+            {
+                value.RunProcess(deltaTime);
+            }
             //if(_waveTime > 10f)
             //{
             //    NextWave();
@@ -65,19 +75,44 @@ namespace SDefence.Manager
             switch (packet)
             {
                 case HQEntityPacket hqPacket:
-                    if(_hqActor == null)
                     {
-                        _hqActor = HQActor.Create();
-                        _hqActor.Activate();
-                        _hqActor.AddOnBattlePacketListener(OnBattlePacketEvent);
+                        if (_hqActor == null)
+                        {
+                            _hqActor = HQActor.Create();
+                            _hqActor.Activate();
+                            _hqActor.AddOnBattlePacketListener(OnBattlePacketEvent);
+                            _hqActor.transform.SetParent(_gameObject.transform);
+                        }
+
+
+                        var entity = hqPacket.Entity;
+                        _hqActor.SetEntity(entity);
+
+                        var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
+                        if (obj != null) _hqActor.SetGraphicObject(obj);
+
+                        break;
                     }
+                case TurretEntityPacket trPacket:
+                    {
+                        if (!_turretDic.ContainsKey(trPacket.Index))
+                        {
+                            var actor = TurretActor.Create();
+                            actor.Activate();
+                            actor.AddOnBattlePacketListener(OnBattlePacketEvent);
+                            actor.transform.SetParent(_gameObject.transform);
+                            _turretDic.Add(trPacket.Index, actor);
+                        }
 
-                    var entity = hqPacket.Entity;
-                    _hqActor.SetEntity(entity);
+                        var trActor = _turretDic[trPacket.Index];
+                        var entity = trPacket.Entity;
+                        trActor.SetEntity(entity);
 
-                    var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
-                    if(obj != null) _hqActor.SetGraphicObject(obj);
-                    break;
+                        var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
+                        if (obj != null) trActor.SetGraphicObject(obj);
+
+                        break;
+                    }
             }
         }
 

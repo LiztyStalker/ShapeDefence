@@ -16,6 +16,8 @@ namespace SDefence.Actor
         private HQEntity _entity;
         private DurableBattleEntity _durableEntity;
 
+        public string Key => _entity.Key;
+
         public void Activate() 
         {
             gameObject.SetActive(true);
@@ -38,7 +40,10 @@ namespace SDefence.Actor
 
         public void SetGraphicObject(GameObject graphicObject)
         {
+            if (_graphicObject != null) DestroyImmediate(_graphicObject);
+
             _graphicObject = Instantiate(graphicObject);
+            _graphicObject.name = "GraphicObject";
             _graphicObject.transform.SetParent(transform);
             _graphicObject.transform.position = Vector3.zero;
             _graphicObject.transform.localScale = Vector3.one;
@@ -90,7 +95,8 @@ namespace SDefence.Actor
 #if UNITY_EDITOR
         public static HQActor Create()
         {
-            var actor = new GameObject();            
+            var actor = new GameObject();
+            actor.name = "Actor@HQ";
             actor.AddComponent<CircleCollider2D>();
             return actor.AddComponent<HQActor>();
         }

@@ -24,6 +24,7 @@ namespace SDefence.Actor
 
         public bool IsDamagable => !_isBroken;
 
+        public string Key => _entity.Key;
         public void Activate() 
         {
             _nowActionTime = 0f;
@@ -49,7 +50,10 @@ namespace SDefence.Actor
 
         public void SetGraphicObject(GameObject graphicObject)
         {
+            if (_graphicObject != null) DestroyImmediate(_graphicObject);
+
             _graphicObject = Instantiate(graphicObject);
+            _graphicObject.name = "GraphicObject";
             _graphicObject.transform.SetParent(transform);
             _graphicObject.transform.position = Vector3.zero;
             _graphicObject.transform.localScale = Vector3.one;
@@ -137,7 +141,8 @@ namespace SDefence.Actor
 #if UNITY_EDITOR
         public static TurretActor Create()
         {
-            var actor = new GameObject();            
+            var actor = new GameObject();
+            actor.name = "Actor@Turret";
             actor.AddComponent<CircleCollider2D>();
             return actor.AddComponent<TurretActor>();
         }
