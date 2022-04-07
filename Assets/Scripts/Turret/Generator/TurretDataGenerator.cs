@@ -33,8 +33,13 @@ namespace SDefence.Turret.Generator
             IncreaseUpgradeRate,
             MaxUpgradeCount,
             RepairTime,
+            StartAttackValue,
+            IncreaseAttackValue,
+            IncreaseAttackRate,
+            StartAttackDelayValue,
+            DecreaseAttackDelayValue,
+            DecreaseAttackDelayRate,
             BulletDataKey,
-            AttackDataKey,
             TechDataKey,
         }
 

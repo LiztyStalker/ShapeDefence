@@ -24,6 +24,11 @@ namespace Utility.Generator
         }
 
 
+
+
+
+
+
         private static void OnCreateAndUpdateTextAssetEvent(GstuSpreadSheet sheet, string worksheet, string dataPath, string bundleName, int startRow)
         {
             Dictionary<string, List<Dictionary<string, Dictionary<string, string>>>> _dic = new Dictionary<string, List<Dictionary<string, Dictionary<string, string>>>>();
@@ -109,8 +114,6 @@ namespace Utility.Generator
                 }
             }
 
-            Debug.Log(JsonMapper.ToJson(_dic));
-
             TextAsset textAsset = new TextAsset(JsonMapper.ToJson(_dic));
 
             System.IO.File.WriteAllText($"{dataPath}/{worksheet}.txt", textAsset.text);
@@ -136,13 +139,68 @@ namespace Utility.Generator
         public static void CreateAndUpdateAllData<T>(string sheetkey, string worksheet, string dataPath, string bundleName = null) where T : ScriptableObjectData
         {
             GSTU_Search gstuSearcher = new GSTU_Search(sheetkey, worksheet, "A2", 2);
-            SpreadsheetManager.Read(gstuSearcher, sheet =>
+            SpreadsheetManager.ReadRaw(gstuSearcher, sheet =>
             {
-                OnCreateAndUpdateEvent<T>(sheet, dataPath, bundleName, gstuSearcher.titleRow);
+                OnCreateAndUpdateEvent<T>(sheet, dataPath, bundleName);
             });
         }
 
-        private static void OnCreateAndUpdateEvent<T>(GstuSpreadSheet sheet, string dataPath, string bundleName, int startRow) where T : ScriptableObjectData
+
+        private static void OnCreateAndUpdateEvent<T>(ValueRange sheet, string dataPath, string bundleName) where T : ScriptableObjectData
+        {
+            T tmpData = null;
+            int index = 0;
+
+            var rows = sheet.values;
+
+            for(int c = 0; c < rows.Count; c++)
+            {
+                var records = rows[c];
+                var key = records[0];
+
+
+                if (tmpData != null && tmpData.Key == key)
+                {
+                    tmpData.AddData(records.ToArray());
+                    EditorUtility.SetDirty(tmpData);
+                    Debug.Log($"Add {key}");
+                }
+                else
+                {
+                    tmpData = null;
+                    //try
+                    //{
+                    var data = AssetDatabase.LoadAssetAtPath<T>($"{dataPath}/{typeof(T).Name}_{key}.asset");
+
+                    if (data == null)
+                    {
+                        Debug.Log($"Create {key}");
+
+                        data = ScriptableObject.CreateInstance<T>();
+                        data.SetSortIndex(index);
+                        data.SetData(records.ToArray());
+                        AssetDatabase.CreateAsset(data, $"{dataPath}/{typeof(T).Name}_{key}.asset");
+                        data.SetAssetBundle(bundleName);
+                        EditorUtility.SetDirty(data);
+                        AssetDatabase.SaveAssets();
+                    }
+                    else
+                    {
+                        Debug.Log($"Update {key}");
+
+                        data.SetSortIndex(index);
+                        data.SetData(records.ToArray());
+                        data.SetAssetBundle(bundleName);
+                        EditorUtility.SetDirty(data);
+                    }
+
+                    tmpData = data;
+                }
+            }
+            Debug.Log("Create And Update End");
+        }
+
+        private static void OnCreateAndUpdateEvent<T>(GstuSpreadSheet sheet, string dataPath, string bundleName) where T : ScriptableObjectData
         {
             T tmpData = null;
             int index = 0;

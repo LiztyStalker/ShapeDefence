@@ -17,7 +17,7 @@ namespace GoogleSheetsToUnity
         public readonly string worksheetName = "Sheet1";
 
         public readonly string startCell = "A1";
-        public readonly string endCell = "Z100";
+        public readonly string endCell = "ZZ100";
 
         public readonly string titleColumn = "A";
         public readonly int titleRow = 1;
@@ -349,7 +349,7 @@ namespace GoogleSheetsToUnity
             //    }
             //}
 
-            Debug.Log(data.valueRange.values.Count);
+            //Debug.Log(data.valueRange.values.Count);
 
 
             foreach (List<string> dataValue in data.valueRange.values)

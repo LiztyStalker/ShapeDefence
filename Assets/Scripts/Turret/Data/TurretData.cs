@@ -4,6 +4,7 @@ namespace SDefence.Turret
     using Durable.Raw;
     using Recovery.Raw;
     using Asset.Raw;
+    using Attack.Raw;
     using Utility.ScriptableObjectData;
 #if UNITY_EDITOR
     using Generator;
@@ -28,13 +29,13 @@ namespace SDefence.Turret
         [SerializeField]
         private string _techDataKey;
         [SerializeField]
-        private string _attackDataKey;
+        private AttackRawData _attackData;
         [SerializeField]
         private float _repairTime;
 
         public string GraphicObjectKey => _graphicObjectKey;
         public string TechDataKey => _techDataKey;
-        public string AttackDataKey => _attackDataKey;
+        public AttackRawData AttackRawData => _attackData;
         public string BulletDataKey => _bulletDataKey;
         public AssetRawData UpgradeRawData => _upgradeRawData;
         public int MaxUpgradeCount => _maxUpgradeCount;
@@ -53,7 +54,6 @@ namespace SDefence.Turret
             IconKey = "Test";
             _bulletDataKey = "Test";
             _techDataKey = "Test";
-            _attackDataKey = "Test";
             _graphicObjectKey = "Turret_Test";
 
             _durableRawDataArray = new DurableRawData[4];
@@ -74,6 +74,8 @@ namespace SDefence.Turret
 
             _maxUpgradeCount = 10;
 
+            _attackData = AttackRawData.Create();
+
             _repairTime = 5f;
         }
 
@@ -83,6 +85,7 @@ namespace SDefence.Turret
 
         public override void SetData(string[] arr)
         {
+
             Key = arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.Key];
 
             IconKey = arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.IconKey];
@@ -121,9 +124,19 @@ namespace SDefence.Turret
 
             _bulletDataKey = arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.BulletDataKey];
 
-            _attackDataKey = arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.AttackDataKey];
+            var attackData = AttackRawData.Create();
+            attackData.SetData(
+                    arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.StartAttackValue],
+                    arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.IncreaseAttackValue],
+                    arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.IncreaseAttackRate],
+                    arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.StartAttackDelayValue],
+                    arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackDelayValue],
+                    arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackDelayRate]
+                );
+            _attackData = attackData;
 
-            //_techDataKey = arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey];
+            if((int)TurretDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey < arr.Length)
+                _techDataKey = arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey];
         }
 
 #endif
