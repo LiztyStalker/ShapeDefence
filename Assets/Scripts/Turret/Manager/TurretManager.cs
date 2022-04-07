@@ -5,16 +5,61 @@ namespace SDefence.Turret
     using System.Collections.Generic;
     using Utility.IO;
 
+    public class OrbitEntity : ISavable
+    {
+        private int[] _capacity;
+
+        public static OrbitEntity Create() => new OrbitEntity();
+
+        private OrbitEntity()
+        {
+            _capacity = new int[1];
+            _capacity[0] = 1;
+        }
+
+        public int GetCapacity(int index) => _capacity[index];
+
+        public void ExpandOrbit(int turretCount)
+        {
+            var list = new List<int>(_capacity);
+            list.Add(turretCount);
+            _capacity = list.ToArray();
+        }
+
+        public string SavableKey() => typeof(OrbitEntity).Name;
+
+        public SavableData GetSavableData()
+        {
+            var data = SavableData.Create();
+            for (int i = 0; i < _capacity.Length; i++) 
+            {
+                data.AddData(i.ToString(), _capacity[i]);
+            }
+            return data;
+        }
+
+        public void SetSavableData(SavableData data)
+        {
+            _capacity = new int[data.Children.Count];
+            foreach(var key in data.Children.Keys)
+            {
+                var index = int.Parse(key);
+                _capacity[index] = (int)data.Children[key];
+            }
+        }
+    }
+
+
     public class TurretManager : ISavable
     {
-        private List<TurretEntity> _list;
-        // 0 - Main Turret
-        // 
+        private OrbitEntity _orbitEntity;
 
+        private List<TurretEntity> _list;
 
         public static TurretManager Create() => new TurretManager();
         public void Initialize()
         {
+            _orbitEntity = OrbitEntity.Create();
             _list = new List<TurretEntity>();
 
             var turret = AdditiveEntity();
@@ -30,6 +75,7 @@ namespace SDefence.Turret
                 _list[i].CleanUp();
             }
             _list.Clear();
+            _orbitEntity = null;
         }
 
         public void Upgrade(int index)
@@ -50,6 +96,11 @@ namespace SDefence.Turret
             var turret = AdditiveEntity();
             turret.Initialize(TurretData.Create(), orbitIndex);
             Refresh(_list.Count - 1);
+        }
+
+        public void ExpandOrbit(int turretCount)
+        {
+            _orbitEntity.ExpandOrbit(turretCount);
         }
 
         private TurretEntity AdditiveEntity()
@@ -76,7 +127,7 @@ namespace SDefence.Turret
         public void OnCommandPacketEvent(TurretCommandPacket packet)
         {
             if (packet.IsUpgrade) Upgrade(packet.Index);
-            if (packet.IsExpand) Expand(1);
+            if (packet.IsExpand) Expand(packet.OrbitIndex);
         }
 
 
@@ -111,6 +162,7 @@ namespace SDefence.Turret
             }
             var data = SavableData.Create();
             data.AddData(SavableKey(), arr);
+            data.AddData(_orbitEntity.SavableKey(), _orbitEntity.GetSavableData());
             return data;
         }
 
@@ -129,6 +181,8 @@ namespace SDefence.Turret
                 //_list[i].SetData(savable.Key);
                 _list[i].SetSavableData(savable.Value);
             }
+
+            _orbitEntity.SetSavableData(data.GetValue(_orbitEntity.SavableKey()));
         }
 
         #endregion

@@ -45,7 +45,7 @@ namespace SDefence.HQ
         {
             Key = "Test";
             IconKey = "Test";
-            _graphicObjectKey = "Test";
+            _graphicObjectKey = "HQ_Test";
 
             _durableRawDataArray = new DurableRawData[4];
             var health = DurableRawData.Create();

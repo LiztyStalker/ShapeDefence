@@ -42,6 +42,14 @@ namespace SDefence.Manager
             switch (packet)
             {
                 case HQCommandPacket hqPacket:
+                    //UpTech -> trManager.ExpandOrbit
+                    if (hqPacket.IsUpTech)
+                    {
+                        //Tmp
+                        //_turretMgr.ExpandOrbit(2);
+
+                        //UpTech -> turretCount
+                    }
                     _hqMgr.OnCommandPacketEvent(hqPacket);
                     break;
                 case TurretCommandPacket trPacket:

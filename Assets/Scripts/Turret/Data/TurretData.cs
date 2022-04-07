@@ -54,7 +54,7 @@ namespace SDefence.Turret
             _bulletDataKey = "Test";
             _techDataKey = "Test";
             _attackDataKey = "Test";
-            _graphicObjectKey = "Test";
+            _graphicObjectKey = "Turret_Test";
 
             _durableRawDataArray = new DurableRawData[4];
             var health = DurableRawData.Create();
