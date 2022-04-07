@@ -1,5 +1,6 @@
 namespace SDefence.Attack.Usable
 {
+    using SDefence.Durable;
     using System.Numerics;
     using Utility.Number;
 
@@ -38,7 +39,11 @@ namespace SDefence.Attack.Usable
 
             Delay = sDelay;
             Delay = NumberDataUtility.GetIsolationInterest(Delay, decVal, decRate, upgrade);
+        }
 
+        public void SetData(UniversalUsableData data)
+        {
+            _value = data.Value;
         }
 
 

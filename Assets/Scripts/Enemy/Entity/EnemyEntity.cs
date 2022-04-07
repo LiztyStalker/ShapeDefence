@@ -7,6 +7,7 @@ namespace SDefence.Turret.Entity
     using SDefence.Entity;
     using Attack;
     using Enemy;
+    using SDefence.Movement;
 
     public class EnemyEntity : IEntity
     {
@@ -17,6 +18,7 @@ namespace SDefence.Turret.Entity
 
         private IAssetUsableData _upgradeAssetData;
         private IAttackUsableData _attackData;
+        private IMovementUsableData _movementData;
 
         private LevelWaveData _levelWaveData;
 
@@ -46,6 +48,11 @@ namespace SDefence.Turret.Entity
         {
             SetData(data);
             _durableEntity.Set(_data.DurableRawDataArray, 0);
+        }
+
+        public void SetLevelWave(LevelWaveData data)
+        {
+            _levelWaveData = data;
         }
 
         public void CleanUp()
@@ -88,5 +95,15 @@ namespace SDefence.Turret.Entity
             return _durableEntity.GetValue<T>();
         }
 
+        public IMovementUsableData GetMovementUsableData()
+        {
+            if (_movementData == null)
+            {
+                _movementData = _data.MovementRawData.GetUsableData(_levelWaveData.GetLevel());
+            }
+            return _movementData;
+        }
+
+        public IMovementActionUsableData GetMovementActionUsableData() => _data.MovementRawData.GetActionUsableData();
     }
 }

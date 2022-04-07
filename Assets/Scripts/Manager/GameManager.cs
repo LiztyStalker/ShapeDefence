@@ -5,15 +5,15 @@ namespace SDefence.Manager
     public class GameManager : MonoBehaviour
     {
         private GameSystem _system;
-        private BattleManager _battleManager;
+        private BattleManager _battle;
 
         private void Awake()
         {
-            _battleManager = BattleManager.Create();
+            _battle = BattleManager.Create();
             _system = GameSystem.Create();
             _system.Initialize();
 
-            _system.AddOnRefreshEntityPacketListener(_battleManager.OnEntityPacketEvent);
+            _system.AddOnRefreshEntityPacketListener(_battle.OnEntityPacketEvent);
         }
 
         private void Start()
@@ -24,14 +24,14 @@ namespace SDefence.Manager
         private void Update()
         {
             var deltaTime = Time.deltaTime;
-            _battleManager.RunProcess(deltaTime);
+            _battle.RunProcess(deltaTime);
         }
 
         private void OnDestroy()
         {
-            _system.RemoveOnRefreshEntityPacketListener(_battleManager.OnEntityPacketEvent);
+            _system.RemoveOnRefreshEntityPacketListener(_battle.OnEntityPacketEvent);
 
-            _battleManager = null;
+            _battle = null;
             _system = null;
         }
 
@@ -40,6 +40,7 @@ namespace SDefence.Manager
         public void OnCommandPacketEvent(Packet.ICommandPacket packet)
         {
             _system.OnCommandPacketEvent(packet);
+            _battle.OnCommandPacketEvent(packet);
         }
 #endif
 

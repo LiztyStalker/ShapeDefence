@@ -8,6 +8,7 @@ namespace SDefence.Actor
     using SDefence.Attack;
     using SDefence.Packet;
     using SDefence.Durable;
+    using SDefence.Durable.Usable;
 
     public class HQActor : MonoBehaviour, IDamagable, IPoolElement, IActor
     {
@@ -85,8 +86,10 @@ namespace SDefence.Actor
         /// <param name="data"></param>
         public void SetDamage(IAttackUsableData data)
         {
+            Debug.Log(_durableEntity.GetValue<HealthDurableUsableData>());
             _durableEntity.Subject(data);
             OnBattlePacketEvent();
+            Debug.Log(_durableEntity.GetValue<HealthDurableUsableData>());
         }
 
         public bool IsDamagable => true;
@@ -97,7 +100,10 @@ namespace SDefence.Actor
         {
             var actor = new GameObject();
             actor.name = "Actor@HQ";
-            actor.AddComponent<CircleCollider2D>();
+            var col = actor.AddComponent<CircleCollider2D>();
+            col.isTrigger = true;
+            var rigid = actor.AddComponent<Rigidbody2D>();
+            rigid.gravityScale = 0f;
             return actor.AddComponent<HQActor>();
         }
 #endif

@@ -9,8 +9,10 @@ namespace SDefence.Actor
     using Packet;
     using Durable;
     using SDefence.Durable.Usable;
+    using Movement;
+    using SDefence.Attack.Usable;
 
-    public class EnemyActor : MonoBehaviour, IDamagable, IPoolElement, IActor, IAttackable
+    public class EnemyActor : MonoBehaviour, IDamagable, IPoolElement, IActor, IAttackable, IMoveable
     {
         private GameObject _graphicObject;
 
@@ -21,11 +23,16 @@ namespace SDefence.Actor
 
         private bool _isBroken = false;
 
-        public bool IsDamagable => !_isBroken;
+        private IMovementActionUsableData _movementAction;
+
 
         public string Key => _entity.Key;
-
         public Vector2 AttackPos => transform.position;
+        public Vector2 NowPosition => transform.position;
+        public bool IsDamagable => !_isBroken;
+
+        public void SetPosition(Vector2 pos) => transform.position = pos;
+
 
         public void Activate() 
         {
@@ -47,6 +54,8 @@ namespace SDefence.Actor
         public void SetEntity(EnemyEntity entity)
         {
             _entity = entity;
+
+            _movementAction = _entity.GetMovementActionUsableData();
         }
 
         public void SetGraphicObject(GameObject graphicObject)
@@ -81,7 +90,7 @@ namespace SDefence.Actor
         public float GetDurableRate<T>() where T : IDurableUsableData => _durableEntity.GetRate<T>();
 
 
-        public void RunProcess(float deltaTime)
+        public void RunProcess(float deltaTime, Vector2 target)
         {
             if (gameObject.activeSelf)
             {
@@ -94,6 +103,8 @@ namespace SDefence.Actor
                         OnAttackEvent(_entity.BulletKey, this, _entity.GetAttackUsableData());
                         _nowActionTime -= _entity.GetAttackUsableData().Delay;
                     }
+
+                    _movementAction.RunProcess(this, _entity.GetMovementUsableData(), deltaTime, target);
                 }
             }
         }
@@ -114,20 +125,45 @@ namespace SDefence.Actor
                     //ÆÄ±«µÊ »óÅÂ
                     _isBroken = true;
                     //battleBrokenEvent
+                    OnRetrieveEvent();
                 }
             }
             //battleEvent
         }
 
 
+        public void OnTriggerEnter2D(Collider2D col)
+        {
+            var damagable = col.GetComponent<IDamagable>();
+            if(damagable != null)
+            {
+                if (damagable is HQActor || damagable is TurretActor)
+                {
+                    if (damagable.IsDamagable)
+                    {
+                        var usable = new AttackUsableData();
+                        usable.SetData(_durableEntity.GetDurableUsableData<HealthDurableUsableData>().CreateUniversalUsableData());
+                        damagable.SetDamage(usable);
+
+                        _isBroken = true;
+                        OnRetrieveEvent();
+                    }
+                }
+            }
+        }
+
+
 
 #if UNITY_EDITOR
-        public static TurretActor Create()
+        public static EnemyActor Create()
         {
             var actor = new GameObject();
             actor.name = "Actor@Turret";
-            actor.AddComponent<CircleCollider2D>();
-            return actor.AddComponent<TurretActor>();
+            var col = actor.AddComponent<CircleCollider2D>();
+            col.isTrigger = true;
+            var rigid = actor.AddComponent<Rigidbody2D>();
+            rigid.gravityScale = 0f;
+            return actor.AddComponent<EnemyActor>();
         }
 #endif
 
@@ -151,14 +187,15 @@ namespace SDefence.Actor
             _attackEvent?.Invoke(bulletKey, attackable, attackData);
         }
 
-        private System.Action<IPoolElement> _retrieveEvent;
-        public void AddOnRetrieveListener(System.Action<IPoolElement> act) => _retrieveEvent += act;
-        public void RemoveOnRetrieveListener(System.Action<IPoolElement> act) => _retrieveEvent -= act;
+        private System.Action<EnemyActor> _retrieveEvent;
+        public void AddOnRetrieveListener(System.Action<EnemyActor> act) => _retrieveEvent += act;
+        public void RemoveOnRetrieveListener(System.Action<EnemyActor> act) => _retrieveEvent -= act;
 
         private void OnRetrieveEvent()
         {
             _retrieveEvent?.Invoke(this);
         }
+
         #endregion
     }
 }

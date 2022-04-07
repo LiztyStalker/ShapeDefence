@@ -67,6 +67,13 @@ namespace SDefence.Test
                 _gameManager.OnCommandPacketEvent(cmd);
             }
 
+            //적등장
+            if (GUILayout.Button("적 등장 "))
+            {
+                var cmd = new EnemyCommandPacket();
+                _gameManager.OnCommandPacketEvent(cmd);
+            }
+
 
             GUILayout.EndVertical();
 

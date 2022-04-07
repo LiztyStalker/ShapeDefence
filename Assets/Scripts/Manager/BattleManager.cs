@@ -9,6 +9,8 @@ namespace SDefence.Manager
     using Utility.Effect;
     using UtilityManager;
     using System.Collections.Generic;
+    using PoolSystem;
+    using SDefence.Turret.Entity;
 
     public class OrbitCase
     {
@@ -103,12 +105,17 @@ namespace SDefence.Manager
 
     public class BattleManager
     {
+        private PoolSystem<EnemyActor> _enemyPool;
+
+        private Vector2 _appearSize;
+
         private GameObject _gameObject;
         private LevelWaveData _levelWaveData;
 
         private HQActor _hqActor;
         private OrbitAction _orbitAction;
         private Dictionary<int, TurretActor> _turretDic;
+        private List<EnemyActor> _enemyActorList;
 
         //터렛 위치 지정자
         private float _waveTime;
@@ -134,6 +141,14 @@ namespace SDefence.Manager
             _effectMgr = EffectManager.Current;
             _audioMgr = AudioManager.Current;
 
+            _enemyPool = PoolSystem<EnemyActor>.Create();
+            _enemyPool.Initialize(CreateEnemyActor);
+
+            _enemyActorList = new List<EnemyActor>();
+
+            _levelWaveData = new LevelWaveData();
+
+            _appearSize = new Vector2(6f, 6f);
         }
 
         public void CleanUp()
@@ -143,6 +158,23 @@ namespace SDefence.Manager
             _bulletMgr.CleanUp();
             _effectMgr.CleanUp();
             _audioMgr.CleanUp();
+
+            _enemyPool.CleanUp();
+            _enemyActorList.Clear();
+        }
+
+        private EnemyActor CreateEnemyActor()
+        {
+            var actor = EnemyActor.Create();
+            actor.name = "Actor@Enemy";
+            actor.AddOnRetrieveListener(RetrieveEnemyActor);
+            actor.Inactivate();
+            return actor;
+        }
+        private void RetrieveEnemyActor(EnemyActor element)
+        {
+            _enemyActorList.Remove(element);
+            _enemyPool.RetrieveElement(element);
         }
 
         public void RunProcess(float deltaTime)
@@ -154,6 +186,11 @@ namespace SDefence.Manager
             }
 
             _orbitAction.RunProcess(deltaTime, _hqActor.transform.position);
+
+            for(int i = 0; i < _enemyActorList.Count; i++)
+            {
+                _enemyActorList[i].RunProcess(deltaTime, _hqActor.transform.position);
+            }
 
             //if(_waveTime > 10f)
             //{
@@ -180,11 +217,13 @@ namespace SDefence.Manager
                             _hqActor.Activate();
                             _hqActor.AddOnBattlePacketListener(OnBattlePacketEvent);
                             _hqActor.transform.SetParent(_gameObject.transform);
+                            Debug.Log("HQReady");
                         }
 
 
                         var entity = hqPacket.Entity;
                         _hqActor.SetEntity(entity);
+                        _hqActor.SetDurableBattleEntity();
 
                         var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
                         if (obj != null) _hqActor.SetGraphicObject(obj);
@@ -206,6 +245,7 @@ namespace SDefence.Manager
                         var trActor = _turretDic[trPacket.Index];
                         var entity = trPacket.Entity;
                         trActor.SetEntity(entity);
+                        trActor.SetDurableBattleEntity();
 
                         var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
                         if (obj != null) trActor.SetGraphicObject(obj);
@@ -235,6 +275,64 @@ namespace SDefence.Manager
             //Sound 
             //Effect
             _battleEvent?.Invoke(packet);
+        }
+
+
+        public void OnCommandPacketEvent(ICommandPacket packet)
+        {
+            switch (packet)
+            {
+                case EnemyCommandPacket enemyPacket:
+                    AppearEnemy();
+                    break;
+            }
+        }
+
+        private void AppearEnemy()
+        {
+            var data = SDefence.Enemy.EnemyData.Create();
+            var entity = EnemyEntity.Create();
+            entity.Initialize(data);
+            entity.SetLevelWave(_levelWaveData);
+            var actor = _enemyPool.GiveElement();
+            actor.SetEntity(entity);
+            actor.SetDurableBattleEntity();
+            var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
+            if (obj != null) actor.SetGraphicObject(obj);
+
+            _enemyActorList.Add(actor);
+            actor.Activate();
+            actor.SetPosition(AppearPosition());
+        }
+
+        private Vector2 AppearPosition()
+        {
+            Vector2 pos;
+            if(25 < UnityEngine.Random.Range(0, 100))
+            {
+                pos.y = Random.Range(-_appearSize.y, _appearSize.y);
+                if (UnityEngine.Random.Range(0, 100) > 50)
+                {
+                    pos.x = _appearSize.x;
+                }
+                else
+                {
+                    pos.x = -_appearSize.x;
+                }
+            }
+            else
+            {
+                pos.x = Random.Range(-_appearSize.x, _appearSize.x);
+                if (UnityEngine.Random.Range(0, 100) > 50)
+                {
+                    pos.y = _appearSize.y;
+                }
+                else
+                {
+                    pos.y = -_appearSize.y;
+                }
+            }
+            return pos;
         }
 
         #endregion

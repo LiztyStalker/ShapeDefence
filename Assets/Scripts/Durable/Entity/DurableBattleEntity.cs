@@ -40,6 +40,16 @@ namespace SDefence.Durable.Entity
 #endif
         }
 
+        public IDurableUsableData GetDurableUsableData<T>() where T : IDurableUsableData
+        {
+            string key = typeof(T).Name;
+            if (_dic.ContainsKey(key))
+            {
+                return _dic[key];
+            }
+            return null;
+        }
+
         public float GetRate<T>() where T : IDurableUsableData
         {
             string key = typeof(T).Name;
