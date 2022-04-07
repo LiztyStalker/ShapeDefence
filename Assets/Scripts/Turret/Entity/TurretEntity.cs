@@ -62,6 +62,8 @@ namespace SDefence.Turret.Entity
 
         public int OrbitIndex => _orbitIndex;
 
+        public string BulletKey => _data.BulletDataKey;
+
         public static TurretEntity Create() => new TurretEntity();
 
         private TurretEntity()
@@ -83,6 +85,7 @@ namespace SDefence.Turret.Entity
             _upgradeAssetData = null;
             _upgradeData = null;
             _recoveryData = null;
+            _attackData = null;
             _durableEntity.CleanUp();
         }
 
@@ -130,7 +133,10 @@ namespace SDefence.Turret.Entity
 
         public IAttackUsableData GetAttackUsableData()
         {
-            //AttackRawData 구성 필요
+            if(_attackData == null)
+            {
+                _attackData = _data.AttackRawData.GetUsableData(_upgradeData.GetValue());
+            }
             return _attackData;
         }
 

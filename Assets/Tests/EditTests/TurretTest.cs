@@ -186,8 +186,8 @@ namespace TestFrameworks
             Assert.AreEqual(actor.GetDurableValue<HealthDurableUsableData>(), "100 / 100");
         }
 
-        [Test]
-        public void TurretTest_Actor_Attack()
+        [UnityTest]
+        public IEnumerator TurretTest_Actor_Attack()
         {
             var data = TurretData.Create();
 
@@ -199,7 +199,22 @@ namespace TestFrameworks
             actor.SetDurableBattleEntity();
             actor.Activate();
 
+            bool isRun = true;
 
+            actor.AddOnAttackListener((key, attackable, data) =>
+            {
+                Debug.Log(key);
+                Debug.Log(attackable);
+                Debug.Log(data);
+                isRun = false;
+            });
+
+            while (isRun)
+            {
+                actor.RunProcess(Time.deltaTime);
+                yield return null;
+            }
+            yield return null;
 
         }
         [Test]

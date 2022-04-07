@@ -25,6 +25,9 @@ namespace SDefence.Actor
         public bool IsDamagable => !_isBroken;
 
         public string Key => _entity.Key;
+
+        public Vector2 AttackPos => transform.position;
+
         public void Activate() 
         {
             _nowActionTime = 0f;
@@ -111,6 +114,11 @@ namespace SDefence.Actor
                 {
                     _nowActionTime += deltaTime;
                     //battleUpdate
+                    if (_nowActionTime >= _entity.GetAttackUsableData().Delay)
+                    {
+                        OnAttackEvent(_entity.BulletKey, this, _entity.GetAttackUsableData());
+                        _nowActionTime -= _entity.GetAttackUsableData().Delay;
+                    }
                 }
             }
         }

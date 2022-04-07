@@ -2,6 +2,7 @@ namespace SDefence.Attack
 {
     public interface IAttackUsableData
     {
+        public float Delay { get; }
         public bool IsZero { get; }
         public void Set(IAttackUsableData value);
         public void SetData(string startValue, string increaseValue, string increaseRate, string startDelayValue, string decreaseDelayValue, string decreaseDelayRate, int upgrade);

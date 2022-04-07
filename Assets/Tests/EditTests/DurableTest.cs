@@ -75,8 +75,8 @@ namespace TestFrameworks
         {
             public BigDecimal Value;
 
-            public float Delay;
-
+            private float _delay;
+            public float Delay { get => _delay; set => _delay = value; }
             public bool IsZero => Value.IsZero;
 
             public string ToString(string format) => Value.ToString(format);
