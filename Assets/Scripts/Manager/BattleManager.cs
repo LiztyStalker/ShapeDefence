@@ -175,6 +175,7 @@ namespace SDefence.Manager
         {
             _enemyActorList.Remove(element);
             _enemyPool.RetrieveElement(element);
+            element.Inactivate();
         }
 
         public void RunProcess(float deltaTime)

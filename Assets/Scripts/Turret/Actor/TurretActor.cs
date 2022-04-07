@@ -58,7 +58,7 @@ namespace SDefence.Actor
             _graphicObject = Instantiate(graphicObject);
             _graphicObject.name = "GraphicObject";
             _graphicObject.transform.SetParent(transform);
-            _graphicObject.transform.position = Vector3.zero;
+            _graphicObject.transform.localPosition = Vector3.zero;
             _graphicObject.transform.localScale = Vector3.one;
         }
 
