@@ -156,45 +156,48 @@ namespace Utility.Generator
             for(int c = 0; c < rows.Count; c++)
             {
                 var records = rows[c];
-                var key = records[0];
 
-
-                if (tmpData != null && tmpData.Key == key)
+                if (records.Count != 0)
                 {
-                    tmpData.AddData(records.ToArray());
-                    EditorUtility.SetDirty(tmpData);
-                    Debug.Log($"Add {key}");
-                }
-                else
-                {
-                    tmpData = null;
-                    //try
-                    //{
-                    var data = AssetDatabase.LoadAssetAtPath<T>($"{dataPath}/{typeof(T).Name}_{key}.asset");
+                    var key = records[0];
 
-                    if (data == null)
+                    if (tmpData != null && tmpData.Key == key)
                     {
-                        Debug.Log($"Create {key}");
-
-                        data = ScriptableObject.CreateInstance<T>();
-                        data.SetSortIndex(index);
-                        data.SetData(records.ToArray());
-                        AssetDatabase.CreateAsset(data, $"{dataPath}/{typeof(T).Name}_{key}.asset");
-                        data.SetAssetBundle(bundleName);
-                        EditorUtility.SetDirty(data);
-                        AssetDatabase.SaveAssets();
+                        tmpData.AddData(records.ToArray());
+                        EditorUtility.SetDirty(tmpData);
+                        Debug.Log($"Add {key}");
                     }
                     else
                     {
-                        Debug.Log($"Update {key}");
+                        tmpData = null;
+                        //try
+                        //{
+                        var data = AssetDatabase.LoadAssetAtPath<T>($"{dataPath}/{typeof(T).Name}_{key}.asset");
 
-                        data.SetSortIndex(index);
-                        data.SetData(records.ToArray());
-                        data.SetAssetBundle(bundleName);
-                        EditorUtility.SetDirty(data);
+                        if (data == null)
+                        {
+                            Debug.Log($"Create {key}");
+
+                            data = ScriptableObject.CreateInstance<T>();
+                            data.SetSortIndex(index);
+                            data.SetData(records.ToArray());
+                            AssetDatabase.CreateAsset(data, $"{dataPath}/{typeof(T).Name}_{key}.asset");
+                            data.SetAssetBundle(bundleName);
+                            EditorUtility.SetDirty(data);
+                            AssetDatabase.SaveAssets();
+                        }
+                        else
+                        {
+                            Debug.Log($"Update {key}");
+
+                            data.SetSortIndex(index);
+                            data.SetData(records.ToArray());
+                            data.SetAssetBundle(bundleName);
+                            EditorUtility.SetDirty(data);
+                        }
+
+                        tmpData = data;
                     }
-
-                    tmpData = data;
                 }
             }
             Debug.Log("Create And Update End");
