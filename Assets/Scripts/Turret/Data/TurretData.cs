@@ -58,12 +58,16 @@ namespace SDefence.Turret
 
             _durableRawDataArray = new DurableRawData[4];
             var health = DurableRawData.Create();
+            health.SetData("SDefence.Durable.Usable.HealthDurableUsableData", "100", "1", "0.1");
             _durableRawDataArray[0] = health;
             var armor = DurableRawData.Create();
+            armor.SetData("SDefence.Durable.Usable.ArmorDurableUsableData", "1", "0", "0.1");
             _durableRawDataArray[1] = armor;
             var shield = DurableRawData.Create();
+            shield.SetData("SDefence.Durable.Usable.ShieldDurableUsableData", "100", "0", "0.1");
             _durableRawDataArray[2] = shield;
             var limShield = DurableRawData.Create();
+            limShield.SetData("SDefence.Durable.Usable.LimitDamageShieldDurableUsableData", "50", "0", "0.1");
             _durableRawDataArray[3] = limShield;
 
             var recovery = RecoveryRawData.Create();

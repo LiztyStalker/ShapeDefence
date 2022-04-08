@@ -28,6 +28,8 @@ namespace SDefence.Actor
 
         public Vector2 AttackPos => transform.position;
 
+        public Vector2 NowPosition => transform.position;
+
         public IAttackUsableData AttackUsableData => _entity.GetAttackUsableData();
 
         public void Activate() 
@@ -70,7 +72,7 @@ namespace SDefence.Actor
         public void SetDurableBattleEntity()
         {
             _durableEntity = _entity.GetDurableBattleEntity();
-            OnBattlePacketEvent();
+            OnActorBattlePacketEvent();
         }
 
         /// <summary>
@@ -91,7 +93,7 @@ namespace SDefence.Actor
         {
             //ÇöÀç ½Çµå¸¸
             _durableEntity.Add(_entity.GetRecoveryUsableData<ShieldRecoveryUsableData>());
-            OnBattlePacketEvent();
+            OnDestroyBattlePacketEvent();
             //battleEvent
         }
 
@@ -118,7 +120,7 @@ namespace SDefence.Actor
                     //battleUpdate
                     if (_nowActionTime >= _entity.GetAttackUsableData().Delay)
                     {
-                        OnAttackEvent(_entity.BulletKey, this, _entity.GetAttackUsableData());
+                        OnAttackEvent(_entity.BulletKey, this);
                         _nowActionTime -= _entity.GetAttackUsableData().Delay;
                     }
                 }
@@ -133,17 +135,17 @@ namespace SDefence.Actor
         {
             if (!_isBroken)
             {
-                _durableEntity.Subject(data);
-                OnBattlePacketEvent();
+                OnHitBattlePacketEvent(_durableEntity.GetRate<ShieldDurableUsableData>() > 0);
+
+                _durableEntity.Subject(data);               
 
                 if (_durableEntity.IsZero<HealthDurableUsableData>())
                 {
                     //ÆÄ±«µÊ »óÅÂ
                     _isBroken = true;
-                    //battleBrokenEvent
+                    OnDestroyBattlePacketEvent();
                 }
             }
-            //battleEvent
         }
 
 
@@ -163,19 +165,35 @@ namespace SDefence.Actor
         private System.Action<IBattlePacket> _battleEvent;
         public void AddOnBattlePacketListener(System.Action<IBattlePacket> act) => _battleEvent += act;
         public void RemoveOnBattlePacketListener(System.Action<IBattlePacket> act) => _battleEvent -= act;
-        private void OnBattlePacketEvent()
+
+        private void OnActorBattlePacketEvent() 
         {
-            var packet = new TurretBattlePacket();
-            packet.SetData(this);
+            var packet = new ActorBattlePacket();
+            packet.Actor = this;
             _battleEvent?.Invoke(packet);
         }
 
-        private System.Action<string, IAttackable, IAttackUsableData> _attackEvent;
-        public void AddOnAttackListener(System.Action<string, IAttackable, IAttackUsableData> act) => _attackEvent += act;
-        public void RemoveOnAttackListener(System.Action<string, IAttackable, IAttackUsableData> act) => _attackEvent -= act;
-        private void OnAttackEvent(string bulletKey, IAttackable attackable, IAttackUsableData attackData)
+        private void OnHitBattlePacketEvent(bool isShieldHit)
         {
-            _attackEvent?.Invoke(bulletKey, attackable, attackData);
+            var packet = new HitBattlePacket();
+            packet.NowPosition = transform.position;
+            packet.IsShieldHit = isShieldHit;
+            _battleEvent?.Invoke(packet);
+        }
+
+        private void OnDestroyBattlePacketEvent()
+        {
+            var packet = new DestroyBattlePacket();
+            packet.Actor = this;
+            _battleEvent?.Invoke(packet);
+        }
+
+        private System.Action<string, IAttackable> _attackEvent;
+        public void AddOnAttackListener(System.Action<string, IAttackable> act) => _attackEvent += act;
+        public void RemoveOnAttackListener(System.Action<string, IAttackable> act) => _attackEvent -= act;
+        private void OnAttackEvent(string bulletKey, IAttackable attackable)
+        {
+            _attackEvent?.Invoke(bulletKey, attackable);
         }
 
         private System.Action<IPoolElement> _retrieveEvent;

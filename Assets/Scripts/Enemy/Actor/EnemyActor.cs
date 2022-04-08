@@ -102,7 +102,7 @@ namespace SDefence.Actor
                     //battleUpdate
                     if (_nowActionTime >= _entity.GetAttackUsableData().Delay)
                     {
-                        OnAttackEvent(_entity.BulletKey, this, _entity.GetAttackUsableData());
+                        OnAttackEvent(_entity.BulletKey, this);
                         _nowActionTime -= _entity.GetAttackUsableData().Delay;
                     }
 
@@ -181,12 +181,12 @@ namespace SDefence.Actor
             //_battleEvent?.Invoke(packet);
         }
 
-        private System.Action<string, IAttackable, IAttackUsableData> _attackEvent;
-        public void AddOnAttackListener(System.Action<string, IAttackable, IAttackUsableData> act) => _attackEvent += act;
-        public void RemoveOnAttackListener(System.Action<string, IAttackable, IAttackUsableData> act) => _attackEvent -= act;
-        private void OnAttackEvent(string bulletKey, IAttackable attackable, IAttackUsableData attackData)
+        private System.Action<string, IAttackable> _attackEvent;
+        public void AddOnAttackListener(System.Action<string, IAttackable> act) => _attackEvent += act;
+        public void RemoveOnAttackListener(System.Action<string, IAttackable> act) => _attackEvent -= act;
+        private void OnAttackEvent(string bulletKey, IAttackable attackable)
         {
-            _attackEvent?.Invoke(bulletKey, attackable, attackData);
+            _attackEvent?.Invoke(bulletKey, attackable);
         }
 
         private System.Action<EnemyActor> _retrieveEvent;

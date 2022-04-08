@@ -74,7 +74,7 @@ namespace Utility.Effect
         /// <param name="position"></param>
         /// <param name="callback"></param>
         /// <returns></returns>
-        public EffectActor Activate(EffectData effectData, Vector3 position, System.Action<EffectActor> inactiveCallback = null)
+        public EffectActor Activate(EffectData effectData, Vector3 position, float scale, System.Action<EffectActor> inactiveCallback = null)
         {
             if (effectData != null)
             {
@@ -84,6 +84,7 @@ namespace Utility.Effect
                     inactiveCallback?.Invoke(actor);
                     RetrieveActor(actor);
                 });
+                actor.transform.localScale = Vector3.one * scale;
                 actor.Activate(position);
                 _list.Add(actor);
                 return actor;
@@ -92,7 +93,7 @@ namespace Utility.Effect
         }
 
 
-        public EffectActor Activate(GameObject effectObject, Vector3 position, System.Action<EffectActor> inactiveCallback = null)
+        public EffectActor Activate(GameObject effectObject, Vector3 position, float scale, System.Action<EffectActor> inactiveCallback = null)
         {
             if (effectObject != null)
             {
@@ -102,6 +103,7 @@ namespace Utility.Effect
                     inactiveCallback?.Invoke(actor);
                     RetrieveActor(actor);
                 });
+                actor.transform.localScale = Vector3.one * scale;
                 actor.Activate(position);
                 _list.Add(actor);
                 return actor;

@@ -28,6 +28,8 @@ namespace Utility.Bullet
 
         private float _nowTime = 0f;
 
+        private bool _isAttack = false;
+
         private SpriteRenderer _spriteRenderer { get; set; }
         private ParticleSystem[] _particles { get; set; }
 
@@ -46,6 +48,8 @@ namespace Utility.Bullet
             _movementData = _data.GetMovementUsableData();
             _movementActionData = _data.GetMovementActionUsableData();
             _attackActionData = _data.GetAttackActionUsableData();
+
+            _attackActionData.SetOnAttackActionListener(OnDamageEvent);
 
             _movementActionData.SetOnEndedActionListener(OnArriveEvent);
             SetName();
@@ -104,7 +108,6 @@ namespace Utility.Bullet
             _arrivePos = Vector2.zero;
         }
 
-
         public void SetPosition(Vector2 pos) => transform.position = pos;
 
         public void SetScale(float scale)
@@ -113,47 +116,11 @@ namespace Utility.Bullet
         }
         public void RunProcess(float deltaTime)
         {
-            _movementActionData.RunProcess(this, _movementData, deltaTime, _arrivePos);
-        }
-              
-
-        //private Vector3 GetEuler(Vector3 startPos, Vector3 arrivePos, float nowTime)
-        //{
-        //    var nowPos = startPos;
-        //    var direction = arrivePos - nowPos;
-        //    var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        //    return Vector3.forward * angle;
-        //}
-
-        //private Vector2 GetPosition(Vector3 startPos, Vector3 arrivePos, float nowTime)
-        //{
-        //    switch (_data.TypeBulletAction)
-        //    {
-        //        case BulletData.TYPE_BULLET_ACTION.Curve:
-        //            return Ditzel.Parabola.MathParabola.Parabola(startPos, arrivePos, 0.5f, nowTime);
-        //        case BulletData.TYPE_BULLET_ACTION.Move:
-        //            return Vector2.MoveTowards(startPos, arrivePos, nowTime);
-        //        case BulletData.TYPE_BULLET_ACTION.Drop:
-        //            var pos = new Vector2(arrivePos.x, arrivePos.y + 10f);
-        //            return Vector2.MoveTowards(pos, arrivePos, nowTime);
-        //        case BulletData.TYPE_BULLET_ACTION.Direct:
-        //            return arrivePos;
-        //    }
-        //    return Vector2.zero;
-        //}
-
-        //private Vector2 GetSlerp(Vector3 startPos, Vector3 arrivePos, float nowTime)
-        //{
-        //    var center = (startPos + arrivePos) * 8f;
-        //    center -= Vector3.up;
-
-        //    var startRelPos = startPos - center;
-        //    var arriveRelPos = arrivePos - center;
-        //    var nowPos = Vector3.Slerp(startRelPos, arriveRelPos, nowTime);
-        //    nowPos += center;
-        //    return nowPos;
-        //}
-
+            if (!_isAttack)
+                _attackActionData.RunProcess(deltaTime);
+            else
+                _movementActionData.RunProcess(this, _movementData, deltaTime, _arrivePos);
+        }             
 
         private void ReadyInactivate()
         {
@@ -198,9 +165,9 @@ namespace Utility.Bullet
                 {
                     if (damagable.IsDamagable)
                     {
-                        damagable.SetDamage(_attackable.AttackUsableData);
-                        OnArriveEvent();
-                        //count--;
+                        //damagable.SetDamage(_attackable.AttackUsableData);
+                        OnCollisionEvent();
+                        _isAttack = true;
                     }
                 }
             }
@@ -212,18 +179,32 @@ namespace Utility.Bullet
 
         #region ##### Listener #####
 
+        private System.Action<float, bool> _damageEvent;
+        private System.Action<BulletActor> _collisionEvent;
         private System.Action<BulletActor> _arrivedEvent;
         private System.Action<BulletActor> _inactiveEvent;
 
         public void SetOnArrivedListener(System.Action<BulletActor> act) => _arrivedEvent = act;
         public void SetOnInactiveListener(System.Action<BulletActor> act) => _inactiveEvent = act;
-
+        public void SetOnCollisionListener(System.Action<BulletActor> act) => _collisionEvent = act;
+        public void SetOnDamageListener(System.Action<float, bool> act) => _damageEvent = act;
 
         private void OnArriveEvent()
         {
             Debug.Log("Arrive");
             _arrivedEvent?.Invoke(this);
             Inactivate();
+        }
+
+        private void OnCollisionEvent()
+        {
+            Debug.Log("Collision");
+            _collisionEvent?.Invoke(this);
+        }
+
+        private void OnDamageEvent(float range, bool isOverlap)
+        {
+            _damageEvent?.Invoke(range, isOverlap);
         }
 
         #endregion

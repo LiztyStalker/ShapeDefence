@@ -19,6 +19,8 @@ namespace SDefence.Actor
 
         public string Key => _entity.Key;
 
+        public Vector2 NowPosition => transform.position;
+
         public void Activate() 
         {
             gameObject.SetActive(true);
@@ -86,10 +88,8 @@ namespace SDefence.Actor
         /// <param name="data"></param>
         public void SetDamage(IAttackUsableData data)
         {
-            Debug.Log(_durableEntity.GetValue<HealthDurableUsableData>());
             _durableEntity.Subject(data);
             OnBattlePacketEvent();
-            Debug.Log(_durableEntity.GetValue<HealthDurableUsableData>());
         }
 
         public bool IsDamagable => true;

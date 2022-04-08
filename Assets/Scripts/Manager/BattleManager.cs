@@ -15,6 +15,7 @@ namespace SDefence.Manager
     using SDefence.Attack;
     using Utility.ScriptableObjectData;
     using Utility.Effect.Data;
+    using SDefence.BattleGen.Data;
 
     public class OrbitCase
     {
@@ -128,6 +129,8 @@ namespace SDefence.Manager
         private EffectManager _effectMgr;
         private AudioManager _audioMgr;
 
+        private BattleGenLevelData _battleGenLevelData;
+
         public static BattleManager Create() => new BattleManager();
 
         private BattleManager()
@@ -174,15 +177,16 @@ namespace SDefence.Manager
             actor.AddOnRetrieveListener(RetrieveEnemyActor);
             actor.AddOnAttackListener(OnAttackEvent);
             actor.Inactivate();
+            _enemyActorList.Add(actor);
             return actor;
         }
         private void RetrieveEnemyActor(EnemyActor actor)
         {
+            actor.Inactivate();
             _enemyActorList.Remove(actor);
             _enemyPool.RetrieveElement(actor);
             actor.RemoveOnRetrieveListener(RetrieveEnemyActor);
             actor.RemoveOnAttackListener(OnAttackEvent);
-            actor.Inactivate();
         }
 
         public void RunProcess(float deltaTime)
@@ -276,14 +280,22 @@ namespace SDefence.Manager
         public void RemoveOnBattlePacketListener(System.Action<IBattlePacket> act) => _battleEvent -= act;
         private void OnBattlePacketEvent(IBattlePacket packet)
         {
-            //switch (packet)
-            //{
-            //    case HQBattlePacket hqPacket:
-            //        if(hqPacket.Actor.GetDurableValue<Shield>)
-            //        break;
-            //}
-            //Sound 
-            //Effect
+            switch (packet)
+            {
+                case HitBattlePacket hitPacket:
+
+                    string key = (hitPacket.IsShieldHit) ? "ShieldHit" : "ActorHit";
+                    var hitEffect = DataStorage.Instance.GetDataOrNull<GameObject>(key);
+                    _effectMgr.Activate(hitEffect, hitPacket.NowPosition, 1f);
+
+
+                    break;
+                case DestroyBattlePacket destroyBattlePacket:
+                    var destroyKey = "DestroyActor";
+                    var destroyEffect = DataStorage.Instance.GetDataOrNull<GameObject>(destroyKey);
+                    _effectMgr.Activate(destroyEffect, destroyBattlePacket.Actor.NowPosition, 1f);
+                    break;
+            }
             _battleEvent?.Invoke(packet);
         }
 
@@ -298,34 +310,34 @@ namespace SDefence.Manager
             }
         }
 
-        private void OnAttackEvent(string bulletKey, IAttackable attackable, IAttackUsableData attackData)
+        private void OnAttackEvent(string bulletKey, IAttackable attackable)
         {
-            var bulletData = (BulletData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(bulletKey, "BulletData");
+            //var bulletData = (BulletData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(bulletKey, "BulletData");
 
-            if (bulletData != null)
-            {
-                switch (attackable)
-                {
-                    case EnemyActor eActor:
-                        _bulletMgr.Activate(attackable, bulletData, 1f, attackable.AttackPos, _hqActor.transform.position, actor =>
-                        {
-                            var effect = DataStorage.Instance.GetDataOrNull<GameObject>(bulletData.DestroyEffectDataKey);
-                            _effectMgr.Activate(effect, actor.NowPosition);
-                        });
-                        break;
-                    case TurretActor tActor:
-                        if (_enemyActorList.Count > 0)
-                        {
-                            var enemyActor = _enemyActorList[UnityEngine.Random.Range(0, _enemyActorList.Count)];
-                            _bulletMgr.Activate(attackable, bulletData, 1f, attackable.AttackPos, enemyActor.transform.position, actor =>
-                            {
-                                var effect = DataStorage.Instance.GetDataOrNull<GameObject>(bulletData.DestroyEffectDataKey);
-                                _effectMgr.Activate(effect, actor.NowPosition);                                
-                            });
-                        }
-                        break;
-                }
-            }
+            //if (bulletData != null)
+            //{
+            //    switch (attackable)
+            //    {
+            //        case EnemyActor eActor:
+            //            _bulletMgr.Activate(attackable, bulletData, 1f, attackable.AttackPos, _hqActor.transform.position, actor =>
+            //            {
+            //                var effect = DataStorage.Instance.GetDataOrNull<GameObject>(bulletData.DestroyEffectDataKey);
+            //                _effectMgr.Activate(effect, actor.NowPosition);
+            //            });
+            //            break;
+            //        case TurretActor tActor:
+            //            if (_enemyActorList.Count > 0)
+            //            {
+            //                var enemyActor = _enemyActorList[UnityEngine.Random.Range(0, _enemyActorList.Count)];
+            //                _bulletMgr.Activate(attackable, bulletData, 1f, attackable.AttackPos, enemyActor.transform.position, actor =>
+            //                {
+            //                    var effect = DataStorage.Instance.GetDataOrNull<GameObject>(bulletData.DestroyEffectDataKey);
+            //                    _effectMgr.Activate(effect, actor.NowPosition);                                
+            //                });
+            //            }
+            //            break;
+            //    }
+            //}
 
 
 
@@ -346,7 +358,6 @@ namespace SDefence.Manager
             var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
             if (obj != null) actor.SetGraphicObject(obj);
 
-            _enemyActorList.Add(actor);
             actor.Activate();
             actor.SetPosition(AppearPosition());
         }

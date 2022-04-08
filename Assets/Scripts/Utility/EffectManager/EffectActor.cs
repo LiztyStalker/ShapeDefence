@@ -30,7 +30,7 @@ namespace Utility.Effect
             _prefab = Instantiate(effectObject);
             _prefab.transform.SetParent(transform);
             _prefab.transform.localPosition = Vector3.zero;
-            _prefab.transform.localScale = Vector3.one * 0.1f;
+            _prefab.transform.localScale = Vector3.one;
             _prefab.gameObject.SetActive(true);
             SetName();
         }
