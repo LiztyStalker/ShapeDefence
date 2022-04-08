@@ -107,14 +107,23 @@ namespace SDefence.Enemy
             _rewardAssetRawData = asset;
 
             var attack = AttackRawData.Create();
-            attack.SetData(
+
+            attack.SetAttack(
                 arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.StartAttackValue],
                 arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.IncreaseAttackValue],
-                arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.IncreaseAttackRate],
+                arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.IncreaseAttackRate]
+                );
+            attack.SetDelay(
                 arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.StartAttackDelayValue],
                 arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackDelayValue],
                 arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackDelayRate]
                 );
+            attack.SetRange(
+                arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.StartAttackRangeValue],
+                arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackRangeValue],
+                arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackRangeRate]
+                );
+
             _attackRawData = attack;
 
             var movement = MovementRawData.Create();
@@ -128,6 +137,8 @@ namespace SDefence.Enemy
                 arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.Accuracy]
                 );
             _movementRawData = movement;
+
+            _bulletDataKey = arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.BulletDataKey];
 
         }
 

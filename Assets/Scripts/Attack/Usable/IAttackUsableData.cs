@@ -5,7 +5,9 @@ namespace SDefence.Attack
         public float Delay { get; }
         public bool IsZero { get; }
         public void Set(IAttackUsableData value);
-        public void SetData(string startValue, string increaseValue, string increaseRate, string startDelayValue, string decreaseDelayValue, string decreaseDelayRate, int upgrade);
+        public void SetAttack(string startValue, string increaseValue, string increaseRate, int upgrade);
+        public void SetDelay(string startValue, string decreaseValue, string decreaseRate, int upgrade);
+        public void SetRange(string startValue, string increaseValue, string increaseRate, int upgrade);
         public string ToString(string format);
         public UniversalUsableData CreateUniversalUsableData();
         public IAttackUsableData Clone();

@@ -125,14 +125,23 @@ namespace SDefence.Turret
             _bulletDataKey = arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.BulletDataKey];
 
             var attackData = AttackRawData.Create();
-            attackData.SetData(
+
+            attackData.SetAttack(
                     arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.StartAttackValue],
                     arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.IncreaseAttackValue],
-                    arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.IncreaseAttackRate],
+                    arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.IncreaseAttackRate]
+                    );
+            attackData.SetDelay(
                     arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.StartAttackDelayValue],
                     arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackDelayValue],
                     arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackDelayRate]
                 );
+            attackData.SetDelay(
+                arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.StartAttackRangeValue],
+                arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackRangeValue],
+                arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackRangeRate]
+            );
+
             _attackData = attackData;
 
             if((int)TurretDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey < arr.Length)

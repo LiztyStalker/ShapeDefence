@@ -39,6 +39,9 @@ namespace SDefence.Turret.Generator
             StartAttackDelayValue,
             DecreaseAttackDelayValue,
             DecreaseAttackDelayRate,
+            StartAttackRangeValue,
+            DecreaseAttackRangeValue,
+            DecreaseAttackRangeRate,
             BulletDataKey,
             TechDataKey,
         }

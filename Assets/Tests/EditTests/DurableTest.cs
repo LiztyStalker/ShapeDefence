@@ -24,19 +24,23 @@ namespace TestFrameworks
         #region ##### Test Attack #####
         private class TestAttackRawData
         {
-            public string StartValue;
-            public string IncreaseValue;
-            public string IncreaseRate;
+            public string StartAttackValue;
+            public string IncreaseAttackValue;
+            public string IncreaseAttackRate;
             public string StartAttackDelayValue;
             public string DecreaseAttackDelayValue;
             public string DecreaseAttackDelayRate;
+            public string StartAttackRangeValue;
+            public string IncreaseAttackRangeValue;
+            public string IncreaseAttackRangeRate;
+
 
 
             internal TestAttackRawData()
             {
-                StartValue = "10";
-                IncreaseValue = "1";
-                IncreaseRate = "0.1";
+                StartAttackValue = "10";
+                IncreaseAttackValue = "1";
+                IncreaseAttackRate = "0.1";
                 StartAttackDelayValue = "1";
                 DecreaseAttackDelayValue = "0";
                 DecreaseAttackDelayRate = "0.1";
@@ -44,9 +48,9 @@ namespace TestFrameworks
 
             internal TestAttackRawData(string startValue, string increaseValue, string increaseRate)
             {
-                StartValue = startValue;
-                IncreaseValue = increaseValue;
-                IncreaseRate = increaseRate;
+                StartAttackValue = startValue;
+                IncreaseAttackValue = increaseValue;
+                IncreaseAttackRate = increaseRate;
                 StartAttackDelayValue = "1";
                 DecreaseAttackDelayValue = "0";
                 DecreaseAttackDelayRate = "0.1";
@@ -54,9 +58,9 @@ namespace TestFrameworks
 
             internal TestAttackRawData(string startValue, string increaseValue, string increaseRate, string startDelayValue, string decreaseDelayValue, string decreaseDelayRate)
             {
-                StartValue = startValue;
-                IncreaseValue = increaseValue;
-                IncreaseRate = increaseRate;
+                StartAttackValue = startValue;
+                IncreaseAttackValue = increaseValue;
+                IncreaseAttackRate = increaseRate;
                 StartAttackDelayValue = startDelayValue;
                 DecreaseAttackDelayValue = decreaseDelayValue;
                 DecreaseAttackDelayRate = decreaseDelayRate;
@@ -65,7 +69,9 @@ namespace TestFrameworks
             internal IAttackUsableData GetUsableData(int upgrade = 0)
             {
                 var data = System.Activator.CreateInstance<TestAttackUsableData>();
-                data.SetData(StartValue, IncreaseValue, IncreaseRate, "0", "0", "0", upgrade);
+                data.SetAttack(StartAttackValue, IncreaseAttackValue, IncreaseAttackRate, upgrade);
+                data.SetDelay(StartAttackDelayValue, DecreaseAttackDelayValue, DecreaseAttackDelayRate, upgrade);
+                data.SetRange(StartAttackRangeValue, IncreaseAttackRangeValue, IncreaseAttackRangeRate, upgrade);
                 return data;
             }
         }
@@ -78,26 +84,44 @@ namespace TestFrameworks
             private float _delay;
             public float Delay { get => _delay; set => _delay = value; }
             public bool IsZero => Value.IsZero;
+            private float _range;
+            public float Range { get => _range; set => _range = value; }
 
             public string ToString(string format) => Value.ToString(format);
 
             public override string ToString() => Value.ToString();
 
-            public void SetData(string startValue, string increaseValue, string increaseRate, string startDelayValue, string decreaseDelayValue, string decreaseDelayRate, int upgrade)
+
+
+            public void SetAttack(string startValue, string increaseValue, string increaseRate, int upgrade)
             {
                 var incVal = int.Parse(increaseValue);
                 var incRate = float.Parse(increaseRate);
 
                 Value = new BigDecimal(startValue);
                 Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, upgrade);
+            }
 
+            public void SetDelay(string startValue, string decreaseValue, string decreaseRate, int upgrade)
+            {
+                var startVal = float.Parse(startValue);
+                var decVal = float.Parse(decreaseValue);
+                var decRate = float.Parse(decreaseRate);
 
-                var sDelay = float.Parse(startDelayValue);
-                var decVal = float.Parse(decreaseDelayValue);
-                var decRate = float.Parse(decreaseDelayRate);
-
-                Delay = sDelay;
+                Delay = startVal;
                 Delay = NumberDataUtility.GetIsolationInterest(Delay, decVal, decRate, upgrade);
+
+            }
+
+            public void SetRange(string startValue, string increaseValue, string increaseRate, int upgrade)
+            {
+                var startVal = float.Parse(startValue);
+                var incVal = float.Parse(increaseValue);
+                var incRate = float.Parse(increaseRate);
+
+                Range = startVal;
+                Range = NumberDataUtility.GetIsolationInterest(Delay, incVal, incRate, upgrade);
+
             }
 
             public void Set(IAttackUsableData value)

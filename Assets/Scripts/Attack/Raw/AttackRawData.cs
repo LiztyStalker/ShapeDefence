@@ -24,6 +24,15 @@ namespace SDefence.Attack.Raw {
         [SerializeField]
         private string _decreaseAttackDelayRate;
 
+        [SerializeField]
+        private string _startAttackRangeValue;
+
+        [SerializeField]
+        private string _increaseAttackRangeValue;
+
+        [SerializeField]
+        private string _increaseAttackRangeRate;
+
 
 #if UNITY_EDITOR
 
@@ -39,6 +48,30 @@ namespace SDefence.Attack.Raw {
             _startAttackDelayValue = "1";
             _decreaseAttackDelayValue = "0";
             _decreaseAttackDelayRate = "0.1";
+            _startAttackRangeValue = "5";
+            _increaseAttackRangeValue = "0";
+            _increaseAttackRangeRate = "0.1";
+        }
+
+        public void SetAttack(string startValue, string increaseValue, string increaseRate)
+        {
+            _startAttackValue = startValue;
+            _increaseAttackValue = increaseValue;
+            _increaseAttackRate = increaseRate;
+        }
+
+        public void SetDelay(string startValue, string decreaseValue, string decreaseRate)
+        {
+            _startAttackDelayValue = startValue;
+            _decreaseAttackDelayValue = decreaseValue;
+            _decreaseAttackDelayRate = decreaseRate;
+        }
+
+        public void SetRange(string startValue, string increaseValue, string increaseRate)
+        {
+            _startAttackRangeValue = startValue;
+            _increaseAttackRangeValue = increaseValue;
+            _increaseAttackRangeRate = increaseRate;
         }
 
         public void SetData(string startValue, string increaseValue, string increaseRate, string startDelayValue, string decreaseDelayValue, string decreaseDelayRate)
@@ -51,12 +84,21 @@ namespace SDefence.Attack.Raw {
             _decreaseAttackDelayRate = decreaseDelayRate;
         }
 
+        public void SetData(string startAttackRangeValue, string increaseAttackRangeValue, string increaseAttackRangeRate)
+        {
+            _startAttackRangeValue = startAttackRangeValue;
+            _increaseAttackRangeValue = increaseAttackRangeValue;
+            _increaseAttackRangeRate = increaseAttackRangeRate;
+        }
+
 #endif
 
         public IAttackUsableData GetUsableData(int upgrade = 0)
         {
             var data = System.Activator.CreateInstance<AttackUsableData>();
-            data.SetData(_startAttackValue, _increaseAttackValue, _increaseAttackRate, _startAttackDelayValue, _decreaseAttackDelayValue, _decreaseAttackDelayRate, upgrade);
+            data.SetAttack(_startAttackValue, _increaseAttackValue, _increaseAttackRate, upgrade);
+            data.SetDelay(_startAttackDelayValue, _decreaseAttackDelayValue, _decreaseAttackDelayRate, upgrade);
+            data.SetRange(_startAttackRangeValue, _increaseAttackRangeValue, _increaseAttackRangeRate, upgrade);
             return data;
         }
 

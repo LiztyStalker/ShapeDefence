@@ -13,7 +13,12 @@ namespace SDefence.Attack.Usable
 
         private float _delay;
         public float Delay { get => _delay; private set => _delay = value; }
-        
+
+
+        private float _range;
+
+        public float Range { get => _range; private set => _range = value; }
+
 
         public bool IsZero => Value.IsZero;
 
@@ -22,23 +27,38 @@ namespace SDefence.Attack.Usable
         {
             Value = ((AttackUsableData)value).Value;
             Delay = ((AttackUsableData)value).Delay;
+            Range = ((AttackUsableData)value).Range;
         }
 
-        public void SetData(string startValue, string increaseValue, string increaseRate, string startDelayValue, string decreaseDelayValue, string decreaseDelayRate, int upgrade)
+        public void SetAttack(string startValue, string increaseValue, string increaseRate, int upgrade)
         {
             var incVal = int.Parse(increaseValue);
             var incRate = float.Parse(increaseRate);
 
             Value = new BigDecimal(startValue);
-            Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, upgrade);
+            Value = NumberDataUtility.GetIsolationInterest(Value, incVal, incRate, upgrade);           
+        }
 
+        public void SetDelay(string startValue, string decreaseValue, string decreaseRate, int upgrade)
+        {
+            var startVal = float.Parse(startValue);
+            var decVal = float.Parse(decreaseValue);
+            var decRate = float.Parse(decreaseRate);
 
-            var sDelay = float.Parse(startDelayValue);
-            var decVal = float.Parse(decreaseDelayValue);
-            var decRate = float.Parse(decreaseDelayRate);
-
-            Delay = sDelay;
+            Delay = startVal;
             Delay = NumberDataUtility.GetIsolationInterest(Delay, decVal, decRate, upgrade);
+
+        }
+
+        public void SetRange(string startValue, string increaseValue, string increaseRate, int upgrade)
+        {
+            var startVal = float.Parse(startValue);
+            var incVal = float.Parse(increaseValue);
+            var incRate = float.Parse(increaseRate);
+
+            Range = startVal;
+            Range = NumberDataUtility.GetIsolationInterest(Delay, incVal, incRate, upgrade);
+
         }
 
         public void SetData(UniversalUsableData data)
