@@ -4,6 +4,10 @@ namespace Utility.Bullet.Data
     using Storage;
     using Effect.Data;
     using ScriptableObjectData;
+    using SDefence.Attack.Raw;
+    using SDefence.Movement.Raw;
+    using SDefence.Attack.Usable;
+    using SDefence.Movement;
 
     [CreateAssetMenu(fileName = "BulletData", menuName = "ScriptableObjects/BulletData")]
     public class BulletData : ScriptableObjectData
@@ -11,40 +15,48 @@ namespace Utility.Bullet.Data
         public enum TYPE_BULLET_ACTION { Move, Curve, Drop, Direct }
 
         [SerializeField]
-        private GameObject _bulletPrefab;
+        private string _graphicObjectKey;
 
         [SerializeField]
-        private string _bulletPrefabKey;
+        private AttackActionRawData _attackActionData;
 
         [SerializeField]
-        private TYPE_BULLET_ACTION _typeBulletAction;
-
-        [SerializeField]
-        private EffectData _arriveEffectData;
-
-        [SerializeField]
-        private string _arriveEffectDataKey;
-
-        [SerializeField]
-        private float _movementSpeed = 1f;
-
-        [SerializeField]
-        private float _height = 0f;
+        private MovementRawData _movementData;
 
         [SerializeField]
         private bool _isRotate = false;
+
+        [SerializeField]
+        private string _activeEffectDataKey;
+
+        [SerializeField]
+        private string _destroyEffectDataKey;
+
+        [SerializeField]
+        private string _activeEffectSfxKey;
+
+        [SerializeField]
+        private string _destroyEffectSfxKey;
+
+
+
+
+        public string GraphicObjectKey => _graphicObjectKey;
+        public AttackActionUsableData GetAttackActionUsableData() => _attackActionData.GetUsableData();
+        public IMovementActionUsableData GetMovementActionUsableData() => _movementData.GetActionUsableData();
+        public IMovementUsableData GetMovementUsableData() => _movementData.GetUsableData();
+        public bool IsRotate => _isRotate;
+        public string ActiveEffectDataKey => _activeEffectDataKey;
+        public string DestroyEffectDataKey => _destroyEffectDataKey;
+        public string ActiveEffectSfxKey => _activeEffectSfxKey;
+        public string DestroyEffectSfxKey => _destroyEffectSfxKey;
+
+
 
 #if UNITY_EDITOR || UNITY_INCLUDE_TESTS
         public static BulletData CreateTest()
         {
             return new BulletData("Data@Bullet");
-        }
-
-        public void SetData(TYPE_BULLET_ACTION typeBulletAction, float movementSpeed, bool isRotate)
-        {
-            _typeBulletAction = typeBulletAction;
-            _movementSpeed = movementSpeed;
-            _isRotate = isRotate;
         }
 
         public override void SetData(string[] arr)
@@ -53,16 +65,37 @@ namespace Utility.Bullet.Data
 
             name = $"{typeof(BulletData).Name}_{Key}";
 
-            _typeBulletAction = (TYPE_BULLET_ACTION)System.Enum.Parse(typeof(TYPE_BULLET_ACTION), arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.TypeBulletAction]);
-            _movementSpeed = float.Parse(arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.MoveSpeed]);
-            _height = float.Parse(arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.Height]);
+            _graphicObjectKey = arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.GraphicObjectKey];
+
+            var attack = AttackActionRawData.Create();
+            attack.SetData(
+                arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.Range],
+                arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.AttackCount],
+                arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.AttackDelayTime],
+                arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.IsOverlap]
+                );
+            _attackActionData = attack;
+
+            var movement = MovementRawData.Create();
+            movement.SetData(
+                arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.StartMovementValue],
+                arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.IncreaseMovementValue],
+                arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.IncreaseMovementRate]
+                );
+
+            movement.SetData(
+                arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.TypeMovement],
+                arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.Accuracy]
+                );
+
+            _movementData = movement;
+
             _isRotate = bool.Parse(arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.IsRotate]);
 
-            if (arr.Length > (int)BulletDataGenerator.TYPE_SHEET_COLUMNS.BulletSpriteKey)
-            {
-                _bulletPrefabKey = arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.BulletSpriteKey];
-                _arriveEffectDataKey = arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.BulletHitKey];
-            }
+            _activeEffectDataKey = arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.ActiveEffectKey];
+            _activeEffectSfxKey = arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.ActiveSfxKey];
+            _destroyEffectDataKey = arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.DestroyEffectKey];
+            _destroyEffectSfxKey = arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.DestorySfxKey];
         }
 
         public override void AddData(string[] arr)
@@ -76,25 +109,6 @@ namespace Utility.Bullet.Data
             return false;
         }
 
-        //public override string[] GetData()
-        //{
-        //    string[] arr = new string[System.Enum.GetValues(typeof(BulletDataGenerator.TYPE_SHEET_COLUMNS)).Length];
-
-        //    arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.TypeBulletAction] = _typeBulletAction.ToString();
-        //    arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.MoveSpeed] = _movementSpeed.ToString();
-        //    arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.Height] = _height.ToString();
-        //    arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.IsRotate] = _isRotate.ToString();
-        //    arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.BulletSpriteKey] = _bulletPrefabKey;
-        //    arr[(int)BulletDataGenerator.TYPE_SHEET_COLUMNS.BulletHitKey] = _arriveEffectDataKey;
-
-        //    return arr;
-        //}
-
-        //public override string[][] GetDataArray()
-        //{
-        //    Debug.LogWarning("사용하지 않음");
-        //    return null;
-        //}
 
         private static Sprite _instanceSprite;
 
@@ -120,36 +134,8 @@ namespace Utility.Bullet.Data
             }
 
             sprite.sprite = _instanceSprite;
-            _bulletPrefab = obj;
-            _bulletPrefab.gameObject.SetActive(false);
         }
 #endif
-
-
-        #region ##### Getter Setter #####
-        public GameObject prefab
-        {
-            get
-            {
-                if (_bulletPrefab == null && !string.IsNullOrEmpty(_bulletPrefabKey))
-                    _bulletPrefab = DataStorage.Instance.GetDataOrNull<GameObject>(_bulletPrefabKey, "Bullet", null);
-                return _bulletPrefab;
-            }
-        }
-        public EffectData ArriveEffectData
-        {
-            get
-            {
-                if (_arriveEffectData == null && !string.IsNullOrEmpty(_arriveEffectDataKey))
-                    _arriveEffectData = DataStorage.Instance.GetDataOrNull<EffectData>(_arriveEffectDataKey);
-                return _arriveEffectData;
-            }
-        }
-        public bool IsRotate => _isRotate;
-        public float MovementSpeed => _movementSpeed;
-        public TYPE_BULLET_ACTION TypeBulletAction => _typeBulletAction;
-
-        #endregion
 
     }
 }

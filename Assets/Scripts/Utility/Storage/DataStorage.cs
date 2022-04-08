@@ -5,6 +5,7 @@ namespace Storage
     using UnityEngine;
     using System.IO;
     using UtilityManager;
+    using Utility.ScriptableObjectData;
 
     [ExecuteAlways]
     public class DataStorage
@@ -27,6 +28,7 @@ namespace Storage
         {
             InitializeDatasFromAssetDatabaseDirectory<Sprite>("Images");
             InitializeDatasFromAssetDatabaseDirectory<GameObject>("Prefabs");
+            InitializeDatasFromAssetDatabaseDirectory<ScriptableObject>("Data");
             //#if UNITY_EDITOR
             //            InitializeDatasFromAssetDatabase<Sprite>("Images/Icons/Assets");
             //            InitializeDatasFromAssetDatabase<SkeletonDataAsset>("Data/Spine");
@@ -136,9 +138,9 @@ namespace Storage
             for (int i = 0; i < files.Length; i++)
             {
                 var data = AssetDatabase.LoadAssetAtPath<T>(files[i]);
-                Debug.Log(files[i]);
                 if (data != null)
                 {
+                    Debug.Log(data.name);
                     AddDirectoryInData(data.name, data);
                 }
             }
@@ -285,9 +287,10 @@ namespace Storage
             {
                 var dic = _dataDic[ToTypeString<T>()];
                 var cKey = GetConvertKey(key, firstVerb, lastVerb);
-//#if UNITY_EDITOR
-//                Debug.Log(ToTypeString<T>() + " " + cKey);
-//#endif
+                //#if UNITY_EDITOR
+                //                Debug.Log(ToTypeString<T>() + " " + cKey);
+                //#endif
+                Debug.Log(cKey);
                 return GetDataOrNull<T>(dic, cKey);
             }
             return null;

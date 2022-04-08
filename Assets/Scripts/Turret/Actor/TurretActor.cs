@@ -28,6 +28,8 @@ namespace SDefence.Actor
 
         public Vector2 AttackPos => transform.position;
 
+        public IAttackUsableData AttackUsableData => _entity.GetAttackUsableData();
+
         public void Activate() 
         {
             _nowActionTime = 0f;

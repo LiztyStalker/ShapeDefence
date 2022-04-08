@@ -30,6 +30,7 @@ namespace SDefence.Actor
         public Vector2 AttackPos => transform.position;
         public Vector2 NowPosition => transform.position;
         public bool IsDamagable => !_isBroken;
+        public IAttackUsableData AttackUsableData => _entity.GetAttackUsableData();
 
         public void SetPosition(Vector2 pos) => transform.position = pos;
 

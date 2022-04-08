@@ -4,23 +4,34 @@ namespace Utility.Bullet
     using PoolSystem;
     using Data;
     using Effect;
+    using SDefence.Actor;
+    using SDefence.Attack;
+    using SDefence.Movement;
+    using SDefence.Attack.Usable;
 
-    public class BulletActor : MonoBehaviour, IPoolElement
+    public class BulletActor : MonoBehaviour, IPoolElement, IMoveable
     {
 
         private const float ARRIVE_DISTANCE = 0.1f;
 
-        private GameObject _prefab;
-        private BulletData _data;
+        private IAttackable _attackable;
 
+        private GameObject _graphicObject;
+        private BulletData _data;
 
         private Vector2 _startPos;
         private Vector2 _arrivePos;
+
+        private IMovementUsableData _movementData;
+        private IMovementActionUsableData _movementActionData;
+        private AttackActionUsableData _attackActionData;
 
         private float _nowTime = 0f;
 
         private SpriteRenderer _spriteRenderer { get; set; }
         private ParticleSystem[] _particles { get; set; }
+
+        public Vector2 NowPosition => transform.position;
 
         private bool _isEffectActivate = false;
 
@@ -32,7 +43,27 @@ namespace Utility.Bullet
         public void SetData(BulletData data)
         {
             _data = data;
+            _movementData = _data.GetMovementUsableData();
+            _movementActionData = _data.GetMovementActionUsableData();
+            _attackActionData = _data.GetAttackActionUsableData();
+
+            _movementActionData.SetOnEndedActionListener(OnArriveEvent);
             SetName();
+        }
+
+        public void SetData(IAttackable attackable)
+        {
+            _attackable = attackable;
+        }
+
+        public void SetGraphicObject(GameObject graphicObject)
+        {
+            if (_graphicObject != null) DestroyImmediate(_graphicObject);
+
+            _graphicObject = Instantiate(graphicObject);
+            _graphicObject.transform.SetParent(transform);
+            _graphicObject.transform.localPosition = Vector3.zero;
+            _graphicObject.transform.localScale = Vector3.one;
         }
 
         public void SetPosition(Vector2 startPos, Vector2 arrivePos)
@@ -48,40 +79,6 @@ namespace Utility.Bullet
         {
             _nowTime = 0f;
             _isEffectActivate = false;
-
-            if (_prefab == null)
-            {
-                //flyweight ÇÊ¿ä
-                _prefab = Instantiate(_data.prefab);
-                _prefab.transform.SetParent(transform);
-                _prefab.transform.localPosition = Vector3.zero;
-                _prefab.transform.localScale = Vector3.one;
-                _prefab.gameObject.SetActive(true);
-            }
-
-            transform.position = _startPos;
-
-            _spriteRenderer = GetComponentInChildren<SpriteRenderer>(true);
-            if (_spriteRenderer != null)
-            {
-                //_spriteRenderer.sortingLayerName = "FrontEffect";
-                //_spriteRenderer.sortingOrder = (int)-transform.position.y - 5;
-                _spriteRenderer.enabled = true;
-            }
-
-            _particles = _prefab.GetComponentsInChildren<ParticleSystem>(true);
-            //if (_particles != null)
-            //{
-            //    for (int i = 0; i < _particles.Length; i++)
-            //    {
-            //        var psRenderer = _particles[i].GetComponent<ParticleSystemRenderer>();
-            //        if(psRenderer != null)
-            //        {
-            //            psRenderer.sortingLayerName = "FrontEffect";
-            //            psRenderer.sortingOrder = (int)-transform.position.y + 10;
-            //        }
-            //    }
-            //}
             gameObject.SetActive(true);
 
         }
@@ -89,6 +86,9 @@ namespace Utility.Bullet
         public void Inactivate()
         {
             gameObject.SetActive(false);
+            _attackable = null;
+            _movementActionData = null;
+            _attackActionData = null;
             _startPos = Vector2.zero;
             _arrivePos = Vector2.zero;
             _nowTime = 0f;
@@ -97,98 +97,62 @@ namespace Utility.Bullet
 
         public void CleanUp()
         {
-            DestroyImmediate(_prefab);
             _data = null;
             _arrivedEvent = null;
             _inactiveEvent = null;
             _startPos = Vector2.zero;
             _arrivePos = Vector2.zero;
-            _prefab = null;
         }
+
+
+        public void SetPosition(Vector2 pos) => transform.position = pos;
 
         public void SetScale(float scale)
         {
             transform.localScale = Vector3.one * scale;
         }
-        private void Update()
+        public void RunProcess(float deltaTime)
         {
-
-            _nowTime = CalculateTime(_nowTime);
-            transform.position = GetPosition(_startPos, _arrivePos, _nowTime);
-
-            if (_data.IsRotate) transform.eulerAngles = GetEuler(_startPos, _arrivePos, _nowTime);
-
-            //Debug.Log(transform.position + " " + _startPos + " " + _arrivePos + " " + _nowTime);
-
-            if (Vector2.Distance(transform.position, _arrivePos) < ARRIVE_DISTANCE)
-            {
-                if (!_isEffectActivate)
-                {
-                    OnArriveEvent();
-                    EffectManager.Current.Activate(_data.ArriveEffectData, transform.position);
-                    _isEffectActivate = true;
-                }
-            }
-
-            if (_isEffectActivate)
-            {
-                ReadyInactivate();
-            }
-
+            _movementActionData.RunProcess(this, _movementData, deltaTime, _arrivePos);
         }
+              
 
-        private float CalculateTime(float nowTime)
-        {
-            return nowTime += Time.deltaTime * _data.MovementSpeed;
-        }
+        //private Vector3 GetEuler(Vector3 startPos, Vector3 arrivePos, float nowTime)
+        //{
+        //    var nowPos = startPos;
+        //    var direction = arrivePos - nowPos;
+        //    var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        //    return Vector3.forward * angle;
+        //}
 
-        private Vector3 GetEuler(Vector3 startPos, Vector3 arrivePos, float nowTime)
-        {
-            var nowPos = startPos;
-            switch (_data.TypeBulletAction)
-            {
-                case BulletData.TYPE_BULLET_ACTION.Curve:
-                    nowPos = Ditzel.Parabola.MathParabola.Parabola(startPos, arrivePos, 0.5f, nowTime);
-                    arrivePos = Ditzel.Parabola.MathParabola.Parabola(startPos, arrivePos, 0.5f, nowTime + 0.1f);
-                    break;
-                case BulletData.TYPE_BULLET_ACTION.Drop:
-                    nowPos = new Vector2(arrivePos.x, arrivePos.y + 10f);
-                    break;
-            }
+        //private Vector2 GetPosition(Vector3 startPos, Vector3 arrivePos, float nowTime)
+        //{
+        //    switch (_data.TypeBulletAction)
+        //    {
+        //        case BulletData.TYPE_BULLET_ACTION.Curve:
+        //            return Ditzel.Parabola.MathParabola.Parabola(startPos, arrivePos, 0.5f, nowTime);
+        //        case BulletData.TYPE_BULLET_ACTION.Move:
+        //            return Vector2.MoveTowards(startPos, arrivePos, nowTime);
+        //        case BulletData.TYPE_BULLET_ACTION.Drop:
+        //            var pos = new Vector2(arrivePos.x, arrivePos.y + 10f);
+        //            return Vector2.MoveTowards(pos, arrivePos, nowTime);
+        //        case BulletData.TYPE_BULLET_ACTION.Direct:
+        //            return arrivePos;
+        //    }
+        //    return Vector2.zero;
+        //}
 
-            var direction = arrivePos - nowPos;
-            var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            return Vector3.forward * angle;
-        }
+        //private Vector2 GetSlerp(Vector3 startPos, Vector3 arrivePos, float nowTime)
+        //{
+        //    var center = (startPos + arrivePos) * 8f;
+        //    center -= Vector3.up;
 
-        private Vector2 GetPosition(Vector3 startPos, Vector3 arrivePos, float nowTime)
-        {
-            switch (_data.TypeBulletAction)
-            {
-                case BulletData.TYPE_BULLET_ACTION.Curve:
-                    return Ditzel.Parabola.MathParabola.Parabola(startPos, arrivePos, 0.5f, nowTime);
-                case BulletData.TYPE_BULLET_ACTION.Move:
-                    return Vector2.MoveTowards(startPos, arrivePos, nowTime);
-                case BulletData.TYPE_BULLET_ACTION.Drop:
-                    var pos = new Vector2(arrivePos.x, arrivePos.y + 10f);
-                    return Vector2.MoveTowards(pos, arrivePos, nowTime);
-                case BulletData.TYPE_BULLET_ACTION.Direct:
-                    return arrivePos;
-            }
-            return Vector2.zero;
-        }
-
-        private Vector2 GetSlerp(Vector3 startPos, Vector3 arrivePos, float nowTime)
-        {
-            var center = (startPos + arrivePos) * 8f;
-            center -= Vector3.up;
-
-            var startRelPos = startPos - center;
-            var arriveRelPos = arrivePos - center;
-            var nowPos = Vector3.Slerp(startRelPos, arriveRelPos, nowTime);
-            nowPos += center;
-            return nowPos;
-        }
+        //    var startRelPos = startPos - center;
+        //    var arriveRelPos = arrivePos - center;
+        //    var nowPos = Vector3.Slerp(startRelPos, arriveRelPos, nowTime);
+        //    nowPos += center;
+        //    return nowPos;
+        //}
 
 
         private void ReadyInactivate()
@@ -225,6 +189,25 @@ namespace Utility.Bullet
         }
 
 
+        public void OnTriggerEnter2D(Collider2D col)
+        {
+            var damagable = col.GetComponent<IDamagable>();
+            if (damagable != null)
+            {
+                if (damagable != _attackable)
+                {
+                    if (damagable.IsDamagable)
+                    {
+                        damagable.SetDamage(_attackable.AttackUsableData);
+                        OnArriveEvent();
+                        //count--;
+                    }
+                }
+            }
+
+            //if(count == 0) Inactivate();
+        }
+
 
 
         #region ##### Listener #####
@@ -238,8 +221,11 @@ namespace Utility.Bullet
 
         private void OnArriveEvent()
         {
+            Debug.Log("Arrive");
             _arrivedEvent?.Invoke(this);
+            Inactivate();
         }
+
         #endregion
 
 

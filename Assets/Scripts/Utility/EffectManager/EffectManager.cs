@@ -76,23 +76,40 @@ namespace Utility.Effect
         /// <returns></returns>
         public EffectActor Activate(EffectData effectData, Vector3 position, System.Action<EffectActor> inactiveCallback = null)
         {
-            if (Application.isPlaying)
+            if (effectData != null)
             {
-                if (effectData != null)
-                {
-                    var actor = _pool.GiveElement();
-                    actor.SetData(effectData);
-                    actor.SetOnInactiveListener(actor => {
-                        inactiveCallback?.Invoke(actor);
-                        RetrieveActor(actor);
-                    });
-                    actor.Activate(position);
-                    _list.Add(actor);
-                    return actor;
-                }
+                var actor = _pool.GiveElement();
+                actor.SetData(effectData);
+                actor.SetOnInactiveListener(actor => {
+                    inactiveCallback?.Invoke(actor);
+                    RetrieveActor(actor);
+                });
+                actor.Activate(position);
+                _list.Add(actor);
+                return actor;
             }
             return null;
         }
+
+
+        public EffectActor Activate(GameObject effectObject, Vector3 position, System.Action<EffectActor> inactiveCallback = null)
+        {
+            if (effectObject != null)
+            {
+                var actor = _pool.GiveElement();
+                actor.SetData(effectObject);
+                actor.SetOnInactiveListener(actor => {
+                    inactiveCallback?.Invoke(actor);
+                    RetrieveActor(actor);
+                });
+                actor.Activate(position);
+                _list.Add(actor);
+                return actor;
+            }
+            return null;
+        }
+
+
 
         /// <summary>
         /// EffectActor를 종료합니다

@@ -16,12 +16,22 @@ namespace Utility.Effect
 
         private void SetName()
         {
-            gameObject.name = $"EffectActor_{_data.name}";
+            gameObject.name = $"EffectActor";
         }
 
         public void SetData(EffectData effectData)
         {
             _data = effectData;
+            SetName();
+        }
+
+        public void SetData(GameObject effectObject)
+        {
+            _prefab = Instantiate(effectObject);
+            _prefab.transform.SetParent(transform);
+            _prefab.transform.localPosition = Vector3.zero;
+            _prefab.transform.localScale = Vector3.one * 0.1f;
+            _prefab.gameObject.SetActive(true);
             SetName();
         }
 
@@ -34,11 +44,7 @@ namespace Utility.Effect
 
             if (_prefab == null)
             {
-                _prefab = Instantiate(_data.effectPrefab);
-                _prefab.transform.SetParent(transform);
-                _prefab.transform.localPosition = Vector3.zero;
-                _prefab.transform.localScale = Vector3.one * 0.1f;
-                _prefab.gameObject.SetActive(true);
+                SetData(_prefab);
             }
 
             transform.position = position;

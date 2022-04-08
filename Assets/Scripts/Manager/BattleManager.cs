@@ -11,6 +11,10 @@ namespace SDefence.Manager
     using System.Collections.Generic;
     using PoolSystem;
     using SDefence.Turret.Entity;
+    using Utility.Bullet.Data;
+    using SDefence.Attack;
+    using Utility.ScriptableObjectData;
+    using Utility.Effect.Data;
 
     public class OrbitCase
     {
@@ -168,14 +172,17 @@ namespace SDefence.Manager
             var actor = EnemyActor.Create();
             actor.name = "Actor@Enemy";
             actor.AddOnRetrieveListener(RetrieveEnemyActor);
+            actor.AddOnAttackListener(OnAttackEvent);
             actor.Inactivate();
             return actor;
         }
-        private void RetrieveEnemyActor(EnemyActor element)
+        private void RetrieveEnemyActor(EnemyActor actor)
         {
-            _enemyActorList.Remove(element);
-            _enemyPool.RetrieveElement(element);
-            element.Inactivate();
+            _enemyActorList.Remove(actor);
+            _enemyPool.RetrieveElement(actor);
+            actor.RemoveOnRetrieveListener(RetrieveEnemyActor);
+            actor.RemoveOnAttackListener(OnAttackEvent);
+            actor.Inactivate();
         }
 
         public void RunProcess(float deltaTime)
@@ -193,6 +200,7 @@ namespace SDefence.Manager
                 _enemyActorList[i].RunProcess(deltaTime, _hqActor.transform.position);
             }
 
+            _bulletMgr.RunProcess(deltaTime);
             //if(_waveTime > 10f)
             //{
             //    NextWave();
@@ -238,6 +246,7 @@ namespace SDefence.Manager
                             var actor = TurretActor.Create();
                             actor.Activate();
                             actor.AddOnBattlePacketListener(OnBattlePacketEvent);
+                            actor.AddOnAttackListener(OnAttackEvent);
                             actor.transform.SetParent(_gameObject.transform);
                             _turretDic.Add(trPacket.Index, actor);
                                                         
@@ -287,6 +296,42 @@ namespace SDefence.Manager
                     AppearEnemy();
                     break;
             }
+        }
+
+        private void OnAttackEvent(string bulletKey, IAttackable attackable, IAttackUsableData attackData)
+        {
+            var bulletData = (BulletData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(bulletKey, "BulletData");
+
+            if (bulletData != null)
+            {
+                switch (attackable)
+                {
+                    case EnemyActor eActor:
+                        _bulletMgr.Activate(attackable, bulletData, 1f, attackable.AttackPos, _hqActor.transform.position, actor =>
+                        {
+                            var effect = DataStorage.Instance.GetDataOrNull<GameObject>(bulletData.DestroyEffectDataKey);
+                            _effectMgr.Activate(effect, actor.NowPosition);
+                        });
+                        break;
+                    case TurretActor tActor:
+                        if (_enemyActorList.Count > 0)
+                        {
+                            var enemyActor = _enemyActorList[UnityEngine.Random.Range(0, _enemyActorList.Count)];
+                            _bulletMgr.Activate(attackable, bulletData, 1f, attackable.AttackPos, enemyActor.transform.position, actor =>
+                            {
+                                var effect = DataStorage.Instance.GetDataOrNull<GameObject>(bulletData.DestroyEffectDataKey);
+                                _effectMgr.Activate(effect, actor.NowPosition);                                
+                            });
+                        }
+                        break;
+                }
+            }
+
+
+
+            //var bulletData = DataStorage.Instance.GetDataOrNull<BulletData>(bulletKey);
+            //if(bulletData != null)
+            //    _bulletMgr.Activate(bulletData, 1f, attackable.AttackPos, )
         }
 
         private void AppearEnemy()

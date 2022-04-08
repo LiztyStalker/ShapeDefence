@@ -5,5 +5,7 @@ namespace SDefence.Attack
     public interface IAttackable
     {
         public Vector2 AttackPos { get; }
+
+        public IAttackUsableData AttackUsableData { get; }
     }
 }
