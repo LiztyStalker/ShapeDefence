@@ -290,7 +290,7 @@ namespace Storage
                 //#if UNITY_EDITOR
                 //                Debug.Log(ToTypeString<T>() + " " + cKey);
                 //#endif
-                Debug.Log(cKey);
+                //Debug.Log(cKey);
                 return GetDataOrNull<T>(dic, cKey);
             }
             return null;

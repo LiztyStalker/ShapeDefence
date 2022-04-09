@@ -155,7 +155,8 @@ namespace SDefence.Actor
         {
             var actor = new GameObject();
             actor.name = "Actor@Turret";
-            actor.AddComponent<CircleCollider2D>();
+            var col = actor.AddComponent<CircleCollider2D>();
+            col.isTrigger = true;
             return actor.AddComponent<TurretActor>();
         }
 #endif

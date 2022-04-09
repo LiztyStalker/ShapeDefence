@@ -7,6 +7,7 @@ namespace Utility.Bullet
     using SDefence.Attack;
     using SDefence.Attack.Usable;
     using SDefence.Actor;
+    using Storage;
 
     public class BulletManager
     {
@@ -87,10 +88,13 @@ namespace Utility.Bullet
                 return null;
             }
 
+            var prefab = DataStorage.Instance.GetDataOrNull<GameObject>(data.GraphicObjectKey);
+
             var actor = _pool.GiveElement();
             actor.SetData(data);
             actor.SetData(attackable);
             actor.SetPosition(startPos, arrivePos);
+            if(prefab != null) actor.SetGraphicObject(prefab);
             actor.SetOnAttackListener(attackCallback);
             actor.SetOnArrivedListener(actor =>
             {
@@ -129,6 +133,7 @@ namespace Utility.Bullet
 
         private void RetrieveActor(BulletActor actor)
         {
+            actor.Inactivate();
             _list.Remove(actor);
             _pool.RetrieveElement(actor);
         }

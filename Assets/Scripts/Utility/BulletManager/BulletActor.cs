@@ -39,9 +39,12 @@ namespace Utility.Bullet
             var obj = new GameObject();
             var col = obj.AddComponent<CircleCollider2D>();
             col.radius = 0.25f;
+            col.isTrigger = true;
             var rigid = obj.AddComponent<Rigidbody2D>();
             rigid.gravityScale = 0f;
-            return obj.AddComponent<BulletActor>();
+            var actor = obj.AddComponent<BulletActor>();
+            actor.Inactivate();
+            return actor;
         }
 
         public void SetData(BulletData data)
@@ -89,6 +92,7 @@ namespace Utility.Bullet
 
         public void Activate()
         {
+            transform.position = _startPos;
             gameObject.SetActive(true);
         }
 
@@ -160,9 +164,9 @@ namespace Utility.Bullet
             var damagable = col.GetComponent<IDamagable>();
             if (damagable != null)
             {
-                if (damagable != _attackable)
+                if (damagable.IsDamagable) 
                 {
-                    if (damagable.IsDamagable)
+                    if (_attackable is EnemyActor && damagable is TurretActor || _attackable is TurretActor && damagable is EnemyActor)
                     {
                         //충돌 행동
                         _movementActionData.SetCollision();

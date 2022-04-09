@@ -410,13 +410,13 @@ namespace SDefence.Manager
                 switch (attackable)
                 {
                     case EnemyActor eActor:
-                        _bulletMgr.Activate(attackable, bulletData, 1f, attackable.AttackPos, _hqActor.transform.position, OnBulletAttackEvent, null);
+                        _bulletMgr.Activate(attackable, bulletData, 0.1f, attackable.AttackPos, _hqActor.transform.position, OnBulletAttackEvent, null);
                         break;
                     case TurretActor tActor:
                         if (_enemyActorList.Count > 0)
                         {
                             var enemyActor = _enemyActorList[UnityEngine.Random.Range(0, _enemyActorList.Count)];
-                            _bulletMgr.Activate(attackable, bulletData, 1f, attackable.AttackPos, enemyActor.transform.position, OnBulletAttackEvent, null);
+                            _bulletMgr.Activate(attackable, bulletData, 0.1f, attackable.AttackPos, enemyActor.transform.position, OnBulletAttackEvent, null);
                         }
                         break;
                 }
