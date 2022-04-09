@@ -29,6 +29,7 @@ namespace Storage
             InitializeDatasFromAssetDatabaseDirectory<Sprite>("Images");
             InitializeDatasFromAssetDatabaseDirectory<GameObject>("Prefabs");
             InitializeDatasFromAssetDatabaseDirectory<ScriptableObject>("Data");
+            InitializeDatasFromAssetDatabaseDirectory<AudioClip>("Sounds");
             //#if UNITY_EDITOR
             //            InitializeDatasFromAssetDatabase<Sprite>("Images/Icons/Assets");
             //            InitializeDatasFromAssetDatabase<SkeletonDataAsset>("Data/Spine");
@@ -290,7 +291,7 @@ namespace Storage
                 //#if UNITY_EDITOR
                 //                Debug.Log(ToTypeString<T>() + " " + cKey);
                 //#endif
-                //Debug.Log(cKey);
+                Debug.Log(cKey);
                 return GetDataOrNull<T>(dic, cKey);
             }
             return null;

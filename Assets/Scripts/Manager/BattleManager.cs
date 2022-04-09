@@ -324,15 +324,6 @@ namespace SDefence.Manager
 
         private void OnBulletAttackEvent(BulletActor actor, IAttackable attackable, IDamagable damagable, AttackActionUsableData actionData, System.Action endCallback)
         {
-            Debug.Log("Attack");
-            actionData.SetOnStartActionListener(() =>
-            {
-                var effect = DataStorage.Instance.GetDataOrNull<GameObject>(actor.DestroyEffectDataKey);
-                _effectMgr.Activate(effect, actor.NowPosition, 1f);
-            });
-
-
-
             actionData.SetOnAttackActionListener((range, isOverlap) =>
             {
                 if (range < 0.1f)
@@ -382,6 +373,10 @@ namespace SDefence.Manager
                 ////ÀÌÆåÆ®
                 var effect = DataStorage.Instance.GetDataOrNull<GameObject>(actor.DestroyEffectDataKey);
                 _effectMgr.Activate(effect, attackable.AttackPos, 1f);
+
+                var sfx = DataStorage.Instance.GetDataOrNull<AudioClip>(actor.DestroyEffectSfxKey);
+                _audioMgr.Activate(sfx, AudioManager.TYPE_AUDIO.SFX);
+
             });
 
 
@@ -390,8 +385,12 @@ namespace SDefence.Manager
                 var effect = DataStorage.Instance.GetDataOrNull<GameObject>(actor.DestroyEffectDataKey);
                 _effectMgr.Activate(effect, actor.NowPosition, 1f);
 
+                var sfx = DataStorage.Instance.GetDataOrNull<AudioClip>(actor.DestroyEffectSfxKey);
+                _audioMgr.Activate(sfx, AudioManager.TYPE_AUDIO.SFX);
+
                 _attackActionList.Remove(actionData);
                 endCallback?.Invoke();
+
             });
 
 
@@ -408,19 +407,32 @@ namespace SDefence.Manager
 
             if (bulletData != null)
             {
+
+                BulletActor actor = null;
+
                 switch (attackable)
                 {
                     case EnemyActor eActor:
-                        _bulletMgr.Activate(attackable, bulletData, 0.1f, attackable.AttackPos, _hqActor.transform.position, OnBulletAttackEvent, null);
+                        actor = _bulletMgr.Activate(attackable, bulletData, 0.1f, attackable.AttackPos, _hqActor.transform.position, OnBulletAttackEvent, null);
                         break;
                     case TurretActor tActor:
                         if (_enemyActorList.Count > 0)
                         {
                             var enemyActor = _enemyActorList[UnityEngine.Random.Range(0, _enemyActorList.Count)];
-                            _bulletMgr.Activate(attackable, bulletData, 0.1f, attackable.AttackPos, enemyActor.transform.position, OnBulletAttackEvent, null);
+                            actor = _bulletMgr.Activate(attackable, bulletData, 0.1f, attackable.AttackPos, enemyActor.transform.position, OnBulletAttackEvent, null);
                         }
                         break;
                 }
+
+                if (actor != null)
+                {
+                    var effect = DataStorage.Instance.GetDataOrNull<GameObject>(bulletData.ActiveEffectDataKey);
+                    _effectMgr.Activate(effect, attackable.AttackPos, 1f);
+
+                    var sfx = DataStorage.Instance.GetDataOrNull<AudioClip>(bulletData.ActiveEffectSfxKey);
+                    _audioMgr.Activate(sfx, AudioManager.TYPE_AUDIO.SFX);
+                }
+
             }
         }
 
