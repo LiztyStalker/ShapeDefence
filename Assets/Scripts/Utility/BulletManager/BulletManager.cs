@@ -79,14 +79,16 @@ namespace Utility.Bullet
             float scale, 
             Vector2 startPos, 
             Vector2 arrivePos, 
-            System.Action<BulletActor, IAttackable, IDamagable, AttackActionUsableData> attackCallback, 
-            System.Action<BulletActor> retrieveCallback)
+            System.Action<BulletActor, IAttackable, IDamagable, AttackActionUsableData, System.Action> attackCallback, 
+            System.Action<BulletActor> arrivedCallback)
         {
             if (data == null)
             {
                 Debug.LogError("BulletData를 지정하세요");
                 return null;
             }
+
+            Debug.Log("Activate");
 
             var prefab = DataStorage.Instance.GetDataOrNull<GameObject>(data.GraphicObjectKey);
 
@@ -98,9 +100,9 @@ namespace Utility.Bullet
             actor.SetOnAttackListener(attackCallback);
             actor.SetOnArrivedListener(actor =>
             {
-                retrieveCallback?.Invoke(actor);
-                RetrieveActor(actor);
+                arrivedCallback?.Invoke(actor);
             });
+            actor.SetOnRetrieveListener(RetrieveActor);
             actor.SetScale(scale);
             actor.Activate();
             _list.Add(actor);

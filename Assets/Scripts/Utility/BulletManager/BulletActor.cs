@@ -34,6 +34,11 @@ namespace Utility.Bullet
 
         public Vector2 NowPosition => transform.position;
 
+        public string DestroyEffectDataKey => _data.DestroyEffectDataKey;
+        public string DestroyEffectSfxKey => _data.DestroyEffectSfxKey;
+        public string ActiveEffectDataKey => _data.ActiveEffectDataKey;
+        public string ActiveEffectSfxKey => _data.ActiveEffectSfxKey;
+
         public static BulletActor Create()
         {
             var obj = new GameObject();
@@ -99,11 +104,6 @@ namespace Utility.Bullet
         public void Inactivate()
         {
             gameObject.SetActive(false);
-            _attackable = null;
-            _movementActionData = null;
-            _attackActionData = null;
-            _startPos = Vector2.zero;
-            _arrivePos = Vector2.zero;
         }
 
         public void CleanUp()
@@ -198,12 +198,27 @@ namespace Utility.Bullet
         }
 
 
-        private System.Action<BulletActor, IAttackable, IDamagable, AttackActionUsableData> _attackEvent;
-        public void SetOnAttackListener(System.Action<BulletActor, IAttackable, IDamagable, AttackActionUsableData> act) => _attackEvent = act;
+        private System.Action<BulletActor, IAttackable, IDamagable, AttackActionUsableData, System.Action> _attackEvent;
+        public void SetOnAttackListener(System.Action<BulletActor, IAttackable, IDamagable, AttackActionUsableData, System.Action> act) => _attackEvent = act;
         private void OnAttackEvent(IDamagable damagable)
         {
-            _attackEvent?.Invoke(this, _attackable, damagable, _attackActionData);
+            _attackEvent?.Invoke(this, _attackable, damagable, _attackActionData, OnRetrieveEvent);
             OnArrivedEvent();
+        }
+
+
+        private System.Action<BulletActor> _retrieveEvent;
+        public void SetOnRetrieveListener(System.Action<BulletActor> act) => _retrieveEvent = act;
+        private void OnRetrieveEvent()
+        {
+            _retrieveEvent?.Invoke(this);
+            _attackable = null;
+            _movementActionData = null;
+            _attackActionData = null;
+            _arrivedEvent = null;
+            _attackActionData = null;
+            _startPos = Vector2.zero;
+            _arrivePos = Vector2.zero;
         }
 
         #endregion

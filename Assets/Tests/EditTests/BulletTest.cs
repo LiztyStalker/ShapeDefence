@@ -64,7 +64,7 @@ namespace TestFrameworks
             var data = BulletData.Create();
             var actor = BulletActor.Create();
             actor.SetData(data);
-            actor.SetOnAttackListener((actor, attackable, damagable, actionData) =>
+            actor.SetOnAttackListener((actor, attackable, damagable, actionData, callback) =>
             {
                 Debug.Log("Collision");
                 isRun = false;
@@ -126,7 +126,7 @@ namespace TestFrameworks
             AttackActionUsableData _actionData = null;
 
             var manager = BulletManager.Current;
-            var actor = manager.Activate(new TestAttackable(), BulletData.Create(), 1f, Vector2.zero, Vector2.one, (actor, attackable, damagable, actionData) =>
+            var actor = manager.Activate(new TestAttackable(), BulletData.Create(), 1f, Vector2.zero, Vector2.one, (actor, attackable, damagable, actionData, callback) =>
             {
                 actionData.SetOnAttackActionListener((range, isOverlap) =>
                 {

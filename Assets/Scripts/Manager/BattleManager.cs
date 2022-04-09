@@ -322,14 +322,22 @@ namespace SDefence.Manager
             }
         }
 
-        private void OnBulletAttackEvent(BulletActor actor, IAttackable attackable, IDamagable damagable, AttackActionUsableData actionData)
+        private void OnBulletAttackEvent(BulletActor actor, IAttackable attackable, IDamagable damagable, AttackActionUsableData actionData, System.Action endCallback)
         {
-            actionData.SetOnStartActionListener(OnAttackStartEvent);
+            Debug.Log("Attack");
+            actionData.SetOnStartActionListener(() =>
+            {
+                var effect = DataStorage.Instance.GetDataOrNull<GameObject>(actor.DestroyEffectDataKey);
+                _effectMgr.Activate(effect, actor.NowPosition, 1f);
+            });
+
+
+
             actionData.SetOnAttackActionListener((range, isOverlap) =>
             {
-                if(range < 0.1f)
+                if (range < 0.1f)
                 {
-                    if(damagable != null) damagable.SetDamage(attackable.AttackUsableData);
+                    if (damagable != null) damagable.SetDamage(attackable.AttackUsableData);
                 }
                 else
                 {
@@ -337,7 +345,7 @@ namespace SDefence.Manager
 
                     if (attackable is TurretActor)
                     {
-                        for(int i = 0; i < _enemyActorList.Count; i++)
+                        for (int i = 0; i < _enemyActorList.Count; i++)
                         {
                             if ((EnemyActor)damagable != _enemyActorList[i])
                             {
@@ -348,9 +356,9 @@ namespace SDefence.Manager
                             }
                         }
                     }
-                    else if(attackable is EnemyActor)
+                    else if (attackable is EnemyActor)
                     {
-                        foreach(var value in _turretDic.Values)
+                        foreach (var value in _turretDic.Values)
                         {
                             if ((TurretActor)damagable != value)
                             {
@@ -361,7 +369,7 @@ namespace SDefence.Manager
                             }
                         }
 
-                        if((HQActor)damagable != _hqActor)
+                        if ((HQActor)damagable != _hqActor)
                         {
                             if (Vector2.Distance(_hqActor.NowPosition, actor.NowPosition) < range)
                             {
@@ -372,32 +380,25 @@ namespace SDefence.Manager
                 }
 
                 ////¿Ã∆Â∆Æ
-                //var effect = DataStorage.Instance.GetDataOrNull<GameObject>(data.DestroyEffectDataKey);
-                //_effectMgr.Activate(effect, attackable.AttackPos, 1f);
+                var effect = DataStorage.Instance.GetDataOrNull<GameObject>(actor.DestroyEffectDataKey);
+                _effectMgr.Activate(effect, attackable.AttackPos, 1f);
             });
 
-            actionData.SetOnEndedActionListener(OnAttackEndEvent);
+
+            actionData.SetOnEndedActionListener(actionData => 
+            {
+                var effect = DataStorage.Instance.GetDataOrNull<GameObject>(actor.DestroyEffectDataKey);
+                _effectMgr.Activate(effect, actor.NowPosition, 1f);
+
+                _attackActionList.Remove(actionData);
+                endCallback?.Invoke();
+            });
+
+
             _attackActionList.Add(actionData);
 
-
         }
-        private void OnAttackStartEvent()
-        {
-            ////¿Ã∆Â∆Æ
-            //var effect = DataStorage.Instance.GetDataOrNull<GameObject>(data.DestroyEffectDataKey);
-            //_effectMgr.Activate(effect, attackable.AttackPos, 1f);
-
-        }
-
-        private void OnAttackEndEvent(AttackActionUsableData actionData)
-        {
-            ////¿Ã∆Â∆Æ
-            //var effect = DataStorage.Instance.GetDataOrNull<GameObject>(data.DestroyEffectDataKey);
-            //_effectMgr.Activate(effect, attackable.AttackPos, 1f);
-
-            _attackActionList.Remove(actionData);
-        }
-
+       
 
         private void OnAttackEvent(string bulletKey, IAttackable attackable)
         {
