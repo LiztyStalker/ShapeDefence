@@ -48,9 +48,9 @@ namespace SDefence.Attack.Usable
         private void OnStartEvent() => _startEvent?.Invoke();
 
 
-        private System.Action _endedEvent;
-        public void SetOnEndedActionListener(System.Action act) => _endedEvent = act;
-        private void OnEndedEvent() => _endedEvent?.Invoke();
+        private System.Action<AttackActionUsableData> _endedEvent;
+        public void SetOnEndedActionListener(System.Action<AttackActionUsableData> act) => _endedEvent = act;
+        private void OnEndedEvent() => _endedEvent?.Invoke(this);
 
 
         private System.Action<float, bool> _attackEvent;

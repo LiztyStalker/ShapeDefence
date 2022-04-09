@@ -5,6 +5,8 @@ namespace Utility.Bullet
     using PoolSystem;
     using Data;
     using SDefence.Attack;
+    using SDefence.Attack.Usable;
+    using SDefence.Actor;
 
     public class BulletManager
     {
@@ -23,7 +25,8 @@ namespace Utility.Bullet
                     _gameObject = new GameObject();
                     _gameObject.transform.position = Vector3.zero;
                     _gameObject.name = "Manager@Bullet";
-                    Object.DontDestroyOnLoad(_gameObject);
+                    if(Application.isPlaying)
+                        Object.DontDestroyOnLoad(_gameObject);
                 }
                 return _gameObject;
             }
@@ -63,15 +66,20 @@ namespace Utility.Bullet
 
         /// <summary>
         /// 탄환을 생성합니다
-        /// Edit : 실행안함
-        /// Play : BulletActor 생성
         /// </summary>
         /// <param name="data"></param>
         /// <param name="startPos"></param>
         /// <param name="arrivePos"></param>
         /// <param name="arrivedCallback"></param>
         /// <returns></returns>
-        public BulletActor Activate(IAttackable attackable, BulletData data, float scale, Vector2 startPos, Vector2 arrivePos, System.Action<BulletActor> arrivedCallback = null, System.Action<BulletActor> inactiveCallback = null)
+        public BulletActor Activate(
+            IAttackable attackable, 
+            BulletData data, 
+            float scale, 
+            Vector2 startPos, 
+            Vector2 arrivePos, 
+            System.Action<BulletActor, IAttackable, IDamagable, AttackActionUsableData> attackCallback, 
+            System.Action<BulletActor> retrieveCallback)
         {
             if (data == null)
             {
@@ -83,10 +91,10 @@ namespace Utility.Bullet
             actor.SetData(data);
             actor.SetData(attackable);
             actor.SetPosition(startPos, arrivePos);
-            actor.SetOnArrivedListener(arrivedCallback);
-            actor.SetOnInactiveListener(actor =>
+            actor.SetOnAttackListener(attackCallback);
+            actor.SetOnArrivedListener(actor =>
             {
-                inactiveCallback?.Invoke(actor);
+                retrieveCallback?.Invoke(actor);
                 RetrieveActor(actor);
             });
             actor.SetScale(scale);
@@ -128,12 +136,7 @@ namespace Utility.Bullet
 
         private BulletActor Create()
         {
-            var obj = new GameObject();
-            var actor = obj.AddComponent<BulletActor>();
-            var col = obj.AddComponent<CircleCollider2D>();
-            col.radius = 0.25f;
-            var rigid = obj.AddComponent<Rigidbody2D>();
-            rigid.gravityScale = 0f;
+            var actor = BulletActor.Create();
             actor.transform.SetParent(gameObject.transform);
             return actor;
         }

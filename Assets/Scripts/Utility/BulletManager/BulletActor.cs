@@ -26,20 +26,22 @@ namespace Utility.Bullet
         private IMovementActionUsableData _movementActionData;
         private AttackActionUsableData _attackActionData;
 
-        private float _nowTime = 0f;
-
-        private bool _isAttack = false;
+        private CircleCollider2D _col;
+        private Rigidbody2D _rigid;
 
         private SpriteRenderer _spriteRenderer { get; set; }
         private ParticleSystem[] _particles { get; set; }
 
         public Vector2 NowPosition => transform.position;
 
-        private bool _isEffectActivate = false;
-
-        private void SetName()
+        public static BulletActor Create()
         {
-            gameObject.name = $"BulletActor_{_data.name}";
+            var obj = new GameObject();
+            var col = obj.AddComponent<CircleCollider2D>();
+            col.radius = 0.25f;
+            var rigid = obj.AddComponent<Rigidbody2D>();
+            rigid.gravityScale = 0f;
+            return obj.AddComponent<BulletActor>();
         }
 
         public void SetData(BulletData data)
@@ -48,11 +50,17 @@ namespace Utility.Bullet
             _movementData = _data.GetMovementUsableData();
             _movementActionData = _data.GetMovementActionUsableData();
             _attackActionData = _data.GetAttackActionUsableData();
-
-            _attackActionData.SetOnAttackActionListener(OnDamageEvent);
-
-            _movementActionData.SetOnEndedActionListener(OnArriveEvent);
+            //도착 후 공격 여부 필요
+            _movementActionData.SetOnEndedActionListener(OnArrivedEvent);
             SetName();
+        }
+
+        private void SetName()
+        {
+            if (!Application.isEditor)
+            {
+                gameObject.name = $"BulletActor_{_data.name}";
+            }
         }
 
         public void SetData(IAttackable attackable)
@@ -81,10 +89,7 @@ namespace Utility.Bullet
 
         public void Activate()
         {
-            _nowTime = 0f;
-            _isEffectActivate = false;
             gameObject.SetActive(true);
-
         }
 
         public void Inactivate()
@@ -95,15 +100,12 @@ namespace Utility.Bullet
             _attackActionData = null;
             _startPos = Vector2.zero;
             _arrivePos = Vector2.zero;
-            _nowTime = 0f;
-            _inactiveEvent?.Invoke(this);
         }
 
         public void CleanUp()
         {
             _data = null;
             _arrivedEvent = null;
-            _inactiveEvent = null;
             _startPos = Vector2.zero;
             _arrivePos = Vector2.zero;
         }
@@ -116,11 +118,8 @@ namespace Utility.Bullet
         }
         public void RunProcess(float deltaTime)
         {
-            if (!_isAttack)
-                _attackActionData.RunProcess(deltaTime);
-            else
-                _movementActionData.RunProcess(this, _movementData, deltaTime, _arrivePos);
-        }             
+            _movementActionData.RunProcess(this, _movementData, deltaTime, _arrivePos);
+        }
 
         private void ReadyInactivate()
         {
@@ -165,46 +164,42 @@ namespace Utility.Bullet
                 {
                     if (damagable.IsDamagable)
                     {
-                        //damagable.SetDamage(_attackable.AttackUsableData);
-                        OnCollisionEvent();
-                        _isAttack = true;
+                        //충돌 행동
+                        _movementActionData.SetCollision();
+                        OnAttackEvent(damagable);
+
+                        //충돌 후 반납 여부 필요
                     }
                 }
             }
-
-            //if(count == 0) Inactivate();
         }
+
+#if UNITY_EDITOR
+        public void SetCollsion()
+        {
+            _movementActionData.SetCollision();
+            OnAttackEvent(null);
+        }
+#endif
 
 
 
         #region ##### Listener #####
 
-        private System.Action<float, bool> _damageEvent;
-        private System.Action<BulletActor> _collisionEvent;
         private System.Action<BulletActor> _arrivedEvent;
-        private System.Action<BulletActor> _inactiveEvent;
-
         public void SetOnArrivedListener(System.Action<BulletActor> act) => _arrivedEvent = act;
-        public void SetOnInactiveListener(System.Action<BulletActor> act) => _inactiveEvent = act;
-        public void SetOnCollisionListener(System.Action<BulletActor> act) => _collisionEvent = act;
-        public void SetOnDamageListener(System.Action<float, bool> act) => _damageEvent = act;
-
-        private void OnArriveEvent()
+        private void OnArrivedEvent()
         {
-            Debug.Log("Arrive");
             _arrivedEvent?.Invoke(this);
-            Inactivate();
         }
 
-        private void OnCollisionEvent()
-        {
-            Debug.Log("Collision");
-            _collisionEvent?.Invoke(this);
-        }
 
-        private void OnDamageEvent(float range, bool isOverlap)
+        private System.Action<BulletActor, IAttackable, IDamagable, AttackActionUsableData> _attackEvent;
+        public void SetOnAttackListener(System.Action<BulletActor, IAttackable, IDamagable, AttackActionUsableData> act) => _attackEvent = act;
+        private void OnAttackEvent(IDamagable damagable)
         {
-            _damageEvent?.Invoke(range, isOverlap);
+            _attackEvent?.Invoke(this, _attackable, damagable, _attackActionData);
+            OnArrivedEvent();
         }
 
         #endregion

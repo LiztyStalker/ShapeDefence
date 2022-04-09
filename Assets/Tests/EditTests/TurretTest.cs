@@ -201,11 +201,10 @@ namespace TestFrameworks
 
             bool isRun = true;
 
-            actor.AddOnAttackListener((key, attackable, data) =>
+            actor.AddOnAttackListener((key, attackable) =>
             {
                 Debug.Log(key);
                 Debug.Log(attackable);
-                Debug.Log(data);
                 isRun = false;
             });
 

@@ -16,6 +16,7 @@ namespace SDefence.Manager
     using Utility.ScriptableObjectData;
     using Utility.Effect.Data;
     using SDefence.BattleGen.Data;
+    using SDefence.Attack.Usable;
 
     public class OrbitCase
     {
@@ -122,6 +123,8 @@ namespace SDefence.Manager
         private Dictionary<int, TurretActor> _turretDic;
         private List<EnemyActor> _enemyActorList;
 
+        private List<AttackActionUsableData> _attackActionList;
+
         //≈Õ∑ø ¿ßƒ° ¡ˆ¡§¿⁄
         private float _waveTime;
 
@@ -154,6 +157,8 @@ namespace SDefence.Manager
             _enemyActorList = new List<EnemyActor>();
 
             _levelWaveData = new LevelWaveData();
+
+            _attackActionList = new List<AttackActionUsableData>();
 
             _appearSize = new Vector2(6f, 6f);
         }
@@ -205,6 +210,13 @@ namespace SDefence.Manager
             }
 
             _bulletMgr.RunProcess(deltaTime);
+
+
+            for (int i = 0; i < _attackActionList.Count; i++)
+            {
+                _attackActionList[i].RunProcess(deltaTime);
+            }
+
             //if(_waveTime > 10f)
             //{
             //    NextWave();
@@ -310,40 +322,105 @@ namespace SDefence.Manager
             }
         }
 
+        private void OnBulletAttackEvent(BulletActor actor, IAttackable attackable, IDamagable damagable, AttackActionUsableData actionData)
+        {
+            actionData.SetOnStartActionListener(OnAttackStartEvent);
+            actionData.SetOnAttackActionListener((range, isOverlap) =>
+            {
+                if(range < 0.1f)
+                {
+                    if(damagable != null) damagable.SetDamage(attackable.AttackUsableData);
+                }
+                else
+                {
+                    if (damagable != null) damagable.SetDamage(attackable.AttackUsableData);
+
+                    if (attackable is TurretActor)
+                    {
+                        for(int i = 0; i < _enemyActorList.Count; i++)
+                        {
+                            if ((EnemyActor)damagable != _enemyActorList[i])
+                            {
+                                if (Vector2.Distance(_enemyActorList[i].AttackPos, actor.NowPosition) < range)
+                                {
+                                    _enemyActorList[i].SetDamage(attackable.AttackUsableData);
+                                }
+                            }
+                        }
+                    }
+                    else if(attackable is EnemyActor)
+                    {
+                        foreach(var value in _turretDic.Values)
+                        {
+                            if ((TurretActor)damagable != value)
+                            {
+                                if (Vector2.Distance(value.NowPosition, actor.NowPosition) < range)
+                                {
+                                    value.SetDamage(attackable.AttackUsableData);
+                                }
+                            }
+                        }
+
+                        if((HQActor)damagable != _hqActor)
+                        {
+                            if (Vector2.Distance(_hqActor.NowPosition, actor.NowPosition) < range)
+                            {
+                                _hqActor.SetDamage(attackable.AttackUsableData);
+                            }
+                        }
+                    }
+                }
+
+                ////¿Ã∆Â∆Æ
+                //var effect = DataStorage.Instance.GetDataOrNull<GameObject>(data.DestroyEffectDataKey);
+                //_effectMgr.Activate(effect, attackable.AttackPos, 1f);
+            });
+
+            actionData.SetOnEndedActionListener(OnAttackEndEvent);
+            _attackActionList.Add(actionData);
+
+
+        }
+        private void OnAttackStartEvent()
+        {
+            ////¿Ã∆Â∆Æ
+            //var effect = DataStorage.Instance.GetDataOrNull<GameObject>(data.DestroyEffectDataKey);
+            //_effectMgr.Activate(effect, attackable.AttackPos, 1f);
+
+        }
+
+        private void OnAttackEndEvent(AttackActionUsableData actionData)
+        {
+            ////¿Ã∆Â∆Æ
+            //var effect = DataStorage.Instance.GetDataOrNull<GameObject>(data.DestroyEffectDataKey);
+            //_effectMgr.Activate(effect, attackable.AttackPos, 1f);
+
+            _attackActionList.Remove(actionData);
+        }
+
+
         private void OnAttackEvent(string bulletKey, IAttackable attackable)
         {
-            //var bulletData = (BulletData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(bulletKey, "BulletData");
+            //≈∫»Ø πﬂªÁ
 
-            //if (bulletData != null)
-            //{
-            //    switch (attackable)
-            //    {
-            //        case EnemyActor eActor:
-            //            _bulletMgr.Activate(attackable, bulletData, 1f, attackable.AttackPos, _hqActor.transform.position, actor =>
-            //            {
-            //                var effect = DataStorage.Instance.GetDataOrNull<GameObject>(bulletData.DestroyEffectDataKey);
-            //                _effectMgr.Activate(effect, actor.NowPosition);
-            //            });
-            //            break;
-            //        case TurretActor tActor:
-            //            if (_enemyActorList.Count > 0)
-            //            {
-            //                var enemyActor = _enemyActorList[UnityEngine.Random.Range(0, _enemyActorList.Count)];
-            //                _bulletMgr.Activate(attackable, bulletData, 1f, attackable.AttackPos, enemyActor.transform.position, actor =>
-            //                {
-            //                    var effect = DataStorage.Instance.GetDataOrNull<GameObject>(bulletData.DestroyEffectDataKey);
-            //                    _effectMgr.Activate(effect, actor.NowPosition);                                
-            //                });
-            //            }
-            //            break;
-            //    }
-            //}
+            var bulletData = (BulletData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(bulletKey, "BulletData");
 
-
-
-            //var bulletData = DataStorage.Instance.GetDataOrNull<BulletData>(bulletKey);
-            //if(bulletData != null)
-            //    _bulletMgr.Activate(bulletData, 1f, attackable.AttackPos, )
+            if (bulletData != null)
+            {
+                switch (attackable)
+                {
+                    case EnemyActor eActor:
+                        _bulletMgr.Activate(attackable, bulletData, 1f, attackable.AttackPos, _hqActor.transform.position, OnBulletAttackEvent, null);
+                        break;
+                    case TurretActor tActor:
+                        if (_enemyActorList.Count > 0)
+                        {
+                            var enemyActor = _enemyActorList[UnityEngine.Random.Range(0, _enemyActorList.Count)];
+                            _bulletMgr.Activate(attackable, bulletData, 1f, attackable.AttackPos, enemyActor.transform.position, OnBulletAttackEvent, null);
+                        }
+                        break;
+                }
+            }
         }
 
         private void AppearEnemy()

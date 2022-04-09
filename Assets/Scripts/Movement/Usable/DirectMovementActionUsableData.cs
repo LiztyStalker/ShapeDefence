@@ -6,8 +6,10 @@ namespace SDefence.Movement.Usable
     {
         public override void RunProcess(IMoveable moveable, IMovementUsableData data, float deltaTime, Vector2 target)
         {
-            base.RunProcess(moveable, data, deltaTime, target);
-            moveable.SetPosition(target);
+            if (RunProcessTypeMovement(moveable, target, deltaTime) == TYPE_MOVEMENT_STATE.Run)
+            {
+                moveable.SetPosition(target);
+            }
         }
     }
 }

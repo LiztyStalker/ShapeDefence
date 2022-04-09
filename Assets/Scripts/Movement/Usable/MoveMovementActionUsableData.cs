@@ -6,10 +6,11 @@ namespace SDefence.Movement.Usable
     {
         public override void RunProcess(IMoveable moveable, IMovementUsableData data, float deltaTime, Vector2 target)
         {
-            base.RunProcess(moveable, data, deltaTime, target);
-
-            var pos = Vector2.MoveTowards(moveable.NowPosition, target, data.MovementValue * deltaTime);
-            moveable.SetPosition(pos);
+            if (RunProcessTypeMovement(moveable, target, deltaTime) == TYPE_MOVEMENT_STATE.Run)
+            {
+                var pos = Vector2.MoveTowards(moveable.NowPosition, target, data.MovementValue * deltaTime);
+                moveable.SetPosition(pos);
+            }            
         }
     }
 }

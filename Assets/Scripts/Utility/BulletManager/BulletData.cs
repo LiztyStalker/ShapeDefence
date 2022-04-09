@@ -54,9 +54,9 @@ namespace Utility.Bullet.Data
 
 
 #if UNITY_EDITOR || UNITY_INCLUDE_TESTS
-        public static BulletData CreateTest()
+        public static BulletData Create()
         {
-            return new BulletData("Data@Bullet");
+            return new BulletData();
         }
 
         public override void SetData(string[] arr)
@@ -112,12 +112,16 @@ namespace Utility.Bullet.Data
 
         private static Sprite _instanceSprite;
 
-        private BulletData(string name)
+        private BulletData(string name = null)
         {
             var obj = new GameObject();
             obj.name = name;
             var sprite = obj.AddComponent<SpriteRenderer>();
 
+            Key = "Test";
+            _graphicObjectKey = "Test";
+            _attackActionData = AttackActionRawData.Create();
+            _movementData = MovementRawData.Create();
 
             if (_instanceSprite == null)
             {

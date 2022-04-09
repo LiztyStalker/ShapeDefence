@@ -5,6 +5,8 @@ namespace SDefence.Movement.Usable
 
     public abstract class AbstractMovementActionUsableData : IMovementActionUsableData
     {
+        public enum TYPE_MOVEMENT_STATE { Start, Run, Collision, End}
+
         //private float _movementWeight;
         //private TYPE_MOVEMENT_ARRIVE _typeArrived;
         //private TYPE_MOVEMENT_COLLISION _typeCollision;
@@ -12,7 +14,7 @@ namespace SDefence.Movement.Usable
         private float _accuracy;
 
         private float _nowMovementTime = 0f;
-        private bool _isStart = false;
+        private TYPE_MOVEMENT_STATE _typeMovementState;
 
 
 
@@ -40,38 +42,42 @@ namespace SDefence.Movement.Usable
         public void SetData(float accuracy)
         {
             _accuracy = accuracy;
-
-            _isStart = false;
+            _typeMovementState = TYPE_MOVEMENT_STATE.Start;
             _nowMovementTime = 0f;
         }
 
-        public virtual void RunProcess(IMoveable moveable, IMovementUsableData data, float deltaTime, Vector2 target)
+        public abstract void RunProcess(IMoveable moveable, IMovementUsableData data, float deltaTime, Vector2 target);
+
+
+        protected TYPE_MOVEMENT_STATE RunProcessTypeMovement(IMoveable moveable, Vector2 target, float deltaTime)
         {
-            if (!_isStart)
+            switch (_typeMovementState)
             {
-                OnStartEvent();
-                _isStart = true;
-            }
+                case TYPE_MOVEMENT_STATE.Start:
+                    OnStartEvent();
+                    _typeMovementState = TYPE_MOVEMENT_STATE.Run;
+                    break;
+                case TYPE_MOVEMENT_STATE.Run:
+                    _nowMovementTime += deltaTime;
 
-            _nowMovementTime += deltaTime;
-
-            if (Vector2.Distance(moveable.NowPosition, target) < _accuracy + 0.01f)
-            {
-                OnEndedEvent();
-                //switch (TypeArrived)
-                //{
-                //    case TYPE_MOVEMENT_ARRIVE.Destroy:
-                //        OnEndedEvent();
-                //        break;
-                //    case TYPE_MOVEMENT_ARRIVE.Repeat:
-                //        break;
-                //    case TYPE_MOVEMENT_ARRIVE.Return:
-                //        break;
-                //    case TYPE_MOVEMENT_ARRIVE.Stop:
-                //        OnEndedEvent();
-                //        break;
-                //}
+                    if (Vector2.Distance(moveable.NowPosition, target) < 0.1f) 
+                    {
+                        _typeMovementState = TYPE_MOVEMENT_STATE.End;
+                    }
+                    break;
+                case TYPE_MOVEMENT_STATE.Collision:
+                    //충돌시 End인지 Run인지 구분 필요
+                case TYPE_MOVEMENT_STATE.End:
+                    Debug.Log("End");
+                    OnEndedEvent();
+                    break;
             }
+            return _typeMovementState;
+        }
+
+        public void SetCollision()
+        {
+            _typeMovementState = TYPE_MOVEMENT_STATE.Collision;
         }
 
 
@@ -85,7 +91,6 @@ namespace SDefence.Movement.Usable
         private System.Action _endedEvent;
         public void SetOnEndedActionListener(System.Action act) => _endedEvent = act;
         protected void OnEndedEvent() => _endedEvent?.Invoke();
-
 
         //private System.Action<Vector2> _movementEvent;
         //public void SetOnMovementActionListener(System.Action<Vector2> act) => _movementEvent = act;

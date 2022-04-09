@@ -210,6 +210,11 @@ namespace TestFrameworks
             public void SetOnEndedActionListener(System.Action act) => _endedEvent = act;
             protected void OnEndedEvent() => _endedEvent?.Invoke();
 
+            public void SetCollision()
+            {
+                throw new System.NotImplementedException();
+            }
+
 
             //private System.Action<Vector2> _movementEvent;
             //public void SetOnMovementActionListener(System.Action<Vector2> act) => _movementEvent = act;
