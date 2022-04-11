@@ -150,9 +150,9 @@ namespace SDefence.Actor
                         usable.SetData(_durableEntity.GetDurableUsableData<HealthDurableUsableData>().CreateUniversalUsableData());
                         damagable.SetDamage(usable);
 
-                        _isBroken = true;
-                        OnRetrieveEvent();
                     }
+                    _isBroken = true;
+                    OnRetrieveEvent();
                 }
             }
         }
