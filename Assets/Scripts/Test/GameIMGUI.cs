@@ -75,6 +75,14 @@ namespace SDefence.Test
             }
 
 
+            //전투
+            if (GUILayout.Button("전투 시작"))
+            {
+                var cmd = new BattleCommandPacket();
+                _gameManager.OnCommandPacketEvent(cmd);
+            }
+
+
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();
