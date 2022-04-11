@@ -88,13 +88,6 @@ namespace SDefence.Actor
             OnActorBattlePacketEvent();
         }
 
-        /// <summary>
-        /// ÀüÅõ ¹Ìµ¹ÀÔ
-        /// </summary>
-        public void UnsetDurableBattleEntity()
-        {
-            _durableEntity = null;
-        }
 
         public string GetDurableValue<T>() where T : IDurableUsableData => _durableEntity.GetValue<T>();
         public float GetDurableRate<T>() where T : IDurableUsableData => _durableEntity.GetRate<T>();
@@ -146,17 +139,20 @@ namespace SDefence.Actor
         /// <param name="data"></param>
         public void SetDamage(IAttackUsableData data)
         {
-            if (!_isBroken)
+            if (!_isInvincible)
             {
-                OnHitBattlePacketEvent(_durableEntity.GetRate<ShieldDurableUsableData>() > 0);
-
-                _durableEntity.Subject(data);               
-
-                if (_durableEntity.IsZero<HealthDurableUsableData>())
+                if (!_isBroken)
                 {
-                    //ÆÄ±«µÊ »óÅÂ
-                    _isBroken = true;
-                    OnDestroyBattlePacketEvent();
+                    OnHitBattlePacketEvent(_durableEntity.GetRate<ShieldDurableUsableData>() > 0);
+
+                    _durableEntity.Subject(data);
+
+                    if (_durableEntity.IsZero<HealthDurableUsableData>())
+                    {
+                        //ÆÄ±«µÊ »óÅÂ
+                        _isBroken = true;
+                        OnDestroyBattlePacketEvent();
+                    }
                 }
             }
         }
