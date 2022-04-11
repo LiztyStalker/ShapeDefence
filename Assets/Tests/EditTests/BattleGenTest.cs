@@ -87,7 +87,7 @@ namespace TestFrameworks
                 Debug.Log("Gen");
             });
 
-            entity.RunProcess(1f);
+            entity.RunProcessBattle(1f);
             LogAssert.Expect(LogType.Log, "Gen");
         }
 
@@ -127,7 +127,7 @@ namespace TestFrameworks
             while (isRun)
             {
                 nowTime += Time.deltaTime;
-                entity.RunProcess(Time.deltaTime);
+                entity.RunProcessBattle(Time.deltaTime);
 
                 if(nowTime > 1f)
                 {
