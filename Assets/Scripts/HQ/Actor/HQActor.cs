@@ -17,9 +17,12 @@ namespace SDefence.Actor
         private HQEntity _entity;
         private DurableBattleEntity _durableEntity;
 
-        public string Key => _entity.Key;
+        private bool _isInvincible = true;
 
+        public string Key => _entity.Key;
         public Vector2 NowPosition => transform.position;
+        public bool IsDamagable => !_isInvincible;
+
 
         public void Activate() 
         {
@@ -39,6 +42,11 @@ namespace SDefence.Actor
         public void SetEntity(HQEntity entity)
         {
             _entity = entity;
+        }
+
+        public void SetInvincible(bool isInvincible)
+        {
+            _isInvincible = isInvincible;
         }
 
         public void SetGraphicObject(GameObject graphicObject)
@@ -92,7 +100,6 @@ namespace SDefence.Actor
             OnBattlePacketEvent();
         }
 
-        public bool IsDamagable => true;
 
 
 #if UNITY_EDITOR
