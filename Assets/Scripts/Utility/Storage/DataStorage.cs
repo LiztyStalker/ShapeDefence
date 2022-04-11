@@ -141,7 +141,7 @@ namespace Storage
                 var data = AssetDatabase.LoadAssetAtPath<T>(files[i]);
                 if (data != null)
                 {
-                    Debug.Log(data.name);
+                    Debug.Log($"InitializeDatasFromAssetDatabaseDirectory Data - {data.name}");
                     AddDirectoryInData(data.name, data);
                 }
             }
@@ -149,7 +149,7 @@ namespace Storage
             var directories = System.IO.Directory.GetDirectories($"Assets/{path}");
             for (int i = 0; i < directories.Length; i++)
             {
-                Debug.Log(directories[i]);
+                Debug.Log($"InitializeDatasFromAssetDatabaseDirectory Directory - {directories[i]}");
                 if (Directory.Exists(directories[i]))
                 {
                     InitializeDatasFromAssetDatabaseDirectory<T>(directories[i].Replace("Assets/", ""));
@@ -158,7 +158,7 @@ namespace Storage
 
 
 
-            Debug.Log($"{typeof(T)} : {GetDataCount<T>()}");
+            Debug.Log($"DataStorage Loaded - {typeof(T)} : {GetDataCount<T>()}");
         }
 
         private void InitializeDataFromAssetDatabase<T>(string path, string name) where T : Object
@@ -291,7 +291,7 @@ namespace Storage
                 //#if UNITY_EDITOR
                 //                Debug.Log(ToTypeString<T>() + " " + cKey);
                 //#endif
-                Debug.Log(cKey);
+                //Debug.Log(cKey);
                 return GetDataOrNull<T>(dic, cKey);
             }
             return null;
