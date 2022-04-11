@@ -7,7 +7,7 @@ namespace SDefence.BattleGen.Entity
     public class BattleGenEntity
     {
 
-        private const float BATTLE_GEN_LOBBY_DELAY = .5f;
+        private const float BATTLE_GEN_LOBBY_DELAY = 1f;
 
         private BattleGenLevelData _battleGenLevelData;
         private BattleGenWaveData _battleGenWaveData;
@@ -70,12 +70,12 @@ namespace SDefence.BattleGen.Entity
 
             if (_battleGenWaveData.HasWaveData(_nowIndex, _nowTime))
             {
+                //UnityEngine.Debug.Log(_nowIndex + " " + _nowTime);
                 _list.Add(_battleGenWaveData.GetBattleGenWaveElement(_nowIndex));
                 _nowIndex++;
                 //Delay
-                _nowTime -= BATTLE_GEN_LOBBY_DELAY;
             }
-            else
+            else if (_battleGenWaveData.IsOverflow(_nowIndex))
             {
                 _nowIndex = 0;
                 _nowTime = -BATTLE_GEN_LOBBY_DELAY;

@@ -11,7 +11,7 @@ namespace SDefence.BattleGen.Data
         [SerializeField]
         private BattleGenWaveElement[] _waveElementArray;
 
-        private bool IsOverflow(int index)
+        public bool IsOverflow(int index)
         {
             return index >= _waveElementArray.Length;
         }
