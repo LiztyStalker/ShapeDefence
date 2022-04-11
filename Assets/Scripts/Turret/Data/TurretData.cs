@@ -79,6 +79,7 @@ namespace SDefence.Turret
             _maxUpgradeCount = 10;
 
             _attackData = AttackRawData.Create();
+            _attackData.SetDelay("0.25", "0", "0.01");
 
             _repairTime = 5f;
         }

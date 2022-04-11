@@ -22,7 +22,8 @@ namespace SDefence.Actor
         private bool _isBroken = false;
         private float _nowRepairTime = 0f;
 
-        public bool IsDamagable => !_isBroken;
+        private bool _isInvincible = true;
+        public bool IsDamagable => !_isInvincible || !_isBroken;
 
         public string Key => _entity.Key;
 
@@ -43,6 +44,18 @@ namespace SDefence.Actor
         {
             gameObject.SetActive(false);
         }
+        public void SetInvincible(bool isInvincible)
+        {
+            _isInvincible = isInvincible;
+        }
+
+        public void Reset()
+        {
+            _nowActionTime = 0f;
+            _nowRepairTime = 0f;
+            _isBroken = false;
+        }
+
         public void CleanUp() 
         {
             _entity = null;
@@ -116,7 +129,7 @@ namespace SDefence.Actor
                 }
                 else
                 {
-                    _nowActionTime += deltaTime;
+                    _nowActionTime = Mathf.Clamp(_nowActionTime + deltaTime, 0f, _entity.GetAttackUsableData().Delay);
                     //battleUpdate
                     if (_nowActionTime >= _entity.GetAttackUsableData().Delay)
                     {

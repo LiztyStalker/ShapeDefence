@@ -2,7 +2,9 @@ namespace SDefence.Turret
 {
     using Entity;
     using Packet;
+    using Storage;
     using System.Collections.Generic;
+    using UnityEngine;
     using Utility.IO;
 
     public class OrbitEntity : ISavable
@@ -56,6 +58,8 @@ namespace SDefence.Turret
 
         private List<TurretEntity> _list;
 
+        private TurretData _defaultTurretData;
+
         public static TurretManager Create() => new TurretManager();
         public void Initialize()
         {
@@ -65,7 +69,7 @@ namespace SDefence.Turret
             var turret = AdditiveEntity();
 
             //기본 터렛 필요
-            turret.Initialize(TurretData.Create(), 0);
+            turret.Initialize(GetDefaultData(), 0);
         }
         
         public void CleanUp()
@@ -94,13 +98,22 @@ namespace SDefence.Turret
         {
             //기본 터렛 필요
             var turret = AdditiveEntity();
-            turret.Initialize(TurretData.Create(), orbitIndex);
+            turret.Initialize(GetDefaultData(), orbitIndex);
             Refresh(_list.Count - 1);
         }
 
         public void ExpandOrbit(int turretCount)
         {
             _orbitEntity.ExpandOrbit(turretCount);
+        }
+
+        private TurretData GetDefaultData()
+        {
+            if(_defaultTurretData == null)
+            {
+                _defaultTurretData = (TurretData)DataStorage.Instance.GetDataOrNull<ScriptableObject>("Simple", "TurretData");
+            }
+            return _defaultTurretData;
         }
 
         private TurretEntity AdditiveEntity()
