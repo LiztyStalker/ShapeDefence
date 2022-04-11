@@ -114,6 +114,11 @@ namespace SDefence.Manager
 
     public class BattleManager
     {
+
+#if UNITY_EDITOR
+        public static bool IS_LOBBY_GEN = false;
+#endif
+
         private const float NEXT_WAVE_TIME = 10f;
 
         public enum TYPE_BATTLE_ACTION { Lobby, Battle}
@@ -191,6 +196,12 @@ namespace SDefence.Manager
             _enemyActorList.Clear();
 
             _battleGenEntity = null;
+
+            //enemy remove event
+            //_enemyActorList
+            //actor.RemoveOnRetrieveListener(RetrieveEnemyActor);
+            //actor.RemoveOnAttackListener(OnAttackEvent);
+
         }
 
         private EnemyActor CreateEnemyActor()
@@ -200,7 +211,6 @@ namespace SDefence.Manager
             actor.AddOnRetrieveListener(RetrieveEnemyActor);
             actor.AddOnAttackListener(OnAttackEvent);
             actor.Inactivate();
-            _enemyActorList.Add(actor);
             return actor;
         }
         private void RetrieveEnemyActor(EnemyActor actor)
@@ -208,8 +218,6 @@ namespace SDefence.Manager
             actor.Inactivate();
             _enemyActorList.Remove(actor);
             _enemyPool.RetrieveElement(actor);
-            actor.RemoveOnRetrieveListener(RetrieveEnemyActor);
-            actor.RemoveOnAttackListener(OnAttackEvent);
         }
 
         public void SetBattle()
@@ -302,7 +310,11 @@ namespace SDefence.Manager
                     break;
                 case TYPE_BATTLE_ACTION.Lobby:
 
+#if UNITY_EDITOR
+                    if(IS_LOBBY_GEN) _battleGenEntity.RunProcessLobby(deltaTime);
+#else
                     _battleGenEntity.RunProcessLobby(deltaTime);
+#endif
 
                     break;
             }
@@ -346,7 +358,7 @@ namespace SDefence.Manager
 
 
 
-        #region ##### Listener #####
+#region ##### Listener #####
 
         private void OnAppearEnemyEvent(string enemyDataKey)
         {
@@ -597,6 +609,7 @@ namespace SDefence.Manager
 
                 actor.Activate();
                 actor.SetPosition(AppearPosition());
+                _enemyActorList.Add(actor);
 
                 //º¸½º?
                 //BossBattlePacket
@@ -611,18 +624,21 @@ namespace SDefence.Manager
 
         private void AppearEnemy()
         {
-            var data = SDefence.Enemy.EnemyData.Create();
+            var data = EnemyData.Create();
             var entity = EnemyEntity.Create();
             entity.Initialize(data);
             entity.SetLevelWave(_levelWaveData);
+
             var actor = _enemyPool.GiveElement();
             actor.SetEntity(entity);
             actor.SetDurableBattleEntity();
+
             var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
             if (obj != null) actor.SetGraphicObject(obj);
 
             actor.Activate();
             actor.SetPosition(AppearPosition());
+            _enemyActorList.Add(actor);
         }
 
         private Vector2 AppearPosition()
@@ -655,7 +671,7 @@ namespace SDefence.Manager
             return pos;
         }
 
-        #endregion
+#endregion
 
     }
 }
