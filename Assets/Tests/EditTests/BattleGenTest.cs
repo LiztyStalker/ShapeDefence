@@ -82,7 +82,7 @@ namespace TestFrameworks
 
             entity.SetData(levelData);
             entity.SetLevelWave(levelWaveData);
-            entity.SetOnBattleGenWaveElementListener(gen =>
+            entity.SetOnAppearEnemyListener(enemyDataKey =>
             {
                 Debug.Log("Gen");
             });
@@ -118,9 +118,9 @@ namespace TestFrameworks
             var entity = BattleGenEntity.Create();
             entity.SetData(levelData);
             entity.SetLevelWave(levelWaveData);
-            entity.SetOnBattleGenWaveElementListener(gen =>
+            entity.SetOnAppearEnemyListener(enemyDataKey =>
             {
-                Debug.Log(gen.Value.EnemyDataKey);
+                Debug.Log(enemyDataKey);
                 genCount++;
             });
 

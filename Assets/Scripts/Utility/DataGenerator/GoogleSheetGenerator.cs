@@ -203,65 +203,199 @@ namespace Utility.Generator
             Debug.Log("Create And Update End");
         }
 
-        private static void OnCreateAndUpdateEvent<T>(GstuSpreadSheet sheet, string dataPath, string bundleName) where T : ScriptableObjectData
+
+
+
+        /// <summary>
+        /// 생성 및 갱신
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataPath"></param>
+        /// <param name="bundleName"></param>
+        public static void CreateAndUpdateAllData<T>(string sheetkey, string worksheet, string dataPath, string bundleName, System.Action<Dictionary<string, T>> callback) where T : ScriptableObjectData
         {
+            GSTU_Search gstuSearcher = new GSTU_Search(sheetkey, worksheet, "A2", 2);
+            SpreadsheetManager.ReadRaw(gstuSearcher, sheet =>
+            {
+                OnCreateAndUpdateEvent<T>(sheet, dataPath, bundleName, callback);
+            });
+        }
+
+
+        private static void OnCreateAndUpdateEvent<T>(ValueRange sheet, string dataPath, string bundleName, System.Action<Dictionary<string, T>> callback) where T : ScriptableObjectData
+        {
+
+            Dictionary<string, T> _dic = new Dictionary<string, T>();
+
             T tmpData = null;
             int index = 0;
 
-            var keys = sheet.rows.PrimaryValues.ToArray();
+            var rows = sheet.values;
 
-            for (int c = 0; c < keys.Length; c++, index++)
+            for (int c = 0; c < rows.Count; c++)
             {
-                var row = keys[c];
-                var key = row[0].value;
-                //var row = sheet.rows[key];
+                var records = rows[c];
 
-                Debug.Log(row[0].value);
-
-                //연계 퀘스트 - 키가 같음
-                if (tmpData != null && tmpData.Key == key)
+                if (records.Count != 0)
                 {
-                    tmpData.AddData(row.Select(cell => cell.value).ToArray());
-                    EditorUtility.SetDirty(tmpData);
-                }
-                else
-                {
-                    tmpData = null;
-                    //try
-                    //{
-                    var data = AssetDatabase.LoadAssetAtPath<T>($"{dataPath}/{typeof(T).Name}_{key}.asset");
+                    var key = records[0];
 
-                    if (data == null)
+                    if (tmpData != null && tmpData.Key == key)
                     {
-                        data = ScriptableObject.CreateInstance<T>();
-                        data.SetSortIndex(index);
-                        data.SetData(row.Select(cell => cell.value).ToArray());
-                        AssetDatabase.CreateAsset(data, $"{dataPath}/{typeof(T).Name}_{key}.asset");
-                        data.SetAssetBundle(bundleName);
-                        EditorUtility.SetDirty(data);
-                        AssetDatabase.SaveAssets();
+                        tmpData.AddData(records.ToArray());
+                        EditorUtility.SetDirty(tmpData);
+                        Debug.Log($"Add {key}");
                     }
                     else
                     {
-                        data.SetSortIndex(index);
-                        data.SetData(row.Select(cell => cell.value).ToArray());
-                        data.SetAssetBundle(bundleName);
-                        EditorUtility.SetDirty(data);
+                        tmpData = null;
+                        //try
+                        //{
+                        var data = AssetDatabase.LoadAssetAtPath<T>($"{dataPath}/{typeof(T).Name}_{key}.asset");
+
+                        if (data == null)
+                        {
+                            Debug.Log($"Create {key}");
+
+                            data = ScriptableObject.CreateInstance<T>();
+                            data.SetSortIndex(index);
+                            data.SetData(records.ToArray());
+                            AssetDatabase.CreateAsset(data, $"{dataPath}/{typeof(T).Name}_{key}.asset");
+                            data.SetAssetBundle(bundleName);
+                            EditorUtility.SetDirty(data);
+                            AssetDatabase.SaveAssets();
+                            _dic.Add(key, data);
+                        }
+                        else
+                        {
+                            Debug.Log($"Update {key}");
+
+                            data.SetSortIndex(index);
+                            data.SetData(records.ToArray());
+                            data.SetAssetBundle(bundleName);
+                            EditorUtility.SetDirty(data);
+                            _dic.Add(key, data);
+                        }
+
+                        tmpData = data;
                     }
-
-                    tmpData = data;
                 }
-                //}
-                //catch (System.Exception e)
-                //{
-                //    Debug.LogWarning(e.Message);
-                //    AssetDatabase.DeleteAsset($"{dataPath}/{typeof(T).Name}_{key}.asset");
-                //}
-
-
             }
+            callback?.Invoke(_dic);
             Debug.Log("Create And Update End");
         }
+
+
+        /// <summary>
+        /// 생성 및 갱신
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataPath"></param>
+        /// <param name="bundleName"></param>
+        public static void SheetAllData<T>(string sheetkey, string worksheet, System.Action<Dictionary<string, T>> callback) where T : ISheetData
+        {
+            GSTU_Search gstuSearcher = new GSTU_Search(sheetkey, worksheet, "A2", 2);
+            SpreadsheetManager.ReadRaw(gstuSearcher, sheet =>
+            {
+                OnSheetAllDataEvent<T>(sheet, callback);
+            });
+        }
+
+
+        private static void OnSheetAllDataEvent<T>(ValueRange sheet, System.Action<Dictionary<string, T>> callback) where T : ISheetData
+        {
+            Dictionary<string, T> _dic = new Dictionary<string, T>();
+
+            var rows = sheet.values;
+
+            for (int c = 0; c < rows.Count; c++)
+            {
+                var records = rows[c];
+
+                if (records.Count != 0)
+                {
+                    var key = records[0];
+
+                    if (!_dic.ContainsKey(key))
+                    {
+                        var data = System.Activator.CreateInstance<T>();
+                        data.SetData(records.ToArray());
+                        _dic.Add(key, data);
+                        Debug.Log($"Create {key}");
+                    }
+                    else
+                    {
+                        var data = _dic[key];
+                        data.AddData(records.ToArray());
+                        _dic[key] = data;
+                        Debug.Log($"Add {key}");
+                    }
+                }
+            }
+
+            callback?.Invoke(_dic);
+            Debug.Log("Create And Update End");
+        }
+
+        //private static void OnCreateAndUpdateEvent<T>(GstuSpreadSheet sheet, string dataPath, string bundleName) where T : ScriptableObjectData
+        //{
+        //    T tmpData = null;
+        //    int index = 0;
+
+        //    var keys = sheet.rows.PrimaryValues.ToArray();
+
+        //    for (int c = 0; c < keys.Length; c++, index++)
+        //    {
+        //        var row = keys[c];
+        //        var key = row[0].value;
+        //        //var row = sheet.rows[key];
+
+        //        Debug.Log(row[0].value);
+
+        //        //연계 퀘스트 - 키가 같음
+        //        if (tmpData != null && tmpData.Key == key)
+        //        {
+        //            tmpData.AddData(row.Select(cell => cell.value).ToArray());
+        //            EditorUtility.SetDirty(tmpData);
+        //        }
+        //        else
+        //        {
+        //            tmpData = null;
+        //            //try
+        //            //{
+        //            var data = AssetDatabase.LoadAssetAtPath<T>($"{dataPath}/{typeof(T).Name}_{key}.asset");
+
+        //            if (data == null)
+        //            {
+        //                data = ScriptableObject.CreateInstance<T>();
+        //                data.SetSortIndex(index);
+        //                data.SetData(row.Select(cell => cell.value).ToArray());
+        //                AssetDatabase.CreateAsset(data, $"{dataPath}/{typeof(T).Name}_{key}.asset");
+        //                data.SetAssetBundle(bundleName);
+        //                EditorUtility.SetDirty(data);
+        //                AssetDatabase.SaveAssets();
+        //            }
+        //            else
+        //            {
+        //                data.SetSortIndex(index);
+        //                data.SetData(row.Select(cell => cell.value).ToArray());
+        //                data.SetAssetBundle(bundleName);
+        //                EditorUtility.SetDirty(data);
+        //            }
+
+        //            tmpData = data;
+        //        }
+        //        //}
+        //        //catch (System.Exception e)
+        //        //{
+        //        //    Debug.LogWarning(e.Message);
+        //        //    AssetDatabase.DeleteAsset($"{dataPath}/{typeof(T).Name}_{key}.asset");
+        //        //}
+
+
+        //    }
+        //    Debug.Log("Create And Update End");
+        //}
 
         #endregion
 

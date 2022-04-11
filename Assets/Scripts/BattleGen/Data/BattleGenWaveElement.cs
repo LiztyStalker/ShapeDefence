@@ -3,7 +3,7 @@ namespace SDefence.BattleGen.Data
     using UnityEngine;
 
     [System.Serializable]
-    public struct BattleGenWaveElement
+    public class BattleGenWaveElement
     {
         [SerializeField]
         private string _enemyDataKey;
@@ -49,7 +49,21 @@ namespace SDefence.BattleGen.Data
             _appearCount = int.Parse(appearCount);
             _weight = int.Parse(weight);
             _waveAppearDelay = float.Parse(waveAppearDelay);
+        }
 
+        private void SetData(BattleGenWaveElement element)
+        {
+            _enemyDataKey = element.EnemyDataKey;
+            _appearCount = element.AppearCount;
+            _weight = element.Weight;
+            _waveAppearDelay = element.WaveAppearDelay;
+        }
+       
+        public BattleGenWaveElement Clone()
+        {
+            var data = Create();
+            data.SetData(this);
+            return data;
         }
 #endif
     }
