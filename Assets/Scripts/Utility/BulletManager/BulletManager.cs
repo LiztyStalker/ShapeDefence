@@ -65,6 +65,14 @@ namespace Utility.Bullet
             _list.Clear();
         }
 
+        public void ForceRetrieve()
+        {
+            for(int i = _list.Count - 1; i >= 0; i--)
+            {
+                _list[i].ForceRetrieve();
+            }
+        }
+
         /// <summary>
         /// 탄환을 생성합니다
         /// </summary>
@@ -88,7 +96,7 @@ namespace Utility.Bullet
                 return null;
             }
 
-            Debug.Log("Activate");
+            //Debug.Log("Activate");
 
             var prefab = DataStorage.Instance.GetDataOrNull<GameObject>(data.GraphicObjectKey);
 

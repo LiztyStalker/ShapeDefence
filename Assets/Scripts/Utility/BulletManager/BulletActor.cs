@@ -106,6 +106,11 @@ namespace Utility.Bullet
             gameObject.SetActive(false);
         }
 
+        public void ForceRetrieve()
+        {
+            OnRetrieveEvent();
+        }
+
         public void CleanUp()
         {
             _data = null;
@@ -212,13 +217,6 @@ namespace Utility.Bullet
         private void OnRetrieveEvent()
         {
             _retrieveEvent?.Invoke(this);
-            _attackable = null;
-            _movementActionData = null;
-            _attackActionData = null;
-            _arrivedEvent = null;
-            _attackActionData = null;
-            _startPos = Vector2.zero;
-            _arrivePos = Vector2.zero;
         }
 
         #endregion
