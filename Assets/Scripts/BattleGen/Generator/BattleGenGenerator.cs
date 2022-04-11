@@ -12,6 +12,7 @@ namespace SDefence.BattleGen.Generator
         {
             Key,
             Level,
+            Lobby,
             Wave1,
             Wave2,
             Wave3,
@@ -49,7 +50,21 @@ namespace SDefence.BattleGen.Generator
                 {
                     foreach (var level in levels.Values)
                     {
-                        for(int i = 0; i < level.WaveDataKeys.Length; i++)
+
+
+                        var lobbyKey = level.LobbyWaveDataKey;
+                        if (waves.ContainsKey(lobbyKey))
+                        {
+                            level.SetLobbyWaveData(waves[lobbyKey]);
+                        }
+                        else
+                        {
+                            UnityEngine.Debug.LogWarning($"{lobbyKey} is not found");
+                        }
+
+
+
+                        for (int i = 0; i < level.WaveDataKeys.Length; i++)
                         {
                             var key = level.WaveDataKeys[i];
                             if (waves.ContainsKey(key))

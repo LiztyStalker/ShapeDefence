@@ -11,6 +11,7 @@ namespace SDefence.Manager
         {
             _battle = BattleManager.Create();
             _system = GameSystem.Create();
+
             _system.Initialize();
 
             _system.AddOnRefreshEntityPacketListener(_battle.OnEntityPacketEvent);
@@ -19,6 +20,7 @@ namespace SDefence.Manager
         private void Start()
         {
             _system.RefreshAll();
+            _battle.SetLobby();
         }
 
         private void Update()

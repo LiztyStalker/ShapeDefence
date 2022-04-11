@@ -28,6 +28,7 @@ namespace SDefence.BattleGen.Data
             return _waveElementArray[index];
         }
 
+
 #if UNITY_EDITOR
         public static BattleGenWaveData Create(string key = null) => new BattleGenWaveData(key);
 

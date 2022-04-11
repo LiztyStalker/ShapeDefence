@@ -13,11 +13,12 @@ namespace SDefence.Manager
     using SDefence.Turret.Entity;
     using Utility.Bullet.Data;
     using SDefence.Attack;
-    using Utility.ScriptableObjectData;
-    using Utility.Effect.Data;
     using SDefence.BattleGen.Data;
     using SDefence.Attack.Usable;
+    using SDefence.BattleGen.Entity;
+    using SDefence.Enemy;
 
+    #region ##### Orbit #####
     public class OrbitCase
     {
         private List<TurretActor> _list;
@@ -109,8 +110,14 @@ namespace SDefence.Manager
         }
     }
 
+    #endregion
+
     public class BattleManager
     {
+        private const float NEXT_WAVE_TIME = 10f;
+
+        public enum TYPE_BATTLE_ACTION { Lobby, Battle}
+
         private PoolSystem<EnemyActor> _enemyPool;
 
         private Vector2 _appearSize;
@@ -132,7 +139,13 @@ namespace SDefence.Manager
         private EffectManager _effectMgr;
         private AudioManager _audioMgr;
 
-        private BattleGenLevelData _battleGenLevelData;
+
+        private BattleGenEntity _battleGenEntity;
+        //private BattleGenLevelData _battleGenLevelData;
+        //private BattleGenWaveData? _battleGenWaveData;
+        //private int _waveElementIndex = 0;
+
+        private TYPE_BATTLE_ACTION _typeBattleAction = TYPE_BATTLE_ACTION.Lobby;
 
         public static BattleManager Create() => new BattleManager();
 
@@ -161,6 +174,9 @@ namespace SDefence.Manager
             _attackActionList = new List<AttackActionUsableData>();
 
             _appearSize = new Vector2(6f, 6f);
+
+            _battleGenEntity = BattleGenEntity.Create();
+            _battleGenEntity.SetOnAppearEnemyListener(OnAppearEnemyEvent);
         }
 
         public void CleanUp()
@@ -173,6 +189,8 @@ namespace SDefence.Manager
 
             _enemyPool.CleanUp();
             _enemyActorList.Clear();
+
+            _battleGenEntity = null;
         }
 
         private EnemyActor CreateEnemyActor()
@@ -194,41 +212,148 @@ namespace SDefence.Manager
             actor.RemoveOnAttackListener(OnAttackEvent);
         }
 
+        public void SetBattle()
+        {
+            _typeBattleAction = TYPE_BATTLE_ACTION.Battle;
+
+            //HQActor 비무적
+            _hqActor.SetInvincible(false);
+            _hqActor.SetDurableBattleEntity();
+
+            //Turret 초기화
+            foreach (var value in _turretDic.Values)
+            {
+                value.SetInvincible(false);
+                value.Reset();
+            }
+
+
+            //Enemy 파괴
+            for (int i = _enemyActorList.Count - 1; i >= 0; i--)
+            {
+                _enemyActorList[i].ForceRetrieve();
+            }
+
+            //Bullet 파괴
+            _bulletMgr.ForceRetrieve();
+
+            //PlayBattle Event 보내기
+        }
+
+
+        public void SetLobby()
+        {
+            _typeBattleAction = TYPE_BATTLE_ACTION.Lobby;
+
+            var enemyLevelDataKey = string.Format("Level{0:d4}", _levelWaveData.GetLevel());
+            var enemyLevelData = (BattleGenLevelData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(enemyLevelDataKey, "BattleGenLevelData");
+
+            if (enemyLevelData != null) 
+            { 
+                _battleGenEntity.SetData(enemyLevelData); 
+            }
+#if UNITY_EDITOR
+            else
+            {
+                Debug.LogWarning($"{enemyLevelDataKey} is not Found");
+            }
+#endif
+
+
+            //HQActor 무적
+            _hqActor.SetInvincible(true);
+
+            //Turret 무적
+            //Turret 초기화
+            foreach (var value in _turretDic.Values)
+            {
+                value.SetInvincible(true);
+                value.Reset();
+            }
+
+
+            //Enemy 파괴
+            for (int i = _enemyActorList.Count - 1; i >= 0; i--)
+            {
+                _enemyActorList[i].ForceRetrieve();
+            }
+
+            //Bullet 파괴
+            _bulletMgr.ForceRetrieve();
+
+
+            //LobbyBattle Event 보내기
+        }
+
         public void RunProcess(float deltaTime)
         {
-            _waveTime += deltaTime;
-            foreach(var value in _turretDic.Values) 
+            switch (_typeBattleAction) 
+            {
+                case TYPE_BATTLE_ACTION.Battle:
+                    _waveTime += deltaTime;
+                    
+                    _battleGenEntity.RunProcessBattle(deltaTime);
+
+                    if (_waveTime > NEXT_WAVE_TIME)
+                    {
+                        NextWave();
+                    }
+
+                    break;
+                case TYPE_BATTLE_ACTION.Lobby:
+
+                    _battleGenEntity.RunProcessLobby(deltaTime);
+
+                    break;
+            }
+
+            foreach (var value in _turretDic.Values)
             {
                 value.RunProcess(deltaTime);
             }
 
             _orbitAction.RunProcess(deltaTime, _hqActor.transform.position);
 
-            for(int i = 0; i < _enemyActorList.Count; i++)
+            for (int i = 0; i < _enemyActorList.Count; i++)
             {
                 _enemyActorList[i].RunProcess(deltaTime, _hqActor.transform.position);
             }
 
             _bulletMgr.RunProcess(deltaTime);
 
-
             for (int i = 0; i < _attackActionList.Count; i++)
             {
                 _attackActionList[i].RunProcess(deltaTime);
             }
 
-            //if(_waveTime > 10f)
-            //{
-            //    NextWave();
-            //}
+
         }
 
-        //private void NextWave()
-        //{
-        //    _levelWaveData.IncreaseNumber();
-        //    _hqActor.NextWave();
-        //    //적 등장 바뀌기
-        //}
+        private void NextWave()
+        {
+            _levelWaveData.IncreaseNumber();
+            _hqActor.NextWave();
+
+            //적 등장 바뀌기
+            _battleGenEntity.SetLevelWave(_levelWaveData);
+
+            //NextWaveBattlePacket
+        }
+
+
+
+
+
+
+
+        #region ##### Listener #####
+
+        private void OnAppearEnemyEvent(string enemyDataKey)
+        {
+            AppearEnemy(enemyDataKey);
+        }
+
+
 
         public void OnEntityPacketEvent(IEntityPacket packet)
         {
@@ -265,7 +390,7 @@ namespace SDefence.Manager
                             actor.AddOnAttackListener(OnAttackEvent);
                             actor.transform.SetParent(_gameObject.transform);
                             _turretDic.Add(trPacket.Index, actor);
-                                                        
+
                         }
 
                         var trActor = _turretDic[trPacket.Index];
@@ -285,7 +410,9 @@ namespace SDefence.Manager
 
 
 
-        #region ##### Listener #####
+
+
+
 
         private System.Action<IBattlePacket> _battleEvent;
         public void AddOnBattlePacketListener(System.Action<IBattlePacket> act) => _battleEvent += act;
@@ -303,9 +430,19 @@ namespace SDefence.Manager
 
                     break;
                 case DestroyBattlePacket destroyBattlePacket:
+                    
                     var destroyKey = "DestroyActor";
-                    var destroyEffect = DataStorage.Instance.GetDataOrNull<GameObject>(destroyKey);
-                    _effectMgr.Activate(destroyEffect, destroyBattlePacket.Actor.NowPosition, 1f);
+
+                    var destroyEffectKey = DataStorage.Instance.GetDataOrNull<GameObject>(destroyKey);
+                    _effectMgr.Activate(destroyEffectKey, destroyBattlePacket.Actor.NowPosition, 1f);
+
+                    if (destroyBattlePacket.Actor is HQActor)
+                    {
+                        //HQ이면 게임 패배 이벤트
+                        //DefeatBattlePacket                        
+                    }
+
+                    //Enemy가 보스이면 게임 승리 이벤트
                     break;
             }
             _battleEvent?.Invoke(packet);
@@ -319,6 +456,9 @@ namespace SDefence.Manager
                 case EnemyCommandPacket enemyPacket:
                     AppearEnemy();
                     break;
+                case BattleCommandPacket battlePacket:
+                    SetBattle();
+                    break;
             }
         }
 
@@ -328,6 +468,7 @@ namespace SDefence.Manager
             {
                 if (range < 0.1f)
                 {
+                    Debug.Log(damagable);
                     if (damagable != null) damagable.SetDamage(attackable.AttackUsableData);
                 }
                 else
@@ -372,7 +513,7 @@ namespace SDefence.Manager
 
                 ////이펙트
                 var effect = DataStorage.Instance.GetDataOrNull<GameObject>(actor.DestroyEffectDataKey);
-                _effectMgr.Activate(effect, attackable.AttackPos, 1f);
+                _effectMgr.Activate(effect, actor.NowPosition, 1f);
 
                 var sfx = DataStorage.Instance.GetDataOrNull<AudioClip>(actor.DestroyEffectSfxKey);
                 _audioMgr.Activate(sfx, AudioManager.TYPE_AUDIO.SFX);
@@ -402,12 +543,10 @@ namespace SDefence.Manager
         private void OnAttackEvent(string bulletKey, IAttackable attackable)
         {
             //탄환 발사
-
             var bulletData = (BulletData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(bulletKey, "BulletData");
 
             if (bulletData != null)
             {
-
                 BulletActor actor = null;
 
                 switch (attackable)
@@ -418,8 +557,11 @@ namespace SDefence.Manager
                     case TurretActor tActor:
                         if (_enemyActorList.Count > 0)
                         {
+                            //타겟팅 정하면 되도록 변경하지 않기
+                            //적이 사망하면 타겟팅 초기화
                             var enemyActor = _enemyActorList[UnityEngine.Random.Range(0, _enemyActorList.Count)];
-                            actor = _bulletMgr.Activate(attackable, bulletData, 0.1f, attackable.AttackPos, enemyActor.transform.position, OnBulletAttackEvent, null);
+                            actor = _bulletMgr.Activate(attackable, bulletData, 0.1f, attackable.AttackPos, enemyActor.NowPosition, OnBulletAttackEvent, null);
+                            //Debug.Log(actor);
                         }
                         break;
                 }
@@ -434,6 +576,37 @@ namespace SDefence.Manager
                 }
 
             }
+        }
+
+        private void AppearEnemy(string key)
+        {
+            var enemyData = (EnemyData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(key, "EnemyData");
+            if (enemyData != null) 
+            {
+                var data = enemyData;
+                var entity = EnemyEntity.Create();
+                entity.Initialize(data);
+                entity.SetLevelWave(_levelWaveData);
+
+                var actor = _enemyPool.GiveElement();
+                actor.SetEntity(entity);
+                actor.SetDurableBattleEntity();
+
+                var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
+                if (obj != null) actor.SetGraphicObject(obj);
+
+                actor.Activate();
+                actor.SetPosition(AppearPosition());
+
+                //보스?
+                //BossBattlePacket
+            }
+#if UNITY_EDITOR
+            else
+            {
+                Debug.LogWarning($"{key} is not found");
+            }
+#endif
         }
 
         private void AppearEnemy()

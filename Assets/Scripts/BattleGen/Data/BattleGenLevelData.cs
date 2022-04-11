@@ -11,7 +11,13 @@ namespace SDefence.BattleGen.Data
         private int _level;
 
         [HideInInspector]
+        private string _lobbyWaveDataKey;
+
+        [HideInInspector]
         private string[] _waveDataKeys;
+
+        [SerializeField]
+        private BattleGenWaveData _lobbyWaveData;
 
         [SerializeField]
         private BattleGenWaveData[] _waveDataArray;
@@ -26,7 +32,10 @@ namespace SDefence.BattleGen.Data
             return null;
         }
 
+        public BattleGenWaveData GetLobbyBattleGenWaveData() => _lobbyWaveData;
+
 #if UNITY_EDITOR
+        public string LobbyWaveDataKey => _lobbyWaveDataKey;
 
         public string[] WaveDataKeys => _waveDataKeys;
 
@@ -36,6 +45,7 @@ namespace SDefence.BattleGen.Data
         {
             Key = "Test";
             _level = 0;
+            _lobbyWaveDataKey = "Test";
             _waveDataArray = new BattleGenWaveData[5];
             for (int i = 0; i < _waveDataArray.Length; i++)
             {
@@ -47,6 +57,11 @@ namespace SDefence.BattleGen.Data
         {
             Key = key;
             _level = int.Parse(level);
+        }
+
+        public void SetLobbyWaveData(BattleGenWaveData data)
+        {
+            _lobbyWaveData = data.Clone();
         }
 
         public void SetWaveData(BattleGenWaveData data, int index)
@@ -61,6 +76,8 @@ namespace SDefence.BattleGen.Data
         {
             Key = arr[(int)BattleGenGenerator.TYPE_SHEET_LEVEL_COLUMNS.Key];
             _level = int.Parse(arr[(int)BattleGenGenerator.TYPE_SHEET_LEVEL_COLUMNS.Level]);
+
+            _lobbyWaveDataKey = arr[(int)BattleGenGenerator.TYPE_SHEET_LEVEL_COLUMNS.Lobby];
 
             _waveDataKeys = new string[5];
             for (int i = 0; i < _waveDataKeys.Length; i++)
