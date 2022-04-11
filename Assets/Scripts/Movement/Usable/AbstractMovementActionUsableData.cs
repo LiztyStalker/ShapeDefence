@@ -68,7 +68,7 @@ namespace SDefence.Movement.Usable
                 case TYPE_MOVEMENT_STATE.Collision:
                     //충돌시 End인지 Run인지 구분 필요
                 case TYPE_MOVEMENT_STATE.End:
-                    Debug.Log("End");
+                    //Debug.Log("End");
                     OnEndedEvent();
                     break;
             }

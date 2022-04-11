@@ -97,6 +97,7 @@ namespace Utility.Effect
         {
             if (effectObject != null)
             {
+                //Debug.Log("Activate");
                 var actor = _pool.GiveElement();
                 actor.SetData(effectObject);
                 actor.SetOnInactiveListener(actor => {
