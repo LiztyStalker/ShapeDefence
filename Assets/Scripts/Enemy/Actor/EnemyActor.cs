@@ -46,6 +46,12 @@ namespace SDefence.Actor
             gameObject.SetActive(false);
             OnBattlePacketEvent(); //Destroyed
         }
+
+        public void ForceRetrieve()
+        {
+            OnRetrieveEvent();
+        }
+
         public void CleanUp() 
         {
             _entity = null;
@@ -80,14 +86,6 @@ namespace SDefence.Actor
             OnBattlePacketEvent();
         }
 
-        /// <summary>
-        /// 전투 미돌입
-        /// </summary>
-        public void UnsetDurableBattleEntity()
-        {
-            _durableEntity = null;
-        }
-
         public string GetDurableValue<T>() where T : IDurableUsableData => _durableEntity.GetValue<T>();
         public float GetDurableRate<T>() where T : IDurableUsableData => _durableEntity.GetRate<T>();
 
@@ -98,12 +96,15 @@ namespace SDefence.Actor
             {
                 if (!_isBroken)
                 {
-                    _nowActionTime += deltaTime;
-                    //battleUpdate
-                    if (_nowActionTime >= _entity.GetAttackUsableData().Delay)
+                    if (_entity.IsAttack)
                     {
-                        OnAttackEvent(_entity.BulletKey, this);
-                        _nowActionTime -= _entity.GetAttackUsableData().Delay;
+                        _nowActionTime += deltaTime;
+                        //battleUpdate
+                        if (_nowActionTime >= AttackUsableData.Delay)
+                        {
+                            OnAttackEvent(_entity.BulletKey, this);
+                            _nowActionTime -= AttackUsableData.Delay;
+                        }
                     }
 
                     _movementAction.RunProcess(this, _entity.GetMovementUsableData(), deltaTime, target);
@@ -121,6 +122,8 @@ namespace SDefence.Actor
             {
                 _durableEntity.Subject(data);
                 OnBattlePacketEvent();
+
+                Debug.Log(_durableEntity.GetValue<HealthDurableUsableData>() + " " + data.CreateUniversalUsableData().Value);
 
                 if (_durableEntity.IsZero<HealthDurableUsableData>())
                 {

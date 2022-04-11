@@ -32,6 +32,8 @@ namespace SDefence.Enemy
         [SerializeField]
         private AssetRawData _rewardAssetRawData;
         [SerializeField]
+        private bool _isAttack = false;
+        [SerializeField]
         private AttackRawData _attackRawData;
         [SerializeField]
         private string _bulletDataKey;
@@ -42,6 +44,7 @@ namespace SDefence.Enemy
         public string GraphicObjectKey => _graphicObjectKey;
         public AssetRawData RewardAssetRawData => _rewardAssetRawData;
         public DurableRawData[] DurableRawDataArray => _durableRawDataArray;
+        public bool IsAttack => _isAttack;
         public AttackRawData AttackRawData => _attackRawData;
         public string BulletDataKey => _bulletDataKey;
         public MovementRawData MovementRawData => _movementRawData;
@@ -69,6 +72,8 @@ namespace SDefence.Enemy
 
             _attackRawData = AttackRawData.Create();
             _movementRawData = MovementRawData.Create();
+
+            _isAttack = false;
         }
 
         public override void AddData(string[] arr) { }
@@ -105,6 +110,8 @@ namespace SDefence.Enemy
             var asset = AssetRawData.Create();
             asset.SetData(arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.TypeRewardAssetData], arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.StartRewardAssetValue], arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.IncreaseRewardAssetValue], arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.IncreaseRewardAssetRate]);
             _rewardAssetRawData = asset;
+
+            _isAttack = bool.Parse(arr[(int)EnemyDataGenerator.TYPE_SHEET_COLUMNS.IsAttack]);
 
             var attack = AttackRawData.Create();
 

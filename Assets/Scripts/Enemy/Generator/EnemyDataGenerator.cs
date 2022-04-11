@@ -29,6 +29,7 @@ namespace SDefence.Enemy.Generator
             StartRewardAssetValue,
             IncreaseRewardAssetValue,
             IncreaseRewardAssetRate,
+            IsAttack,
             StartAttackValue,
             IncreaseAttackValue,
             IncreaseAttackRate,

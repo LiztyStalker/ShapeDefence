@@ -37,6 +37,8 @@ namespace SDefence.Turret.Entity
 
         public string BulletKey => _data.BulletDataKey;
 
+        public bool IsAttack => _data.IsAttack;
+
         public static EnemyEntity Create() => new EnemyEntity();
 
         private EnemyEntity()
