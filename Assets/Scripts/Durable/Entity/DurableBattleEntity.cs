@@ -83,7 +83,7 @@ namespace SDefence.Durable.Entity
                 if (HasDurableUsableData<LimitDamageShieldDurableUsableData>())
                 {
                     var limit = _dic[GetKey<LimitDamageShieldDurableUsableData>()];
-                    if (value.Compare(limit) < 0)
+                    if (limit.Value > 0 && value.Compare(limit) < 0)
                     {
                         value = limit.CreateUniversalUsableData();
                     }
@@ -105,6 +105,8 @@ namespace SDefence.Durable.Entity
 
                 //실드 감소
             }
+
+            UnityEngine.Debug.Log(value.Value);
 
             if (!value.IsZero)
             {
