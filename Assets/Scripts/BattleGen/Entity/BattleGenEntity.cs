@@ -40,9 +40,11 @@ namespace SDefence.BattleGen.Entity
         public void RunProcessBattle(float deltaTime)
         {
             _nowTime += deltaTime;
+
             //Wave에 도달
             if (HasBattleGenWaveData())
             {
+                //UnityEngine.Debug.Log("Run " + _nowTime);
                 if (_battleGenWaveData.HasWaveData(_nowIndex, _nowTime))
                 {
                     _list.Add(_battleGenWaveData.GetBattleGenWaveElement(_nowIndex));
@@ -63,9 +65,6 @@ namespace SDefence.BattleGen.Entity
 
         public void RunProcessLobby(float deltaTime)
         {
-            if(_battleGenWaveData == null)
-                _battleGenWaveData = _battleGenLevelData.GetLobbyBattleGenWaveData();
-
             _nowTime += deltaTime;
 
             if (_battleGenWaveData.HasWaveData(_nowIndex, _nowTime))
@@ -96,10 +95,16 @@ namespace SDefence.BattleGen.Entity
         /// 레벨 웨이브 적용
         /// </summary>
         /// <param name="levelWaveData"></param>
-        public void SetLevelWave(LevelWaveData levelWaveData)
+        public void SetBattle(LevelWaveData levelWaveData)
         {
             _battleGenWaveData = _battleGenLevelData.GetBattleGenWaveData(levelWaveData.GetWave());
-            _battleGenWaveData = null;
+            _nowTime = 0;
+            _nowIndex = 0;
+        }
+
+        public void SetLobby()
+        {
+            _battleGenWaveData = _battleGenLevelData.GetLobbyBattleGenWaveData();
             _nowTime = 0;
             _nowIndex = 0;
         }

@@ -83,6 +83,12 @@ namespace SDefence.Test
             }
 
 
+            //전투
+            if (GUILayout.Button($"로비 리스폰 {BattleManager.IS_LOBBY_GEN}"))
+            {
+                BattleManager.IS_LOBBY_GEN = !BattleManager.IS_LOBBY_GEN;
+            }
+
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();

@@ -81,7 +81,7 @@ namespace TestFrameworks
             var entity = BattleGenEntity.Create();
 
             entity.SetData(levelData);
-            entity.SetLevelWave(levelWaveData);
+            entity.SetBattle(levelWaveData);
             entity.SetOnAppearEnemyListener(enemyDataKey =>
             {
                 Debug.Log("Gen");
@@ -99,7 +99,7 @@ namespace TestFrameworks
 
             var entity = BattleGenEntity.Create();
             entity.SetData(levelData);
-            entity.SetLevelWave(levelWaveData);
+            entity.SetBattle(levelWaveData);
 
             Debug.Log(entity.HasBattleGenWaveData());
             Assert.IsTrue(entity.HasBattleGenWaveData());
@@ -117,7 +117,7 @@ namespace TestFrameworks
 
             var entity = BattleGenEntity.Create();
             entity.SetData(levelData);
-            entity.SetLevelWave(levelWaveData);
+            entity.SetBattle(levelWaveData);
             entity.SetOnAppearEnemyListener(enemyDataKey =>
             {
                 Debug.Log(enemyDataKey);
@@ -132,7 +132,7 @@ namespace TestFrameworks
                 if(nowTime > 1f)
                 {
                     levelWaveData.IncreaseNumber();
-                    entity.SetLevelWave(levelWaveData);
+                    entity.SetBattle(levelWaveData);
                     nowTime = 0f;
                 }
 

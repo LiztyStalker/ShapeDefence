@@ -44,7 +44,7 @@ namespace SDefence.Actor
         public void Inactivate() 
         {
             gameObject.SetActive(false);
-            OnBattlePacketEvent(); //Destroyed
+            OnDestroyedBattlePacketEvent();
         }
 
         public void ForceRetrieve()
@@ -182,6 +182,13 @@ namespace SDefence.Actor
             //var packet = new EnemyBattlePacket();
             //packet.SetData(this);
             //_battleEvent?.Invoke(packet);
+        }
+
+        private void OnDestroyedBattlePacketEvent()
+        {
+            var packet = new DestroyBattlePacket();
+            packet.Actor = this;
+            _battleEvent?.Invoke(packet);
         }
 
         private System.Action<string, IAttackable> _attackEvent;

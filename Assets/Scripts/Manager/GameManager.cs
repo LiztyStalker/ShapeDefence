@@ -15,6 +15,10 @@ namespace SDefence.Manager
             _system.Initialize();
 
             _system.AddOnRefreshEntityPacketListener(_battle.OnEntityPacketEvent);
+
+            _battle.AddOnBattlePacketListener(packet => {
+                Debug.Log($"Packet {packet.GetType().Name}");
+            });
         }
 
         private void Start()
@@ -32,6 +36,10 @@ namespace SDefence.Manager
         private void OnDestroy()
         {
             _system.RemoveOnRefreshEntityPacketListener(_battle.OnEntityPacketEvent);
+           
+            _battle.RemoveOnBattlePacketListener(packet => {
+                Debug.Log($"Packet {packet.GetType().Name}");
+            });
 
             _battle = null;
             _system = null;

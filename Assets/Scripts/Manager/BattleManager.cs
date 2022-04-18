@@ -119,7 +119,7 @@ namespace SDefence.Manager
         public static bool IS_LOBBY_GEN = false;
 #endif
 
-        private const float NEXT_WAVE_TIME = 10f;
+        private const float NEXT_WAVE_TIME = 5f;
 
         public enum TYPE_BATTLE_ACTION { Lobby, Battle}
 
@@ -146,9 +146,7 @@ namespace SDefence.Manager
 
 
         private BattleGenEntity _battleGenEntity;
-        //private BattleGenLevelData _battleGenLevelData;
-        //private BattleGenWaveData? _battleGenWaveData;
-        //private int _waveElementIndex = 0;
+
 
         private TYPE_BATTLE_ACTION _typeBattleAction = TYPE_BATTLE_ACTION.Lobby;
 
@@ -208,20 +206,26 @@ namespace SDefence.Manager
         {
             var actor = EnemyActor.Create();
             actor.name = "Actor@Enemy";
-            actor.AddOnRetrieveListener(RetrieveEnemyActor);
+            actor.AddOnRetrieveListener(OnRetrieveEnemyActorEvent);
+            actor.AddOnBattlePacketListener(OnBattlePacketEvent);
             actor.AddOnAttackListener(OnAttackEvent);
             actor.Inactivate();
             return actor;
         }
-        private void RetrieveEnemyActor(EnemyActor actor)
+
+        private void OnRetrieveEnemyActorEvent(EnemyActor actor)
         {
-            actor.Inactivate();
             _enemyActorList.Remove(actor);
             _enemyPool.RetrieveElement(actor);
+            actor.Inactivate();
+            //Debug.Log("Retrieve " + actor.GetInstanceID() + " " + _enemyActorList.Count);
         }
 
         public void SetBattle()
         {
+            Debug.Log("Start Battle");
+
+            _waveTime = 0f;
             _typeBattleAction = TYPE_BATTLE_ACTION.Battle;
 
             //HQActor 비무적
@@ -245,20 +249,22 @@ namespace SDefence.Manager
             //Bullet 파괴
             _bulletMgr.ForceRetrieve();
 
+            //LevelWave 적용하기
+            _battleGenEntity.SetBattle(_levelWaveData);
+
             //PlayBattle Event 보내기
+            OnPlayBattlePacketEvent();
         }
 
 
-        public void SetLobby()
+        private void SetBattleGen()
         {
-            _typeBattleAction = TYPE_BATTLE_ACTION.Lobby;
-
             var enemyLevelDataKey = string.Format("Level{0:d4}", _levelWaveData.GetLevel());
             var enemyLevelData = (BattleGenLevelData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(enemyLevelDataKey, "BattleGenLevelData");
 
-            if (enemyLevelData != null) 
-            { 
-                _battleGenEntity.SetData(enemyLevelData); 
+            if (enemyLevelData != null)
+            {
+                _battleGenEntity.SetData(enemyLevelData);
             }
 #if UNITY_EDITOR
             else
@@ -266,7 +272,16 @@ namespace SDefence.Manager
                 Debug.LogWarning($"{enemyLevelDataKey} is not Found");
             }
 #endif
+        }
 
+        public void SetLobby()
+        {
+            Debug.Log("Start Lobby");
+
+            _typeBattleAction = TYPE_BATTLE_ACTION.Lobby;
+            _waveTime = 0f;
+
+            SetBattleGen();
 
             //HQActor 무적
             _hqActor.SetInvincible(true);
@@ -290,6 +305,11 @@ namespace SDefence.Manager
             _bulletMgr.ForceRetrieve();
 
 
+            //Lobby Gen
+            _battleGenEntity.SetLobby();
+
+
+
             //LobbyBattle Event 보내기
         }
 
@@ -302,9 +322,11 @@ namespace SDefence.Manager
                     
                     _battleGenEntity.RunProcessBattle(deltaTime);
 
-                    if (_waveTime > NEXT_WAVE_TIME)
-                    {
-                        NextWave();
+                    if (!_levelWaveData.IsLastWave()) {
+                        if (_waveTime > NEXT_WAVE_TIME)
+                        {
+                            NextWave();
+                        }
                     }
 
                     break;
@@ -337,8 +359,6 @@ namespace SDefence.Manager
             {
                 _attackActionList[i].RunProcess(deltaTime);
             }
-
-
         }
 
         private void NextWave()
@@ -346,26 +366,24 @@ namespace SDefence.Manager
             _levelWaveData.IncreaseNumber();
             _hqActor.NextWave();
 
+            _waveTime = 0f;
+
             //적 등장 바뀌기
-            _battleGenEntity.SetLevelWave(_levelWaveData);
+            _battleGenEntity.SetBattle(_levelWaveData);
 
             //NextWaveBattlePacket
+            OnNextWaveBattlePacketEvent();
+            Debug.Log($"NextWave {_levelWaveData.GetLevel()} / {_levelWaveData.GetWave()}");
         }
 
 
 
-
-
-
-
-#region ##### Listener #####
+        #region ##### Listener #####
 
         private void OnAppearEnemyEvent(string enemyDataKey)
         {
             AppearEnemy(enemyDataKey);
         }
-
-
 
         public void OnEntityPacketEvent(IEntityPacket packet)
         {
@@ -448,17 +466,65 @@ namespace SDefence.Manager
                     var destroyEffectKey = DataStorage.Instance.GetDataOrNull<GameObject>(destroyKey);
                     _effectMgr.Activate(destroyEffectKey, destroyBattlePacket.Actor.NowPosition, 1f);
 
-                    if (destroyBattlePacket.Actor is HQActor)
+                    //전투일때
+                    if (_typeBattleAction == TYPE_BATTLE_ACTION.Battle)
                     {
-                        //HQ이면 게임 패배 이벤트
-                        //DefeatBattlePacket                        
+                        if (destroyBattlePacket.Actor is HQActor)
+                        {
+                            //HQ이면 게임 패배 이벤트
+                            var pk = new DefeatBattlePacket();
+                            _battleEvent?.Invoke(pk);
+                        }
+
+                        //for(int i = 0; i < _enemyActorList.Count; i++)
+                        //{
+                        //    Debug.Log("EnemyActor " + _enemyActorList[i].GetInstanceID());
+                            
+                        //}
+                        //Debug.Log("EnemyActor Count " + _enemyActorList.Count);
+
+                        //Enemy가 보스이면 게임 승리 이벤트
+                        //또는 적이 없으면 게임 승리 이벤트
+                        if (_enemyActorList.Count == 0 && _levelWaveData.IsLastWave())
+                        {
+                            var pk = new ClearBattlePacket();
+                            _battleEvent?.Invoke(pk);
+
+                            //자동 게임 종료
+                            _levelWaveData.IncreaseNumber();
+                            SetLobby();
+
+                            //이어하기
+                            //_levelWaveData.IncreaseNumber();
+                            //SetBattleGen();
+                            //SetBattle();
+                        }
                     }
 
-                    //Enemy가 보스이면 게임 승리 이벤트
                     break;
             }
             _battleEvent?.Invoke(packet);
         }
+
+        private void OnPlayBattlePacketEvent()
+        {
+            var packet = new PlayBattlePacket();
+            _battleEvent?.Invoke(packet);
+        }
+
+        private void OnNextWaveBattlePacketEvent()
+        {
+            var packet = new NextWaveBattlePacket();
+            packet.data = _levelWaveData;
+            _battleEvent?.Invoke(packet);
+        }
+
+        private void OnAppearEnemyBattlePacketEvent()
+        {
+            var packet = new AppearEnemyBattlePacket();
+            _battleEvent?.Invoke(packet);
+        }
+
 
 
         public void OnCommandPacketEvent(ICommandPacket packet)
@@ -607,12 +673,13 @@ namespace SDefence.Manager
                 var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
                 if (obj != null) actor.SetGraphicObject(obj);
 
+                _enemyActorList.Add(actor);
                 actor.Activate();
                 actor.SetPosition(AppearPosition());
-                _enemyActorList.Add(actor);
+                //Debug.Log("Appear " + actor.GetInstanceID() + " " + _enemyActorList.Count);
 
-                //보스?
-                //BossBattlePacket
+                //보스? 특수? 
+                OnAppearEnemyBattlePacketEvent();
             }
 #if UNITY_EDITOR
             else
@@ -636,9 +703,9 @@ namespace SDefence.Manager
             var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
             if (obj != null) actor.SetGraphicObject(obj);
 
+            _enemyActorList.Add(actor);
             actor.Activate();
             actor.SetPosition(AppearPosition());
-            _enemyActorList.Add(actor);
         }
 
         private Vector2 AppearPosition()

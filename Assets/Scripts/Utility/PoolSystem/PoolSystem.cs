@@ -39,7 +39,7 @@ namespace PoolSystem
 
         public void RetrieveElement(T element)
         {
-            _queue.Enqueue(element);
+            if(!_queue.Contains(element)) _queue.Enqueue(element);
         }
 
         public void CleanUp()
