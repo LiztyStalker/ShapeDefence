@@ -146,7 +146,7 @@ namespace SDefence.Turret
                     arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackDelayValue],
                     arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackDelayRate]
                 );
-            attackData.SetDelay(
+            attackData.SetRange(
                 arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.StartAttackRangeValue],
                 arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackRangeValue],
                 arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.DecreaseAttackRangeRate]
