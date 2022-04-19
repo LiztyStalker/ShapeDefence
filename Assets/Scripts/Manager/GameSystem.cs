@@ -41,20 +41,42 @@ namespace SDefence.Manager
         {
             switch (packet)
             {
-                case HQCommandPacket hqPacket:
-                    //UpTech -> trManager.ExpandOrbit
-                    if (hqPacket.IsUpTech)
-                    {
-                        //Tmp
-                        //_turretMgr.ExpandOrbit(2);
+                case UpgradeCommandPacket pk:
+                    // HQ Turret
+                    break;
+                case OpenTechCommandPacket pk:
+                    // HQ Turret
+                    break;
+                case UpTechCommandPacket pk:
+                    // HQ Turret
+                    break;
+                case ExpandCommandPacket pk:
+                    // Turret
+                    break;
+                case OpenDisassembleCommandPacket pk:
+                    // Turret
+                    break;
+                case DisassembleCommandPacket pk:
+                    // Turret
+                    break;
+                case RefreshCommandPacket pk:
+                    // HQ Turret
+                    break;
 
-                        //UpTech -> turretCount
-                    }
-                    _hqMgr.OnCommandPacketEvent(hqPacket);
-                    break;
-                case TurretCommandPacket trPacket:
-                    _turretMgr.OnCommandPacketEvent(trPacket);
-                    break;
+                //case HQCommandPacket hqPacket:
+                //    //UpTech -> trManager.ExpandOrbit
+                //    if (hqPacket.IsUpTech)
+                //    {
+                //        //Tmp
+                //        //_turretMgr.ExpandOrbit(2);
+
+                //        //UpTech -> turretCount
+                //    }
+                //    _hqMgr.OnCommandPacketEvent(hqPacket);
+                //    break;
+                //case TurretCommandPacket trPacket:
+                //    _turretMgr.OnCommandPacketEvent(trPacket);
+                //    break;
             }
 
         }

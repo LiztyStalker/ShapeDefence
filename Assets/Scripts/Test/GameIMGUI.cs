@@ -25,50 +25,7 @@ namespace SDefence.Test
 
             GUILayout.BeginVertical();
 
-            if(GUILayout.Button("본부 강화 "))
-            {
-                var cmd = new HQCommandPacket();
-                cmd.SetData(true, false);
-                _gameManager.OnCommandPacketEvent(cmd);
-            }
-            
-            if(GUILayout.Button("본부 테크 "))
-            {
-                var cmd = new HQCommandPacket();
-                cmd.SetData(false, true);
-                _gameManager.OnCommandPacketEvent(cmd);
-            }
-
-
-            if(GUILayout.Button("포탑 강화 "))
-            {
-                var cmd = new TurretCommandPacket();
-                cmd.SetData(0);
-                cmd.SetData(true, false, false);
-                _gameManager.OnCommandPacketEvent(cmd);
-
-            }
-            if (GUILayout.Button("포탑 테크 "))
-            {
-                var cmd = new TurretCommandPacket();
-                cmd.SetData(0);
-                cmd.SetData(false, true, false);
-                _gameManager.OnCommandPacketEvent(cmd);
-            }
-
-            _orbitIndex = GUILayout.TextField(_orbitIndex);
-            
-
-            if (GUILayout.Button("포탑 확장 "))
-            {
-                var cmd = new TurretCommandPacket();
-                cmd.SetData(0);
-                cmd.SetOrbit(int.Parse(_orbitIndex));
-                cmd.SetData(false, false, true);
-                _gameManager.OnCommandPacketEvent(cmd);
-            }
-
-            GUILayout.Space(20f);
+            GUILayout.Label("전투");
 
             //적등장
             if (GUILayout.Button("적 등장 "))
@@ -76,8 +33,6 @@ namespace SDefence.Test
                 var cmd = new EnemyCommandPacket();
                 _gameManager.OnCommandPacketEvent(cmd);
             }
-
-            GUILayout.Space(20f);
 
             //전투
             if (GUILayout.Button("전투 시작"))
@@ -102,11 +57,56 @@ namespace SDefence.Test
             }
 
 
-            //전투
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical();
+
+            GUILayout.Label("로비");
+
             if (GUILayout.Button($"로비 리스폰 {BattleManager.IS_LOBBY_GEN}"))
             {
                 BattleManager.IS_LOBBY_GEN = !BattleManager.IS_LOBBY_GEN;
             }
+
+            GUILayout.Space(10f);
+
+            if (GUILayout.Button("강화"))
+            {
+                var cmd = new UpgradeCommandPacket();
+                _gameManager.OnCommandPacketEvent(cmd);
+            }
+            if (GUILayout.Button("확장"))
+            {
+                var cmd = new ExpandCommandPacket();
+                _gameManager.OnCommandPacketEvent(cmd);
+            }
+            if (GUILayout.Button("테크열기"))
+            {
+                var cmd = new OpenTechCommandPacket();
+                _gameManager.OnCommandPacketEvent(cmd);
+            }
+            if (GUILayout.Button("테크진행"))
+            {
+                var cmd = new UpTechCommandPacket();
+                _gameManager.OnCommandPacketEvent(cmd);
+            }
+            if (GUILayout.Button("갱신"))
+            {
+                var cmd = new RefreshCommandPacket();
+                _gameManager.OnCommandPacketEvent(cmd);
+            }
+            if (GUILayout.Button("분해열기"))
+            {
+                var cmd = new OpenDisassembleCommandPacket();
+                _gameManager.OnCommandPacketEvent(cmd);
+            }
+            if (GUILayout.Button("분해"))
+            {
+                var cmd = new DisassembleCommandPacket();
+                _gameManager.OnCommandPacketEvent(cmd);
+            }
+
+
 
             GUILayout.Label(_levelWave);
 
