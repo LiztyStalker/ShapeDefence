@@ -6,10 +6,12 @@ namespace SDefence.Turret
     using Asset.Raw;
     using Attack.Raw;
     using Utility.ScriptableObjectData;
+    using Durable.Usable;
+    using Recovery.Usable;
+    using Tech;
 #if UNITY_EDITOR
     using Generator;
-    using Durable.Usable;
-    using SDefence.Recovery.Usable;
+    using System.Collections.Generic;
 #endif
 
     public class TurretData : ScriptableObjectData
@@ -29,12 +31,15 @@ namespace SDefence.Turret
         [SerializeField]
         private string _techDataKey;
         [SerializeField]
+        private TechRawData _techRawData;
+        [SerializeField]
         private AttackRawData _attackData;
         [SerializeField]
         private float _repairTime;
 
         public string GraphicObjectKey => _graphicObjectKey;
         public string TechDataKey => _techDataKey;
+        public TechRawData TechRawData => _techRawData;
         public AttackRawData AttackRawData => _attackData;
         public string BulletDataKey => _bulletDataKey;
         public AssetRawData UpgradeRawData => _upgradeRawData;
@@ -153,6 +158,12 @@ namespace SDefence.Turret
                 _techDataKey = arr[(int)TurretDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey];
         }
 
+        public void SetTechRawData(TechRawData raw)
+        {
+            _techRawData = raw;
+        }
+
+        public void ClearTechRawData() => _techRawData = null;
 #endif
     }
 }

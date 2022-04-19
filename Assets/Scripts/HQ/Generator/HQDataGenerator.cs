@@ -40,11 +40,34 @@ namespace SDefence.HQ.Generator
         private readonly static string _bundleName = "data/hq";
         private readonly static string _sheetKey = "1RwNsRfdv78BLc1ziQQeTqIRMVC2bmNU8lnYVHycnrgo";
         private readonly static string _worksheetKey = "HQ_Data";
+        private readonly static string _worksheetTechKey = "Tech_Data";
 
         [MenuItem("Data/HQ/Create And Update All HQData")]
         private static void CreateAndUpdateAllData()
         {
-            GoogleSheetGenerator.CreateAndUpdateAllData<HQData>(_sheetKey, _worksheetKey, _dataPath, _bundleName);
+            GoogleSheetGenerator.SheetAllData<Tech.TechRawData>(_sheetKey, _worksheetTechKey, raws =>
+            {
+                GoogleSheetGenerator.CreateAndUpdateAllData<HQData>(_sheetKey, _worksheetKey, _dataPath, _bundleName, dic =>
+                {
+                    foreach(var value in dic.Values)
+                    {
+                        if (!string.IsNullOrEmpty(value.TechDataKey))
+                        {
+                            if (raws.ContainsKey(value.TechDataKey))
+                            {
+                                var tech = raws[value.TechDataKey];
+                                value.SetTechRawData(tech.Clone());
+                            }
+                        }
+                        else
+                        {
+                            value.SetTechRawData(null);
+                        }
+                    }
+                });
+
+            });
+
         }
 
 

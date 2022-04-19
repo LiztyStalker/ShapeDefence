@@ -5,10 +5,11 @@ namespace SDefence.HQ
     using Recovery.Raw;
     using Asset.Raw;
     using Utility.ScriptableObjectData;
+    using Tech;
+    using SDefence.Recovery.Usable;
+    using Durable.Usable;
 #if UNITY_EDITOR
     using Generator;
-    using Durable.Usable;
-    using SDefence.Recovery.Usable;
 #endif
 
     public class HQData : ScriptableObjectData
@@ -26,10 +27,13 @@ namespace SDefence.HQ
         [SerializeField]
         private string _techDataKey;
         [SerializeField]
+        private TechRawData _techRawData;
+        [SerializeField]
         private int _orbitCount;
 
         public string GraphicObjectKey => _graphicObjectKey;
         public string TechDataKey => _techDataKey;
+        public TechRawData TechRawData => _techRawData;
         public AssetRawData UpgradeRawData => _upgradeRawData;
         public int MaxUpgradeCount => _maxUpgradeCount;
         public DurableRawData[] DurableRawDataArray => _durableRawDataArray;
@@ -66,6 +70,8 @@ namespace SDefence.HQ
             _maxUpgradeCount = 10;
 
             _orbitCount = 1;
+
+            _techRawData = null;
         }
 
         public override void AddData(string[] arr) { }
@@ -110,8 +116,22 @@ namespace SDefence.HQ
 
             _orbitCount = int.Parse(arr[(int)HQDataGenerator.TYPE_SHEET_COLUMNS.OrbitCount]);
 
-            _techDataKey = arr[(int)HQDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey];
+            if (arr.Length > (int)HQDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey)
+            {
+                _techDataKey = arr[(int)HQDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey];
+            }
+            else
+            {
+                _techDataKey = null;
+            }
         }
+
+        public void SetTechRawData(TechRawData raw)
+        {
+            _techRawData = raw;
+        }
+
+        
 
 #endif
     }

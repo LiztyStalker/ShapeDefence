@@ -1,55 +1,53 @@
 namespace SDefence.Tech
 {
-    using UnityEngine;
+    using SDefence.Tech.Generator;
     using System.Collections.Generic;
-    using Utility.ScriptableObjectData;
-    using Generator;
+    using UnityEngine;
+    using Utility;
 
-    public class TechData : ScriptableObjectData
-    {
-        [SerializeField]
-        private TechRawData[] _techRawDataArray;
+    //public class TechData : ScriptableObjectData
+    //{
+    //    [SerializeField]
+    //    private TechRawData[] _techRawDataArray;
 
-        public override void AddData(string[] arr)
-        {
-            var list = new List<TechRawData>(_techRawDataArray);
-            var data = TechRawData.Create();
-            data.SetData(
-                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey],
-                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeTechData],
-                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeAssetData],
-                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechAssetValue]
-            );
-            list.Add(data);
-            _techRawDataArray = list.ToArray();
-        }
+    //    public override void AddData(string[] arr)
+    //    {
+    //        var list = new List<TechRawData>(_techRawDataArray);
+    //        var data = TechRawData.Create();
+    //        data.SetData(
+    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey],
+    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeTechData],
+    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeAssetData],
+    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechAssetValue]
+    //        );
+    //        list.Add(data);
+    //        _techRawDataArray = list.ToArray();
+    //    }
 
-        public override bool HasDataArray()
-        {
-            return true;
-        }
+    //    public override bool HasDataArray()
+    //    {
+    //        return true;
+    //    }
 
-        public override void SetData(string[] arr)
-        {
-            Key = arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.Key];
+    //    public override void SetData(string[] arr)
+    //    {
+    //        Key = arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.Key];
 
-            _techRawDataArray = new TechRawData[1];
-            var data = TechRawData.Create();
-            data.SetData(
-                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey],
-                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeTechData],
-                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeAssetData],
-                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechAssetValue]
-            );
-            _techRawDataArray[0] = data;
+    //        _techRawDataArray = new TechRawData[1];
+    //        var data = TechRawData.Create();
+    //        data.SetData(
+    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey],
+    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeTechData],
+    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeAssetData],
+    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechAssetValue]
+    //        );
+    //        _techRawDataArray[0] = data;
 
-        }
-    }
-
-
+    //    }
+    //}
 
     [System.Serializable]
-    public class TechRawData
+    public class TechRawElement
     {
         [SerializeField]
         private string _typeTechData;
@@ -72,10 +70,8 @@ namespace SDefence.Tech
         public int TechAssetValue => _techAssetValue;
 
 
-#if UNITY_EDITOR
-        public static TechRawData Create() => new TechRawData();
-
-        private TechRawData()
+        public static TechRawElement Create() => new TechRawElement();
+        public TechRawElement()
         {
             _typeTechData = "Test";
             _techDataKey = "Test";
@@ -84,7 +80,6 @@ namespace SDefence.Tech
             _typeAssetData = "Neutral";
             _techAssetValue = 100;
         }
-
         public void SetData(string typeTechData, string techDataKey, string typeAssetData, string techAssetValue)
         {
             _typeTechData = typeTechData;
@@ -95,6 +90,77 @@ namespace SDefence.Tech
             _techAssetValue = int.Parse(techAssetValue);
         }
 
+        public TechRawElement Clone()
+        {
+            var data = Create();
+            data.SetData(_typeTechData, _techDataKey, _typeAssetData, _techAssetValue.ToString());
+            return data;
+        }
+    }
+
+
+
+    [System.Serializable]
+    public class TechRawData : ISheetData
+    {
+        [SerializeField]
+        private TechRawElement[] _techRawElements;
+
+        public TechRawElement[] TechRawElements => _techRawElements;
+#if UNITY_EDITOR
+        
+        public TechRawData()
+        {
+            
+        }               
+
+        private void SetData(TechRawData raw)
+        {
+            _techRawElements = new TechRawElement[raw.TechRawElements.Length];
+            for(int i = 0; i < _techRawElements.Length; i++)
+            {
+                _techRawElements[i] = raw.TechRawElements[i].Clone();
+            }
+        }
+
+        public void SetData(string[] arr)
+        {
+            _techRawElements = new TechRawElement[1];
+
+            var data = TechRawElement.Create();
+            data.SetData(
+                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeTechData],
+                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey],
+                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeAssetData],
+                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechAssetValue]
+                );
+
+            _techRawElements[0] = data;
+        }
+
+        public void AddData(string[] arr)
+        {
+            var data = TechRawElement.Create();
+            data.SetData(
+                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeTechData],
+                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey],
+                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeAssetData],
+                arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechAssetValue]
+                );
+
+            var list = new List<TechRawElement>(_techRawElements);
+            list.Add(data);
+            _techRawElements = list.ToArray();
+        }
+
+        public void ClearData() => _techRawElements = null;
+
+        public TechRawData Clone()
+        {
+            var data = new TechRawData();
+            data.SetData(this);
+            return data;
+        }
 #endif
     }
 }
