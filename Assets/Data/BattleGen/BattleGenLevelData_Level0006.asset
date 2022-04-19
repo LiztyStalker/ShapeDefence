@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94d23cc8fafe9924385b1af9952e478d, type: 3}
+  m_Name: BattleGenLevelData_Level0006
+  m_EditorClassIdentifier: 
+  _key: Level0006
+  _iconKey: 
+  _sortIndex: 0
+  _isTest: 0
+  _level: 7
+  _lobbyWaveData:
+    _waveElementArray:
+    - _enemyDataKey: Test
+      _appearCount: 5
+      _weight: 1
+      _waveAppearDelay: 0
+  _waveDataArray:
+  - _waveElementArray:
+    - _enemyDataKey: Test
+      _appearCount: 5
+      _weight: 1
+      _waveAppearDelay: 0
+  - _waveElementArray:
+    - _enemyDataKey: Test
+      _appearCount: 5
+      _weight: 1
+      _waveAppearDelay: 0
+  - _waveElementArray:
+    - _enemyDataKey: Test
+      _appearCount: 5
+      _weight: 1
+      _waveAppearDelay: 0
+  - _waveElementArray:
+    - _enemyDataKey: Test
+      _appearCount: 5
+      _weight: 1
+      _waveAppearDelay: 0
+  - _waveElementArray:
+    - _enemyDataKey: Boss1
+      _appearCount: 1
+      _weight: 1
+      _waveAppearDelay: 0
+    - _enemyDataKey: Boss2
+      _appearCount: 1
+      _weight: 1
+      _waveAppearDelay: 0
+    - _enemyDataKey: Boss3
+      _appearCount: 1
+      _weight: 1
+      _waveAppearDelay: 0

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 027ea39421f8d4745a430e55d6ca1a5d, type: 3}
+  m_Name: BulletData_Test
+  m_EditorClassIdentifier: 
+  _key: Test
+  _iconKey: 
+  _sortIndex: 0
+  _isTest: 1
+  _graphicObjectKey: Bullet_Test
+  _attackActionData:
+    _attackRange: 0
+    _attackCount: 1
+    _attackDelayTime: 0
+    _isOverlap: 0
+  _movementData:
+    _startMovementValue: 1
+    _increaseMovementValue: 0
+    _increaseMovementRate: 0.01
+    _typeMovementAction: Direct
+    _accuracy: 0
+  _isRotate: 0
+  _activeEffectDataKey: 
+  _destroyEffectDataKey: DotHit
+  _activeEffectSfxKey: SFX_DotShoot1
+  _destroyEffectSfxKey: 

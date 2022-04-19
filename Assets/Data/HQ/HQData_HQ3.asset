@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdd619485666aa240814dddfdd1d2c1d, type: 3}
   m_Name: HQData_HQ3
   m_EditorClassIdentifier: 
-  _key: 
+  _key: HQ3
   _iconKey: HQ3
-  _sortIndex: 2
+  _sortIndex: 0
   _isTest: 0
   _graphicObjectKey: HQ3
   _durableRawDataArray:
@@ -45,4 +45,11 @@ MonoBehaviour:
     _increaseValue: 1
     _increaseRate: 0.2
   _maxUpgradeCount: 50
-  _orbitCount: 3
+  _techDataKey: HQTech3
+  _techRawData:
+    _techRawElements:
+    - _typeTechData: HQ4
+      _techDataKey: HQ
+      _typeAssetData: Neutral
+      _techAssetValue: 300
+  _orbitCount: 4

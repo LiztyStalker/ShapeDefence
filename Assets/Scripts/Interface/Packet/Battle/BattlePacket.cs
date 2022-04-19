@@ -1,7 +1,8 @@
 namespace SDefence.Packet
 {
-    using SDefence.Actor;
-    using SDefence.Data;
+    using Actor;
+    using Data;
+    using Enemy;
     using UnityEngine;
 
     public class AppearEnemyBattlePacket : IBattlePacket
@@ -9,6 +10,7 @@ namespace SDefence.Packet
         //보스
         //특수
         //진보스
+        public TYPE_ENEMY_STYLE TypeEnemyStyle;
     }
 
     public class ActorBattlePacket : IBattlePacket

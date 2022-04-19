@@ -106,7 +106,7 @@ namespace SDefence.Durable.Entity
                 //실드 감소
             }
 
-            UnityEngine.Debug.Log(value.Value);
+            //UnityEngine.Debug.Log(value.Value);
 
             if (!value.IsZero)
             {

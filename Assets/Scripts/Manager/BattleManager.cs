@@ -12,11 +12,11 @@ namespace SDefence.Manager
     using PoolSystem;
     using SDefence.Turret.Entity;
     using Utility.Bullet.Data;
-    using SDefence.Attack;
-    using SDefence.BattleGen.Data;
-    using SDefence.Attack.Usable;
-    using SDefence.BattleGen.Entity;
-    using SDefence.Enemy;
+    using Attack;
+    using BattleGen.Data;
+    using Attack.Usable;
+    using BattleGen.Entity;
+    using Enemy;
 
     #region ##### Orbit #####
     public class OrbitCase
@@ -125,9 +125,12 @@ namespace SDefence.Manager
 
         private PoolSystem<EnemyActor> _enemyPool;
 
+        //등장 위치 - 카메라 화면 가장자리 정의 필요
         private Vector2 _appearSize;
 
+        
         private GameObject _gameObject;
+
         private LevelWaveData _levelWaveData;
 
         private HQActor _hqActor;
@@ -194,17 +197,13 @@ namespace SDefence.Manager
             _enemyActorList.Clear();
 
             _battleGenEntity = null;
-
-            //enemy remove event
-            //_enemyActorList
-            //actor.RemoveOnRetrieveListener(RetrieveEnemyActor);
-            //actor.RemoveOnAttackListener(OnAttackEvent);
-
         }
 
         private EnemyActor CreateEnemyActor()
         {
             var actor = EnemyActor.Create();
+            actor.transform.SetParent(_gameObject.transform);
+            actor.transform.localScale = Vector3.one;
             actor.name = "Actor@Enemy";
             actor.AddOnRetrieveListener(OnRetrieveEnemyActorEvent);
             actor.AddOnBattlePacketListener(OnBattlePacketEvent);
@@ -286,14 +285,12 @@ namespace SDefence.Manager
             //HQActor 무적
             _hqActor.SetInvincible(true);
 
-            //Turret 무적
-            //Turret 초기화
+            //Turret 무적 / 초기화
             foreach (var value in _turretDic.Values)
             {
                 value.SetInvincible(true);
                 value.Reset();
             }
-
 
             //Enemy 파괴
             for (int i = _enemyActorList.Count - 1; i >= 0; i--)
@@ -371,9 +368,9 @@ namespace SDefence.Manager
             //적 등장 바뀌기
             _battleGenEntity.SetBattle(_levelWaveData);
 
-            //NextWaveBattlePacket
+
             OnNextWaveBattlePacketEvent();
-            Debug.Log($"NextWave {_levelWaveData.GetLevel()} / {_levelWaveData.GetWave()}");
+            //Debug.Log($"NextWave {_levelWaveData.GetLevel()} / {_levelWaveData.GetWave()}");
         }
 
 
@@ -476,19 +473,13 @@ namespace SDefence.Manager
                             _battleEvent?.Invoke(pk);
                         }
 
-                        //for(int i = 0; i < _enemyActorList.Count; i++)
-                        //{
-                        //    Debug.Log("EnemyActor " + _enemyActorList[i].GetInstanceID());
-                            
-                        //}
-                        //Debug.Log("EnemyActor Count " + _enemyActorList.Count);
-
                         //Enemy가 보스이면 게임 승리 이벤트
                         //또는 적이 없으면 게임 승리 이벤트
                         if (_enemyActorList.Count == 0 && _levelWaveData.IsLastWave())
                         {
                             var pk = new ClearBattlePacket();
                             _battleEvent?.Invoke(pk);
+                            //UIClear
 
                             //자동 게임 종료
                             _levelWaveData.IncreaseNumber();
@@ -519,9 +510,10 @@ namespace SDefence.Manager
             _battleEvent?.Invoke(packet);
         }
 
-        private void OnAppearEnemyBattlePacketEvent()
+        private void OnAppearEnemyBattlePacketEvent(TYPE_ENEMY_STYLE typeEnemyStyle)
         {
             var packet = new AppearEnemyBattlePacket();
+            packet.TypeEnemyStyle = typeEnemyStyle;
             _battleEvent?.Invoke(packet);
         }
 
@@ -657,7 +649,6 @@ namespace SDefence.Manager
                             //적이 사망하면 타겟팅 초기화
                             var enemyActor = _enemyActorList[UnityEngine.Random.Range(0, _enemyActorList.Count)];
                             actor = _bulletMgr.Activate(attackable, bulletData, 0.1f, attackable.AttackPos, enemyActor.NowPosition, OnBulletAttackEvent, null);
-                            //Debug.Log(actor);
                         }
                         break;
                 }
@@ -697,7 +688,7 @@ namespace SDefence.Manager
                 //Debug.Log("Appear " + actor.GetInstanceID() + " " + _enemyActorList.Count);
 
                 //보스? 특수? 
-                OnAppearEnemyBattlePacketEvent();
+                OnAppearEnemyBattlePacketEvent(enemyData.TypeEnemyStyle);
             }
 #if UNITY_EDITOR
             else

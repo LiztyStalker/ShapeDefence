@@ -9,23 +9,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdd619485666aa240814dddfdd1d2c1d, type: 3}
-  m_Name: HQData_HQ4
+  m_Script: {fileID: 11500000, guid: 1f688208e5379cb4093d97e119a4cd93, type: 3}
+  m_Name: TurretData_Missile
   m_EditorClassIdentifier: 
-  _key: HQ4
-  _iconKey: HQ4
+  _key: Missile
+  _iconKey: Missile
   _sortIndex: 0
   _isTest: 0
-  _graphicObjectKey: HQ4
+  _graphicObjectKey: Missile
+  _bulletDataKey: Missile
   _durableRawDataArray:
   - _typeData: SDefence.Durable.Usable.HealthDurableUsableData
-    _startValue: 1000
+    _startValue: 25
     _increaseValue: 1
     _increaseRate: 0.1
   - _typeData: SDefence.Durable.Usable.ArmorDurableUsableData
-    _startValue: 3
+    _startValue: 0
     _increaseValue: 0
-    _increaseRate: 0.05
+    _increaseRate: 0
   - _typeData: SDefence.Durable.Usable.ShieldDurableUsableData
     _startValue: 0
     _increaseValue: 0
@@ -41,15 +42,21 @@ MonoBehaviour:
     _increaseRate: 0
   _upgradeRawData:
     _typeData: SDefence.Asset.Usable.NeutralAssetUsableData
-    _startValue: 10
+    _startValue: 20
     _increaseValue: 1
-    _increaseRate: 0.2
-  _maxUpgradeCount: 100
-  _techDataKey: HQTech4
+    _increaseRate: 0.1
+  _maxUpgradeCount: 25
+  _techDataKey: '-'
   _techRawData:
-    _techRawElements:
-    - _typeTechData: HQ5
-      _techDataKey: HQ
-      _typeAssetData: Neutral
-      _techAssetValue: 400
-  _orbitCount: 6
+    _techRawElements: []
+  _attackData:
+    _startAttackValue: 20
+    _increaseAttackValue: 3
+    _increaseAttackRate: 0.1
+    _startAttackDelayValue: 4
+    _decreaseAttackDelayValue: 0
+    _decreaseAttackDelayRate: 0.01
+    _startAttackRangeValue: 5
+    _increaseAttackRangeValue: 0
+    _increaseAttackRangeRate: 0.1
+  _repairTime: 5
