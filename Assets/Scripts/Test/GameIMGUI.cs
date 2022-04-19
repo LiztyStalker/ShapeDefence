@@ -13,6 +13,9 @@ namespace SDefence.Test
         private GameManager _gameManager;
 
         private string _orbitIndex;
+        private string _levelWave;
+
+
 
         public void OnGUI()
         {
@@ -35,8 +38,6 @@ namespace SDefence.Test
                 cmd.SetData(false, true);
                 _gameManager.OnCommandPacketEvent(cmd);
             }
-
-
 
 
             if(GUILayout.Button("포탑 강화 "))
@@ -67,6 +68,8 @@ namespace SDefence.Test
                 _gameManager.OnCommandPacketEvent(cmd);
             }
 
+            GUILayout.Space(20f);
+
             //적등장
             if (GUILayout.Button("적 등장 "))
             {
@@ -74,11 +77,27 @@ namespace SDefence.Test
                 _gameManager.OnCommandPacketEvent(cmd);
             }
 
+            GUILayout.Space(20f);
 
             //전투
             if (GUILayout.Button("전투 시작"))
             {
-                var cmd = new BattleCommandPacket();
+                var cmd = new PlayBattleCommandPacket();
+                _gameManager.OnCommandPacketEvent(cmd);
+            }
+            if (GUILayout.Button("재도전"))
+            {
+                var cmd = new RetryCommandPacket();
+                _gameManager.OnCommandPacketEvent(cmd);
+            }
+            if (GUILayout.Button("로비이동"))
+            {
+                var cmd = new ToLobbyCommandPacket();
+                _gameManager.OnCommandPacketEvent(cmd);
+            }
+            if (GUILayout.Button("다음전투"))
+            {
+                var cmd = new NextLevelCommandPacket();
                 _gameManager.OnCommandPacketEvent(cmd);
             }
 
@@ -88,6 +107,8 @@ namespace SDefence.Test
             {
                 BattleManager.IS_LOBBY_GEN = !BattleManager.IS_LOBBY_GEN;
             }
+
+            GUILayout.Label(_levelWave);
 
             GUILayout.EndVertical();
 

@@ -531,10 +531,28 @@ namespace SDefence.Manager
         {
             switch (packet)
             {
+#if UNITY_EDITOR
                 case EnemyCommandPacket enemyPacket:
                     AppearEnemy();
                     break;
-                case BattleCommandPacket battlePacket:
+#endif
+                case PlayBattleCommandPacket pk:
+                    //전투시작 PlayBattleCommandPacket - Lobby To Battle
+                    SetBattle();
+                    break;
+                case RetryCommandPacket pk:
+                    //재도전 RetryCommandPacket
+                    SetBattleGen();
+                    SetBattle();
+                    break;
+                case ToLobbyCommandPacket pk:
+                    //로비 ToLobbyCommandPacket - Battle To Lobby
+                    SetLobby();
+                    break;
+                case NextLevelCommandPacket pk:
+                    //다음단계 NextLevelCommandPacket
+                    _levelWaveData.IncreaseNumber();
+                    SetBattleGen();
                     SetBattle();
                     break;
             }
