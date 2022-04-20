@@ -4,14 +4,32 @@ namespace SDefence.UI
 
     public class UIBattle : MonoBehaviour
     {
+        private UILevelWave _uiLevelWave;
+        private UIAlarmBoss _uiAlarmBoss;
+        private UIDurableContainer _uiDurableContainer;
+
         public void Initialize()
         {
+            _uiLevelWave = GetComponentInChildren<UILevelWave>(true);
+            _uiAlarmBoss = GetComponentInChildren<UIAlarmBoss>(true);
+            _uiDurableContainer = GetComponentInChildren<UIDurableContainer>(true);
 
+#if UNITY_EDITOR
+            Debug.Assert(_uiLevelWave != null, "_uiLevelWave 를 찾을 수 없습니다");
+            Debug.Assert(_uiAlarmBoss != null, "_uiAlarmBoss 를 찾을 수 없습니다");
+            Debug.Assert(_uiDurableContainer != null, "_uiDurableContainer 를 찾을 수 없습니다");
+#endif
+
+            _uiLevelWave.Initialize();
+            _uiAlarmBoss.Initialize();
+            _uiDurableContainer.Initialize();
         }
 
         public void CleanUp()
         {
-
+            _uiLevelWave.CleanUp();
+            _uiAlarmBoss.CleanUp();
+            _uiDurableContainer.CleanUp();
         }
 
         public void Show()
@@ -22,6 +40,12 @@ namespace SDefence.UI
         public void Hide()
         {
             gameObject.SetActive(false);
+        }
+        public void SetData()
+        {
+            //LevelWave
+            //AlarmBoss
+            //DurableContainer
         }
     }
 }

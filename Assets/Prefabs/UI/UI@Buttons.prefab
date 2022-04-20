@@ -127,9 +127,9 @@ GameObject:
   - component: {fileID: 5291918830867340612}
   - component: {fileID: 5291918830867340615}
   - component: {fileID: 5291918830867340614}
-  - component: {fileID: 2724158483212400948}
+  - component: {fileID: 29068441660747547}
   m_Layer: 5
-  m_Name: UI@Button
+  m_Name: UI@Buttons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -174,7 +174,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_TargetDisplay: 0
 --- !u!114 &5291918830867340615
 MonoBehaviour:
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &2724158483212400948
+--- !u!114 &29068441660747547
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -225,9 +225,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5291918830867340608}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26db0fae50e32954d9d0e335343c3b9d, type: 3}
+  m_Script: {fileID: 11500000, guid: ff67dc5db49136a4e93e1b2afb5c742d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _settingsBtn: {fileID: 7862319965776554416}
 --- !u!1 &5783404692266862433
 GameObject:
   m_ObjectHideFlags: 0

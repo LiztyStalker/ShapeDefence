@@ -1549,7 +1549,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!114 &2615314126757367889
 MonoBehaviour:
@@ -1611,8 +1611,8 @@ MonoBehaviour:
   _langSheet: {fileID: 8909712638009231747}
   _langLabel: {fileID: 765882002114415552}
   _langBtn: {fileID: 6734846717508190387}
-  _creditSheet: {fileID: 0}
-  _creditsBtn: {fileID: 0}
+  _creditSheet: {fileID: 4616277029735666287}
+  _creditsBtn: {fileID: 8901385399857201950}
   _saveBtn: {fileID: 4318036644202567346}
   _gpgsBtn: {fileID: 638865669419640125}
   _qnaBtn: {fileID: 2980148242478947393}

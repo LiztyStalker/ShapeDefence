@@ -203,7 +203,7 @@ GameObject:
   - component: {fileID: 8983206396281682876}
   - component: {fileID: 8983206396281682877}
   - component: {fileID: 8983206396281682866}
-  - component: {fileID: 8983206396281682879}
+  - component: {fileID: 1936098184800797757}
   m_Layer: 5
   m_Name: UI@Level
   m_TagString: Untagged
@@ -250,7 +250,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_TargetDisplay: 0
 --- !u!114 &8983206396281682877
 MonoBehaviour:
@@ -292,7 +292,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &8983206396281682879
+--- !u!114 &1936098184800797757
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -301,6 +301,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8983206396281682864}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8b2cf280c94ca140b6e9b31e0901dea, type: 3}
+  m_Script: {fileID: 11500000, guid: bab8e6e46ae5cf9469226456af1f80e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _levelText: {fileID: 9006834329397259842}

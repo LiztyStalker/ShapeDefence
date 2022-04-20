@@ -26,6 +26,11 @@ namespace Utility.UI
         private UISettings _uiSettings;
         private static UICommon Create()
         {
+
+            _current = FindObjectOfType<UICommon>(true);
+
+            if (_current != null) return _current;
+
             var ui = Storage.DataStorage.Instance.GetDataOrNull<GameObject>(UGUI_NAME);
             if (ui != null)
             {
@@ -56,6 +61,7 @@ namespace Utility.UI
             }
 
             _uiPopup.Initialize();
+            _uiPopup.Hide();
 
 
             _uiSettings = GetComponentInChildren<UISettings>(true);
@@ -66,7 +72,7 @@ namespace Utility.UI
                 _uiSettings.transform.SetParent(transform);
             }
             _uiSettings.Initialize();
-
+            _uiSettings.Hide();
         }
 
 

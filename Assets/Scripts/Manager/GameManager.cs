@@ -1,14 +1,30 @@
 namespace SDefence.Manager
 {
     using UnityEngine;
+    using UI;
+    using Storage;
 
     public class GameManager : MonoBehaviour
     {
         private GameSystem _system;
         private BattleManager _battle;
+        private UIGame _uiGame;
 
         private void Awake()
         {
+            _uiGame = FindObjectOfType<UIGame>(true);
+            if(_uiGame == null)
+            {
+                var obj = DataStorage.Instance.GetDataOrNull<GameObject>("UI@Game");
+                _uiGame = obj.GetComponent<UIGame>();
+            }
+
+            _uiGame.Initialize();
+
+
+
+
+
             _battle = BattleManager.Create();
             _system = GameSystem.Create();
 

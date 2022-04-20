@@ -2,7 +2,7 @@ namespace SDefence.UI
 {
     using UnityEngine;
 
-    public class UIAsset : MonoBehaviour
+    public class UIAlarmBoss : MonoBehaviour
     {
         public void Initialize()
         {
@@ -14,12 +14,7 @@ namespace SDefence.UI
 
         public void Show()
         {
-            gameObject.SetActive(true);
-        }
-        public void Hide()
-        {
-            gameObject.SetActive(false);
-        }
 
+        }
     }
 }
