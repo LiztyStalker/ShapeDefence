@@ -48,8 +48,25 @@ namespace SDefence.UI
             _list.Clear();
         }
 
-        public void Show()
+        public void Show()//TechData
         {
+            //Test
+            if (_list.Count == 0)
+            {
+                var btn = Create();
+                btn.SetData("Test");
+                _list.Add(btn);
+            }
+            else
+            {
+                for(int i = 0; i < _list.Count; i++)
+                {
+                    _list[i].SetData("Test");
+                    _list[i].Show();
+                }
+            }
+           
+
             gameObject.SetActive(true);
         }
 
@@ -60,11 +77,15 @@ namespace SDefence.UI
             OnClosedEvent();
         }
 
-        public void SetData()
+        private UITechButton Create()
         {
-            //AssetData
-            //TechData - List
+            var btn = Instantiate(_techBtn);
+            btn.transform.SetParent(_techFrame);
+            btn.transform.localScale = Vector3.one;
+            btn.SetOnCommandPacketListener(OnCommandPacketEvent);
+            return btn;
         }
+
 
         private void Clear()
         {
@@ -78,7 +99,12 @@ namespace SDefence.UI
 
         private System.Action<ICommandPacket> _cmdEvent;
         public void SetOnCommandPacketListener(System.Action<ICommandPacket> act) => _cmdEvent = act;
-        private void OnCommandPacketEvent(ICommandPacket pk) => _cmdEvent?.Invoke(pk);
+        private void OnCommandPacketEvent(ICommandPacket pk)
+        {
+            _cmdEvent?.Invoke(pk);
+            Hide();
+        }
+
         private void OnCloseEvent()
         {
             Hide();

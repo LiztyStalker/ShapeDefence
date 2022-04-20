@@ -65,6 +65,7 @@ namespace SDefence.UI
             //DisassembleCommandPacket
             var pk = new DisassembleCommandPacket();
             _cmdEvent?.Invoke(pk);
+            OnCloseEvent();
         }
 
 

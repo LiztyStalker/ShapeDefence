@@ -1623,6 +1623,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8327839710310591227}
+  - component: {fileID: 6867837764393505371}
   m_Layer: 5
   m_Name: TechFrame
   m_TagString: Untagged
@@ -1649,6 +1650,30 @@ RectTransform:
   m_AnchoredPosition: {x: 4, y: -127}
   m_SizeDelta: {x: 755.2091, y: 181.465}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &6867837764393505371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2913145879136943686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 200, y: 80}
+  m_Spacing: {x: 10, y: 0}
+  m_Constraint: 2
+  m_ConstraintCount: 1
 --- !u!1 &2918416259727280416
 GameObject:
   m_ObjectHideFlags: 0
@@ -5925,7 +5950,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7786586962893524819
 RectTransform:
   m_ObjectHideFlags: 0

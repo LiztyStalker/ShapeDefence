@@ -299,7 +299,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 377, y: -246}
+  m_AnchoredPosition: {x: -10, y: -246}
   m_SizeDelta: {x: 400, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3742090310126139225
@@ -919,7 +919,7 @@ GameObject:
   - component: {fileID: 7274671636512297018}
   - component: {fileID: 2734544654979527545}
   m_Layer: 5
-  m_Name: Texture
+  m_Name: GroundTexture
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -937,7 +937,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3726636142334232115}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1645,8 +1645,8 @@ RectTransform:
   - {fileID: 3726679946743944276}
   - {fileID: 5148851780611254337}
   - {fileID: 4480395546083793381}
-  - {fileID: 4652058943674438118}
   - {fileID: 4502639961477778810}
+  - {fileID: 4652058943674438118}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1896,7 +1896,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -67, y: -246}
+  m_AnchoredPosition: {x: -454, y: -246}
   m_SizeDelta: {x: 400, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7242174981217493108
@@ -2724,7 +2724,7 @@ RectTransform:
   - {fileID: 3241356766538671217}
   - {fileID: 7820110672749065297}
   m_Father: {fileID: 3726636142334232115}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}

@@ -1,5 +1,6 @@
 namespace SDefence.UI
 {
+    using SDefence.Packet;
     using UnityEngine;
 
     public class UIGamePopup : MonoBehaviour
@@ -35,6 +36,13 @@ namespace SDefence.UI
             _uiTechPopup.SetOnClosedListener(Hide);
             _uiDisassemblePopup.SetOnClosedListener(Hide);
             _uiRewardOfflinePopup.SetOnClosedListener(Hide);
+
+            _uiClearPopup.SetOnCommandPacketListener(OnCommandPacketEvent);
+            _uiDefeatPopup.SetOnCommandPacketListener(OnCommandPacketEvent);
+            _uiTechPopup.SetOnCommandPacketListener(OnCommandPacketEvent);
+            _uiDisassemblePopup.SetOnCommandPacketListener(OnCommandPacketEvent);
+            _uiRewardOfflinePopup.SetOnCommandPacketListener(OnCommandPacketEvent);
+
         }
 
         public void CleanUp()
@@ -64,6 +72,9 @@ namespace SDefence.UI
             _uiDefeatPopup.Show();
         }
 
+        /// <summary>
+        /// TechData
+        /// </summary>
         public void ShowTechPopup()
         {
             Show();
@@ -91,5 +102,13 @@ namespace SDefence.UI
         {
             gameObject.SetActive(false);
         }
+
+
+        #region ##### Listener #####
+        private System.Action<ICommandPacket> _cmdEvent;
+        public void SetOnCommandPacketListener(System.Action<ICommandPacket> act) => _cmdEvent = act;
+        private void OnCommandPacketEvent(ICommandPacket pk) => _cmdEvent?.Invoke(pk);
+
+        #endregion
     }
 }

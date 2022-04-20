@@ -12,7 +12,8 @@ namespace SDefence.UI
 
         public void Initialize()
         {
-
+            _disassembleProduction.Hide();
+            _techProduction.Hide();
         }
 
         public void CleanUp()

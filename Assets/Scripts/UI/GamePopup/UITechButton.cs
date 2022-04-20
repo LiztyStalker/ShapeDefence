@@ -29,8 +29,9 @@ namespace SDefence.UI
             gameObject.SetActive(false);
         }
 
-        public void SetData()
+        public void SetData(string text)
         {
+            _text.text = text;
             //AssetData
         }
 

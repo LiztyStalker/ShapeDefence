@@ -86,6 +86,7 @@ namespace SDefence.UI
             _uiBattle.Hide();
 
             _uiGamePopup.Initialize();
+            _uiGamePopup.SetOnCommandPacketListener(OnCommandPacketEvent);
 
             _uiProduction.Initialize();
             _uiProduction.Hide();
@@ -100,6 +101,7 @@ namespace SDefence.UI
             _uiHelp.Hide();
 
             _uiButtons.Initialize();
+            _uiButtons.SetOnCommandPacketListener(OnCommandPacketEvent);
             _uiButtons.Show();
         }
 
@@ -117,6 +119,7 @@ namespace SDefence.UI
 
             _uiBattle.CleanUp();
 
+            _uiGamePopup.SetOnCommandPacketListener(null);
             _uiGamePopup.CleanUp();
 
             _uiProduction.CleanUp();
@@ -175,27 +178,28 @@ namespace SDefence.UI
             {
                 case SettingsCommandPacket pk:
                     //UICommon Settings
-                    UICommon.Current.ShowSettings();
+                    _uiCommon.ShowSettings();
                     break;
                 case OpenDisassembleCommandPacket pk:
-                    //GamePopup Disassemble
-                    break;
-                case OpenTechCommandPacket pk:
-                    //GamePopup Tech
+                    //GamePopup Disassemble -> Apply DisassembleCommandPacket
+                    _uiGamePopup.ShowDisassemblePopup();
                     break;
                 case DisassembleCommandPacket pk:
-                    //Production Disassemble
+                    //Production Disassemble 
                     _uiProduction.ShowDisassembleProduction(null);
+                    break;
+                case OpenTechCommandPacket pk:
+                    //GamePopup Tech -> Apply UpTechCommandPacket
+                    _uiGamePopup.ShowTechPopup();
                     break;
                 case UpTechCommandPacket pk:
                     //Production UpTech
                     _uiProduction.ShowTechProduction(null);
                     break;
                 case HelpCommandPacket pk:
-                    //UIHelp Show
+                    //UIHelp Show - UICategory
                     _uiHelp.Show();
                     break;
-
                 case PlayBattleCommandPacket pk:
                     //Play Battle
                     _uiLobby.Hide();

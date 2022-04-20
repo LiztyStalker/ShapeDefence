@@ -52,7 +52,7 @@ namespace Utility.UI
         private Button _personalBtn;
 
         [SerializeField]
-        private Button _exitButton;
+        private Button _exitBtn;
 
         public static UISettings Create()
         {
@@ -85,7 +85,8 @@ namespace Utility.UI
             Debug.Assert(_saveBtn != null, $"_saveButton 구성하지 못했습니다");
             Debug.Assert(_gpgsBtn != null, $"_gpgsButton 구성하지 못했습니다");
             Debug.Assert(_qnaBtn != null, $"_qnaButton 구성하지 못했습니다");
-            Debug.Assert(_exitButton != null, $"_exitButton 구성하지 못했습니다");
+            Debug.Assert(_exitBtn != null, $"_exitButton 구성하지 못했습니다");
+
 
             Load();
 
@@ -118,14 +119,14 @@ namespace Utility.UI
         private void RegisterEvents()
         {
             _frameSlider.onValueChanged.AddListener(OnFrameEvent);
-            _exitButton.onClick.AddListener(OnExitEvent);
+            _exitBtn.onClick.AddListener(Hide);
         }
 
         private void UnRegisterEvents()
         {
             _frameSlider.onValueChanged.RemoveListener(OnFrameEvent);
 
-            _exitButton.onClick.RemoveListener(OnExitEvent);
+            _exitBtn.onClick.RemoveListener(Hide);
         }
 
 

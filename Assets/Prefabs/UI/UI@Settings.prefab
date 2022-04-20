@@ -1618,7 +1618,7 @@ MonoBehaviour:
   _qnaBtn: {fileID: 2980148242478947393}
   _serviceBtn: {fileID: 138553935916050464}
   _personalBtn: {fileID: 9070209641712490505}
-  _exitButton: {fileID: 798766177323021551}
+  _exitBtn: {fileID: 798766177323021551}
 --- !u!1 &2622602936563513913
 GameObject:
   m_ObjectHideFlags: 0
