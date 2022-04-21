@@ -252,7 +252,7 @@ namespace SDefence.Manager
             _battleGenEntity.SetBattle(_levelWaveData);
 
             //PlayBattle Event º¸³»±â
-            OnPlayBattlePacketEvent();
+            OnPlayBattlePacketEvent(_battleGenEntity.GetBossIconKey(), _levelWaveData);
         }
 
 
@@ -497,9 +497,11 @@ namespace SDefence.Manager
             _battleEvent?.Invoke(packet);
         }
 
-        private void OnPlayBattlePacketEvent()
+        private void OnPlayBattlePacketEvent(string bossIconKey, LevelWaveData lwData)
         {
             var packet = new PlayBattlePacket();
+            packet.data = lwData;
+            packet.BossIcon = DataStorage.Instance.GetDataOrNull<Sprite>(bossIconKey, "Icon");
             _battleEvent?.Invoke(packet);
         }
 

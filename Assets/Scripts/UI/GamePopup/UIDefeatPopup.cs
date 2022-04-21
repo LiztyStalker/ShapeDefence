@@ -51,12 +51,14 @@ namespace SDefence.UI
             //ToLobbyCommandPacket
             var pk = new ToLobbyCommandPacket();
             _cmdEvent?.Invoke(pk);
+            Hide();
         }
         private void OnRetryCommandPacketEvent()
         {
             //AdbToLobbyCommandPacket
             var pk = new RetryCommandPacket();
             _cmdEvent?.Invoke(pk);
+            Hide();
         }
 
 

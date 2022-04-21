@@ -1,8 +1,9 @@
 namespace SDefence.UI
 {
+    using SDefence.Packet;
     using UnityEngine;
 
-    public class UIBattle : MonoBehaviour
+    public class UIBattle : MonoBehaviour, IBattlePacketUser
     {
         private UILevelWave _uiLevelWave;
         private UIAlarmBoss _uiAlarmBoss;
@@ -46,6 +47,23 @@ namespace SDefence.UI
             //LevelWave
             //AlarmBoss
             //DurableContainer
+        }
+
+        public void OnBattlePacketEvent(IBattlePacket packet)
+        {
+            switch (packet)
+            {
+                case NextWaveBattlePacket pk:
+                    _uiLevelWave.SetData(pk.data.GetWave(), pk.data.MaxWave());
+                    break;
+                case AppearEnemyBattlePacket pk:
+                    _uiAlarmBoss.Show(pk.TypeEnemyStyle);
+                    break;
+                case PlayBattlePacket pk:
+                    _uiLevelWave.SetData(pk.data.GetWave(), pk.data.MaxWave());
+                    _uiLevelWave.SetIcon(pk.BossIcon);
+                    break;
+            }
         }
     }
 }

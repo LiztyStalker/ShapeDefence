@@ -39,10 +39,9 @@ namespace SDefence.Packet
         public LevelWaveData data;
     }
 
-#if UNITY_EDITOR
-
     public class PlayBattlePacket : IBattlePacket
     {
+        public Sprite BossIcon;
+        public LevelWaveData data;
     }
-#endif
 }

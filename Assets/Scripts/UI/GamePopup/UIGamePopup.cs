@@ -3,7 +3,7 @@ namespace SDefence.UI
     using SDefence.Packet;
     using UnityEngine;
 
-    public class UIGamePopup : MonoBehaviour
+    public class UIGamePopup : MonoBehaviour, IBattlePacketUser
     {
         private UIClearPopup _uiClearPopup;
         private UIDefeatPopup _uiDefeatPopup;
@@ -108,6 +108,21 @@ namespace SDefence.UI
         private System.Action<ICommandPacket> _cmdEvent;
         public void SetOnCommandPacketListener(System.Action<ICommandPacket> act) => _cmdEvent = act;
         private void OnCommandPacketEvent(ICommandPacket pk) => _cmdEvent?.Invoke(pk);
+
+        public void OnBattlePacketEvent(IBattlePacket packet)
+        {
+            switch (packet)
+            {
+                case ClearBattlePacket pk:
+                    ShowClearPopup();
+                    break;
+                case DefeatBattlePacket pk:
+                    ShowDefeatPopup();
+                    break;
+            }
+        }
+
+
 
         #endregion
     }

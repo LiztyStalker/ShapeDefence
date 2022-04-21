@@ -14,6 +14,8 @@ namespace SDefence.UI
         [SerializeField]
         private Image _bossIcon;
 
+        private float _targetValue;
+
         public void Initialize()
         {
 
@@ -24,10 +26,24 @@ namespace SDefence.UI
 
         }
 
-        public void SetData()
+        public void SetIcon(Sprite sprite)
+        {
+            //BossIcon
+            _bossIcon.sprite = sprite;
+        }
+
+        public void SetData(int wave, int maxWave)
         {
             //LevelWave
-            //BossIcon
+            _waveText.text = $"{wave + 1}/{maxWave}";
+            _targetValue = (float)wave / (float)(maxWave - 1);
+            if (_targetValue < 0.01f)
+                _waveSlider.value = _targetValue;
+        }
+
+        private void Update()
+        {
+            _waveSlider.value = Mathf.Lerp(_waveSlider.value, _targetValue, Time.deltaTime);
         }
     }
 }

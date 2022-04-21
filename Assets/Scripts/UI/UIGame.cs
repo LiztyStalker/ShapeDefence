@@ -19,6 +19,13 @@ namespace SDefence.UI
 
     #endregion
 
+    #region ##### IBattlePacketUser #####
+    public interface IBattlePacketUser
+    {
+        public void OnBattlePacketEvent(IBattlePacket packet);
+    }
+    #endregion
+
 
     public class UIGame : MonoBehaviour
     {
@@ -33,7 +40,7 @@ namespace SDefence.UI
         private UICommon _uiCommon;
 
         private Dictionary<string, ICategory> _dic;
-
+        private List<IBattlePacketUser> _battleList;
 
 
         public void Initialize()
@@ -59,6 +66,13 @@ namespace SDefence.UI
             Debug.Assert(_uiButtons != null, "_uiButtons 를 찾을 수 없음");
 
 #endif
+
+            _battleList = new List<IBattlePacketUser>();
+            _battleList.Add(_uiBattle);
+            _battleList.Add(_uiGamePopup);
+            _battleList.Add(_uiLevel);
+
+
             _dic = new Dictionary<string, ICategory>();
 
             for (int i = 0; i < transform.childCount; i++)
@@ -107,6 +121,8 @@ namespace SDefence.UI
 
         public void CleanUp()
         {
+            _battleList.Clear();
+
             foreach (var value in _dic.Values)
             {
                 value.SetOnCommandPacketListener(null);
@@ -154,16 +170,20 @@ namespace SDefence.UI
         }
 
 
-        public void OnEntityPacketEvent(IEntityPacket pk)
+        public void OnEntityPacketEvent(IEntityPacket packet)
         {
             //모두 뿌리기?
             //IEntityPacketUser
         }
 
-        public void OnBattlePacketEvent(IBattlePacket pk)
+        public void OnBattlePacketEvent(IBattlePacket packet)
         {
             //모두 뿌리기?
             //IBattlePacketUser
+            for(int i = 0; i < _battleList.Count; i++)
+            {
+                _battleList[i].OnBattlePacketEvent(packet);
+            }
         }
 
         #region ##### Listener #####
@@ -176,6 +196,10 @@ namespace SDefence.UI
 
             switch (packet)
             {
+                case ToLobbyCommandPacket pk:
+                    _uiBattle.Hide();
+                    _uiLobby.Show();
+                    break;
                 case SettingsCommandPacket pk:
                     //UICommon Settings
                     _uiCommon.ShowSettings();

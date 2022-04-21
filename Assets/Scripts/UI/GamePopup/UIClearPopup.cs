@@ -57,12 +57,14 @@ namespace SDefence.UI
             //ToLobbyCommandPacket
             var pk = new ToLobbyCommandPacket();
             _cmdEvent?.Invoke(pk);
+            Hide();
         }
         private void OnAdbToLobbyCommandPacketEvent()
         {
             //AdbToLobbyCommandPacket
             var pk = new AdbToLobbyCommandPacket();
             _cmdEvent?.Invoke(pk);
+            Hide();
         }
 
         private void OnNextLevelCommandPacketEvent()
@@ -70,6 +72,7 @@ namespace SDefence.UI
             //NextLevelCommandPacket
             var pk = new NextLevelCommandPacket();
             _cmdEvent?.Invoke(pk);
+            Hide();
         }
 
 

@@ -1,10 +1,11 @@
 namespace SDefence.UI
 {
     using Data;
+    using SDefence.Packet;
     using UnityEngine;
     using UnityEngine.UI;
 
-    public class UILevel : MonoBehaviour
+    public class UILevel : MonoBehaviour, IBattlePacketUser
     {
         [SerializeField]
         private Text _levelText;
@@ -34,5 +35,9 @@ namespace SDefence.UI
             _levelText.text = $"Level {levelWaveData.GetLevel()}";
         }
 
+        public void OnBattlePacketEvent(IBattlePacket packet)
+        {
+
+        }
     }
 }
