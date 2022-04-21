@@ -51,9 +51,11 @@ namespace SDefence.HQ.Entity
 
         public string GraphicObjectKey => _data.GraphicObjectKey;
 
-        public string TechDataKey => _data.TechDataKey;
+        public int TechLevel => 0;
 
         public int UpgradeValue => _upgradeData.GetValue();
+
+        public int OrbitCount => _data.OrbitCount;
 
         public static HQEntity Create() => new HQEntity();
 
@@ -93,6 +95,21 @@ namespace SDefence.HQ.Entity
 
             _durableEntity.Set(_data.DurableRawDataArray, _upgradeData.GetValue());
         }
+
+#if UNITY_EDITOR
+        public void SetMaxUpgrade_Test()
+        {
+            while (!IsMaxUpgrade())
+            {
+                _upgradeData.IncreaseNumber();
+            }
+            _upgradeAssetData = null;
+            _recoveryData = null;
+
+            _durableEntity.Set(_data.DurableRawDataArray, _upgradeData.GetValue());
+
+        }
+#endif
         public bool IsMaxUpgrade() => _upgradeData.GetValue() == _data.MaxUpgradeCount;
 
         public void ClearUpgrade()

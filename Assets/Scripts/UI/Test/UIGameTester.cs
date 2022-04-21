@@ -105,11 +105,49 @@ namespace SDefence.UI.Test
 
             GUILayout.Label("로비 패킷");
 
-            if (GUILayout.Button("HQ 갱신"))
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("HQ 갱신 일반"))
             {
+                var raw = HQ.HQData.Create();
+                var entity = HQ.Entity.HQEntity.Create();
+                entity.SetData(raw);
+
                 var pk = new HQEntityPacket();
+                pk.Entity = entity;
+                pk.IsActiveUpgrade = false;
+                pk.IsActiveUpTech = false;
                 _uiGame.OnEntityPacketEvent(pk);
             }
+
+            if (GUILayout.Button("HQ 갱신 - 업글"))
+            {
+                var raw = HQ.HQData.Create();
+                var entity = HQ.Entity.HQEntity.Create();
+                entity.SetData(raw);
+
+                var pk = new HQEntityPacket();
+                pk.Entity = entity;
+                pk.IsActiveUpgrade = true;
+                pk.IsActiveUpTech = false;
+                _uiGame.OnEntityPacketEvent(pk);
+            }
+
+            if (GUILayout.Button("HQ 갱신 - 테크"))
+            {
+                var raw = HQ.HQData.Create();
+                var entity = HQ.Entity.HQEntity.Create();
+                entity.SetData(raw);
+                entity.SetMaxUpgrade_Test();
+
+                var pk = new HQEntityPacket();
+                pk.Entity = entity;
+                pk.IsActiveUpgrade = false;
+                pk.IsActiveUpTech = true;
+                _uiGame.OnEntityPacketEvent(pk);
+            }
+
+            GUILayout.EndHorizontal();
 
             if (GUILayout.Button("포탑 갱신"))
             {

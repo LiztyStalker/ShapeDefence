@@ -52,7 +52,7 @@ namespace SDefence.HQ
         private void OnEntityPacketEvent()
         {
             var packet = new HQEntityPacket();
-            packet.SetData(_entity);
+            packet.Entity = _entity;
             _entityEvent?.Invoke(packet);
         }
 

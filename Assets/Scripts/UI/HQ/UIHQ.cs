@@ -1,6 +1,8 @@
 namespace SDefence.UI
 {
     using Packet;
+    using SDefence.Durable.Usable;
+    using SDefence.Recovery.Usable;
     using Storage;
     using System;
     using UnityEngine;
@@ -82,16 +84,18 @@ namespace SDefence.UI
             _icon.sprite = DataStorage.Instance.GetDataOrNull<Sprite>(entity.IconKey, "Icon");
 
             //UIGridText
-            //Name - 본부 
-            //Tech - 등급[3 / 10]
-            //Level - Lv 45 / 50
-            //Health - 체력
-            //Armor - 방어력
-            //Shield - 실드
-            //ShieldRec - 실드회복량
-            //LimShield - 실드한계값
-            //Orbit - 궤도 수
+            string str = "";
+            str += entity.Name + "\n";
+            str += entity.TechLevel + "\n";
+            str += entity.UpgradeValue + "\n";
+            str += "내구도 " + entity.GetDurableUsableData<HealthDurableUsableData>() + "\n";
+            str += "방어력 " + entity.GetDurableUsableData<ArmorDurableUsableData>() + "\n";
+            str += "실드 " + entity.GetDurableUsableData<ShieldDurableUsableData>() + "\n";
+            str += "실드회복량 " + entity.GetRecoveryUsableData<ShieldRecoveryUsableData>() + "\n";
+            str += "실드최대피격량 " + entity.GetDurableUsableData<LimitDamageShieldDurableUsableData>() + "\n";
+            str += "궤도수 " + entity.OrbitCount + "\n";
 
+            _text.text = str;
 
             //Upgrade - Asset
             //Tech - Asset
