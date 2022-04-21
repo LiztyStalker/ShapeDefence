@@ -109,6 +109,8 @@ namespace SDefence.BattleGen.Entity
             _nowIndex = 0;
         }
 
+        public string GetBossIconKey() => _battleGenLevelData.BossIconKey;
+
         #region ##### Listener #####
 
         private System.Action<string> _appearEvent;

@@ -17,6 +17,7 @@ MonoBehaviour:
   _sortIndex: 0
   _isTest: 0
   _level: 2
+  _bossIconKey: Triangle
   _lobbyWaveData:
     _waveElementArray:
     - _enemyDataKey: Test

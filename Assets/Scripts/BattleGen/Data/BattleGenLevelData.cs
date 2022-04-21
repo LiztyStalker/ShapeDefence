@@ -17,11 +17,16 @@ namespace SDefence.BattleGen.Data
         private string[] _waveDataKeys;
 
         [SerializeField]
+        private string _bossIconKey;
+
+        [SerializeField]
         private BattleGenWaveData _lobbyWaveData;
 
         [SerializeField]
         private BattleGenWaveData[] _waveDataArray;
 
+        public int Level => _level;
+        public string BossIconKey => _bossIconKey;
 
         public BattleGenWaveData GetBattleGenWaveData(int wave) 
         {
@@ -86,6 +91,9 @@ namespace SDefence.BattleGen.Data
             }
 
             _waveDataArray = new BattleGenWaveData[_waveDataKeys.Length];
+
+
+            _bossIconKey = arr[(int)BattleGenGenerator.TYPE_SHEET_LEVEL_COLUMNS.BossIconKey];
         }
 
         public override void AddData(string[] arr)

@@ -17,7 +17,8 @@ namespace SDefence.BattleGen.Generator
             Wave2,
             Wave3,
             Wave4,
-            Wave5
+            Wave5,
+            BossIconKey
         }
 
         public enum TYPE_SHEET_WAVE_COLUMNS
