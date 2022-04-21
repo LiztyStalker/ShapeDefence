@@ -8,6 +8,12 @@ namespace SDefence.Asset.Entity
     public class AssetUsableEntity : ISavable
     {
         private Dictionary<string, IAssetUsableData> _dic;
+        //Key
+        //Neutral / AssetUsableData
+        //Start / AssetUsableData
+
+        //Value
+        //IAssetUsableData
 
         public static AssetUsableEntity Create() => new AssetUsableEntity();
         private AssetUsableEntity()
@@ -21,13 +27,28 @@ namespace SDefence.Asset.Entity
             _dic = null;
         }
 
-        private string GetKey(IAssetUsableData uData) => uData.GetType().Name;
 
-        private string GetKey<T>() => typeof(T).Name;
+        public bool HasKey(string key) => _dic.ContainsKey(key);
+        private string GetKey(IAssetUsableData uData) => uData.GetType().Name.Replace("AssetUsableData", "");
+
+        private string GetKey<T>() => typeof(T).Name.Replace("AssetUsableData", "");
+
+        public string GetValue(string key)
+        {
+            if (_dic.ContainsKey(key))
+            {
+                return _dic[key].ToString();
+            }
+#if UNITY_EDITOR
+            return "-Empty-";
+#else
+            return "0";
+#endif
+        }
 
         public string GetValue<T>(string format = null) where T : IAssetUsableData
         {
-            string key = typeof(T).Name;
+            string key = typeof(T).Name.Replace("AssetUsableData", "");
             if (_dic.ContainsKey(key))
             {
                 return _dic[key].ToString(format);
@@ -37,7 +58,6 @@ namespace SDefence.Asset.Entity
 #else
             return "";
 #endif
-
         }
 
         public void Add(IAssetUsableData uData)

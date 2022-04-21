@@ -13,7 +13,7 @@ namespace SDefence.UI
         private Text _text;
 
         [SerializeField]
-        private UIAsset _uiAsset;
+        private UIAssetContainer _uiAsset;
 
         [SerializeField]
         private RectTransform _techFrame;

@@ -95,8 +95,14 @@ namespace SDefence.Durable.Usable
             }
         }
 
-      
-        public float GetRate() => (float)(_nowDurableUsableData.Value / _maxDurableUsableData.Value);
+
+        public float GetRate()
+        {
+            if (_maxDurableUsableData.Value > 0f)
+                return (float)(_nowDurableUsableData.Value / _maxDurableUsableData.Value);
+            else
+                return 0f;
+        }
 
 
         public void SetData(string startValue, string increaseValue, string increaseRate, int upgrade) => _nowDurableUsableData.SetData(startValue, increaseValue, increaseRate, upgrade);

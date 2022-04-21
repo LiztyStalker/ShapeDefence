@@ -7,7 +7,7 @@ namespace SDefence.UI
     public class UIRewardOfflinePopup : MonoBehaviour
     {
         [SerializeField]
-        private UIAsset _uiAsset;
+        private UIAssetContainer _uiAsset;
 
         [SerializeField]
         private Text _timeText;

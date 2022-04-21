@@ -8,7 +8,7 @@ namespace SDefence.UI
 
 
     #region ##### Category #####
-    public interface ICategory 
+    public interface ICategory : IEntityPacketUser
     {
         public void Initialize();
         public void CleanUp();
@@ -23,6 +23,13 @@ namespace SDefence.UI
     public interface IBattlePacketUser
     {
         public void OnBattlePacketEvent(IBattlePacket packet);
+    }
+    #endregion
+
+    #region ##### IBattlePacketUser #####
+    public interface IEntityPacketUser
+    {
+        public void OnEntityPacketEvent(IEntityPacket packet);
     }
     #endregion
 
@@ -41,6 +48,7 @@ namespace SDefence.UI
 
         private Dictionary<string, ICategory> _dic;
         private List<IBattlePacketUser> _battleList;
+        private List<IEntityPacketUser> _entityList;
 
 
         public void Initialize()
@@ -73,6 +81,11 @@ namespace SDefence.UI
             _battleList.Add(_uiLevel);
 
 
+            _entityList = new List<IEntityPacketUser>();
+            _entityList.Add(_uiAsset);
+
+
+
             _dic = new Dictionary<string, ICategory>();
 
             for (int i = 0; i < transform.childCount; i++)
@@ -82,6 +95,7 @@ namespace SDefence.UI
                 if (category != null)
                 {
                     _dic.Add(category.GetType().Name, category);
+                    _entityList.Add(category);
                 }
             }
 
@@ -109,7 +123,7 @@ namespace SDefence.UI
             _uiLevel.Show();
 
             _uiAsset.Initialize();
-            _uiAsset.Show();
+            _uiAsset.Show();            
 
             _uiHelp.Initialize();
             _uiHelp.Hide();
@@ -122,6 +136,7 @@ namespace SDefence.UI
         public void CleanUp()
         {
             _battleList.Clear();
+            _entityList.Clear();
 
             foreach (var value in _dic.Values)
             {
@@ -172,13 +187,17 @@ namespace SDefence.UI
 
         public void OnEntityPacketEvent(IEntityPacket packet)
         {
-            //¸ðµÎ »Ñ¸®±â?
+            //¸ðµÎ »Ñ¸®±â
             //IEntityPacketUser
+            for (int i = 0; i < _entityList.Count; i++)
+            {
+                _entityList[i].OnEntityPacketEvent(packet);
+            }
         }
 
         public void OnBattlePacketEvent(IBattlePacket packet)
         {
-            //¸ðµÎ »Ñ¸®±â?
+            //¸ðµÎ »Ñ¸®±â
             //IBattlePacketUser
             for(int i = 0; i < _battleList.Count; i++)
             {

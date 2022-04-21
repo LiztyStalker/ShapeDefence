@@ -10,12 +10,12 @@ namespace SDefence.UI
         [SerializeField]
         private Text _text;
 
-        private UIAsset _uiAsset;
+        private UIAssetContainer _uiAsset;
 
         protected override void OnEnable()
         {
             base.OnEnable();
-            _uiAsset = GetComponentInChildren<UIAsset>();
+            _uiAsset = GetComponentInChildren<UIAssetContainer>();
         }
 
         public void SetText(string text)

@@ -5,7 +5,8 @@ namespace SDefence.UI.Test
     using Data;
     using Storage;
     using UnityEngine;
-    
+    using SDefence.Asset.Entity;
+    using SDefence.Asset.Raw;
 
     public class UIGameTester : MonoBehaviour
     {
@@ -47,7 +48,7 @@ namespace SDefence.UI.Test
 
             GUILayout.BeginVertical();
 
-            GUILayout.Label("전투");
+            GUILayout.Label("전투 패킷");
 
             if (GUILayout.Button("전투 시작"))
             {
@@ -96,6 +97,37 @@ namespace SDefence.UI.Test
                 pk.data = _levelWaveData;
                 _uiGame.OnBattlePacketEvent(pk);
                 _levelWaveData.IncreaseNumber();
+            }
+
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical();
+
+            GUILayout.Label("로비 패킷");
+
+            if (GUILayout.Button("HQ 갱신"))
+            {
+                var pk = new HQEntityPacket();
+                _uiGame.OnEntityPacketEvent(pk);
+            }
+
+            if (GUILayout.Button("포탑 갱신"))
+            {
+                var pk = new TurretEntityPacket();
+                _uiGame.OnEntityPacketEvent(pk);
+            }
+
+            if (GUILayout.Button("재화 갱신 Test"))
+            {
+                var raw = AssetRawData.Create();
+                var usable = raw.GetUsableData();
+
+                var assetEntity = AssetUsableEntity.Create();
+                assetEntity.Set(usable);
+
+                var pk = new AssetEntityPacket();
+                pk.Entity = assetEntity;
+                _uiGame.OnEntityPacketEvent(pk);
             }
 
 

@@ -9,7 +9,7 @@ namespace SDefence.UI
     public class UITurret : MonoBehaviour, ICategory
     {
         [SerializeField]
-        private UIAsset _uiAsset;
+        private UIAssetContainer _uiAsset;
 
         [SerializeField]
         private Button _helpBtn;
@@ -43,6 +43,8 @@ namespace SDefence.UI
             _mainTurret.SetOnCommandPacketListener(OnCommandPacketEvent);
             _orbitTurret.SetOnCommandPacketListener(OnCommandPacketEvent);
 
+            _uiAsset.Initialize();
+
             _orbitTurret.Hide();
 
         }
@@ -53,6 +55,8 @@ namespace SDefence.UI
 
             _helpBtn.onClick.RemoveListener(OnHelpCommandPacketEvent);
             _exitBtn.onClick.RemoveListener(Hide);
+
+            _uiAsset.CleanUp();
         }
 
         public void Show()
@@ -65,12 +69,16 @@ namespace SDefence.UI
             gameObject.SetActive(false);
         }
 
-        public void OnEntityPacketEvent(IEntityPacket pk)
+        public void OnEntityPacketEvent(IEntityPacket packet)
         {
-            //UIAsset
-            //tab SetText SetIndex
-            //MainTurret
-            //OrbitTurret
+            if (packet is TurretEntityPacket)
+            {
+                //UIAsset
+                //tab SetText SetIndex
+                //MainTurret
+                //OrbitTurret
+            }
+            _uiAsset.OnEntityPacketEvent(packet);
         }
 
         #region ##### Listener #####

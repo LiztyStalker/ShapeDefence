@@ -7,7 +7,7 @@ namespace SDefence.UI
     public class UIDefeatPopup : MonoBehaviour
     {
         [SerializeField]
-        private UIAsset _uiAsset;
+        private UIAssetContainer _uiAsset;
 
         [SerializeField]
         private Button _toLobbyBtn;
