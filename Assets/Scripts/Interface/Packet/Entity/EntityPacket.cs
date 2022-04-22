@@ -28,6 +28,7 @@ namespace SDefence.Packet
     public class TurretArrayEntityPacket : IEntityPacket
     {
         public TurretEntityPacket[] packets;
+        public int OrbitIndex;
         public bool IsExpand;
     }
 

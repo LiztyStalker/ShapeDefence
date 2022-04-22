@@ -41,6 +41,22 @@ namespace SDefence.UI.Test
 
             switch (packet)
             {
+                case RefreshCommandPacket refPk:
+
+                    switch (refPk.TypeCmdKey)
+                    {
+                        case TYPE_COMMAND_KEY.HQ:
+                            OnHQRefreshEvent(false, false, false);
+                            break;
+                        case TYPE_COMMAND_KEY.Turret:
+                            OnTurretOrbitRefreshEntity();
+                            if (refPk.ParentIndex == 0)
+                                OnTurretRefreshEvent(0, 0, false, false, false);
+                            else
+                                OnTurretArrayRefreshEvent(refPk.ParentIndex, 1, false, false, false, false);
+                            break;
+                    } 
+                    break;
                 case TabCommandPacket tabPacket:
                     if(tabPacket.Index == 0)
                     {
@@ -146,42 +162,21 @@ namespace SDefence.UI.Test
 
             if (GUILayout.Button("HQ 갱신 일반"))
             {
-                var raw = HQ.HQData.Create();
-                var entity = HQ.Entity.HQEntity.Create();
-                entity.SetData(raw);
-
-                var pk = new HQEntityPacket();
-                pk.Entity = entity;
-                pk.IsActiveUpgrade = false;
-                pk.IsActiveUpTech = false;
-                _uiGame.OnEntityPacketEvent(pk);
+                OnHQRefreshEvent(false, false, false);
             }
 
-            if (GUILayout.Button("HQ 갱신 - 업글"))
+            if (GUILayout.Button("HQ 업글 가능"))
             {
-                var raw = HQ.HQData.Create();
-                var entity = HQ.Entity.HQEntity.Create();
-                entity.SetData(raw);
-
-                var pk = new HQEntityPacket();
-                pk.Entity = entity;
-                pk.IsActiveUpgrade = true;
-                pk.IsActiveUpTech = false;
-                _uiGame.OnEntityPacketEvent(pk);
+                OnHQRefreshEvent(true, false, false);
             }
 
-            if (GUILayout.Button("HQ 갱신 - 테크"))
+            if (GUILayout.Button("HQ 테크 / 재화 부족"))
             {
-                var raw = HQ.HQData.Create();
-                var entity = HQ.Entity.HQEntity.Create();
-                entity.SetData(raw);
-                entity.SetMaxUpgrade_Test();
-
-                var pk = new HQEntityPacket();
-                pk.Entity = entity;
-                pk.IsActiveUpgrade = false;
-                pk.IsActiveUpTech = true;
-                _uiGame.OnEntityPacketEvent(pk);
+                OnHQRefreshEvent(false, false, true);
+            }
+            if (GUILayout.Button("HQ 갱신 / 재화 있음"))
+            {
+                OnHQRefreshEvent(false, true, true);
             }
 
             GUILayout.EndHorizontal();
@@ -192,90 +187,36 @@ namespace SDefence.UI.Test
 
             if (GUILayout.Button("주 포탑 갱신"))
             {
-                var raw = Turret.TurretData.Create();
-                var entity = Turret.Entity.TurretEntity.Create();
-                entity.Initialize(raw, 0);
-                var pk = new TurretEntityPacket();
-                pk.Entity = entity;
-                pk.OrbitIndex = entity.OrbitIndex;
-                pk.Index = 0;
-                pk.IsActiveUpgrade = false;
-                pk.IsActiveUpTech = false;
-                _uiGame.OnEntityPacketEvent(pk);
+                OnHQRefreshEvent(false, false, false);
             }
-
-            if (GUILayout.Button("주 포탑 업글"))
+            if (GUILayout.Button("주 포탑 업글 가능"))
             {
-                var raw = Turret.TurretData.Create();
-                var entity = Turret.Entity.TurretEntity.Create();
-                entity.Initialize(raw, 0);
-                var pk = new TurretEntityPacket();
-                pk.Entity = entity;
-                pk.OrbitIndex = entity.OrbitIndex;
-                pk.Index = 0;
-                pk.IsActiveUpgrade = true;
-                pk.IsActiveUpTech = false;
-                _uiGame.OnEntityPacketEvent(pk);
+                OnHQRefreshEvent(true, false, false);
             }
-
-            if (GUILayout.Button("주 포탑 테크"))
+            if (GUILayout.Button("주 포탑 테크 / 재화 부족"))
             {
-                var raw = Turret.TurretData.Create();
-                var entity = Turret.Entity.TurretEntity.Create();
-                entity.Initialize(raw, 0);
-                entity.SetMaxUpgrade_Test();
-                var pk = new TurretEntityPacket();
-                pk.Entity = entity;
-                pk.OrbitIndex = entity.OrbitIndex;
-                pk.Index = 0;
-                pk.IsActiveUpgrade = false;
-                pk.IsActiveUpTech = true;
-                _uiGame.OnEntityPacketEvent(pk);
+                OnHQRefreshEvent(false, false, true);
+            }
+            if (GUILayout.Button("주 포탑 테크 / 재화 충분"))
+            {
+                OnHQRefreshEvent(false, true, true);
             }
 
             GUILayout.EndHorizontal();
 
             if (GUILayout.Button("궤도 갱신"))
             {
-                var pk = new TurretOrbitEntityPacket();
-                pk.OrbitCount = 1;
-                _uiGame.OnEntityPacketEvent(pk);
+                OnTurretOrbitRefreshEntity();
             }
 
             if (GUILayout.Button("궤도 포탑 전체 갱신"))
             {
-                var raw = Turret.TurretData.Create();
-                var entity = Turret.Entity.TurretEntity.Create();
-                entity.Initialize(raw, 1);
-                var pk = new TurretEntityPacket();
-                pk.Entity = entity;
-                pk.OrbitIndex = entity.OrbitIndex;
-                pk.Index = 0;
-
-                var pks = new TurretArrayEntityPacket();
-                pks.packets = new TurretEntityPacket[1];
-                pks.packets[0] = pk;
-                pks.IsExpand = false;
-
-                _uiGame.OnEntityPacketEvent(pks);
+                OnTurretArrayRefreshEvent(1, 1, false, false, false, false);
             }
 
             if (GUILayout.Button("궤도 포탑 전체 갱신 확장"))
             {
-
-                var raw = Turret.TurretData.Create();
-                var entity = Turret.Entity.TurretEntity.Create();
-                entity.Initialize(raw, 1);
-                var pk = new TurretEntityPacket();
-                pk.Entity = entity;
-                pk.OrbitIndex = entity.OrbitIndex;
-                pk.Index = 0;
-
-                var pks = new TurretArrayEntityPacket();
-                pks.packets = new TurretEntityPacket[1];
-                pks.packets[0] = pk;
-                pks.IsExpand = true;
-                _uiGame.OnEntityPacketEvent(pks);
+                OnTurretArrayRefreshEvent(1, 1, false, false, false, true);
             }
 
 
@@ -283,44 +224,22 @@ namespace SDefence.UI.Test
 
             if (GUILayout.Button("궤도 포탑 갱신"))
             {
-                var raw = Turret.TurretData.Create();
-                var entity = Turret.Entity.TurretEntity.Create();
-                entity.Initialize(raw, 1);
-                var pk = new TurretEntityPacket();
-                pk.Entity = entity;
-                pk.OrbitIndex = entity.OrbitIndex;
-                pk.Index = 0;
-                _uiGame.OnEntityPacketEvent(pk);
+                OnTurretRefreshEvent(1, 0, false, false, false);
             }
 
 
-            if (GUILayout.Button("궤도 포탑 업글"))
+            if (GUILayout.Button("궤도 포탑 업글 가능"))
             {
-                var raw = Turret.TurretData.Create();
-                var entity = Turret.Entity.TurretEntity.Create();
-                entity.Initialize(raw, 1);
-                var pk = new TurretEntityPacket();
-                pk.Entity = entity;
-                pk.OrbitIndex = entity.OrbitIndex;
-                pk.Index = 0;
-                pk.IsActiveUpTech = false;
-                pk.IsActiveUpgrade = true;
-                _uiGame.OnEntityPacketEvent(pk);
+                OnTurretRefreshEvent(1, 0, true, false, false);
             }
 
-            if (GUILayout.Button("궤도 포탑 테크"))
+            if (GUILayout.Button("궤도 포탑 테크 / 재화 부족"))
             {
-                var raw = Turret.TurretData.Create();
-                var entity = Turret.Entity.TurretEntity.Create();
-                entity.Initialize(raw, 1);
-                entity.SetMaxUpgrade_Test();
-                var pk = new TurretEntityPacket();
-                pk.Entity = entity;
-                pk.OrbitIndex = entity.OrbitIndex;
-                pk.Index = 0;
-                pk.IsActiveUpTech = true;
-                pk.IsActiveUpgrade = false;
-                _uiGame.OnEntityPacketEvent(pk);
+                OnTurretRefreshEvent(1, 0, false, false, true);
+            }
+            if (GUILayout.Button("궤도 포탑 테크 / 재화 있음"))
+            {
+                OnTurretRefreshEvent(1, 0, false, true, true);
             }
 
             GUILayout.EndHorizontal();
@@ -356,6 +275,69 @@ namespace SDefence.UI.Test
         }
 
 
+        private void OnHQRefreshEvent(bool isActiveUpgrade, bool isActiveUpTech, bool isFullUpgrade)
+        {
+            var raw = HQ.HQData.Create();
+            var entity = HQ.Entity.HQEntity.Create();
+            entity.SetData(raw);
+            if (isFullUpgrade) entity.SetMaxUpgrade_Test();
+
+            var pk = new HQEntityPacket();
+            pk.Entity = entity;
+            pk.IsActiveUpgrade = isActiveUpgrade;
+            pk.IsActiveUpTech = isActiveUpTech;
+            _uiGame.OnEntityPacketEvent(pk);
+        }
+
+        private void OnTurretOrbitRefreshEntity()
+        {
+            var pk = new TurretOrbitEntityPacket();
+            pk.OrbitCount = 1;
+            _uiGame.OnEntityPacketEvent(pk);
+        }
+
+
+        private void OnTurretRefreshEvent(int orbitIndex, int index, bool isUpgrade, bool isUpTech, bool isFullUpgrade)
+        {
+            var raw = Turret.TurretData.Create();
+            var entity = Turret.Entity.TurretEntity.Create();
+            entity.Initialize(raw, orbitIndex);
+            if (isFullUpgrade) entity.SetMaxUpgrade_Test();
+
+            var pk = new TurretEntityPacket();
+            pk.Entity = entity;
+            pk.OrbitIndex = entity.OrbitIndex;
+            pk.Index = index;
+            pk.IsActiveUpgrade = isUpgrade;
+            pk.IsActiveUpTech = isUpTech;
+            _uiGame.OnEntityPacketEvent(pk);
+        }
+
+        private void OnTurretArrayRefreshEvent(int orbitIndex, int count, bool isUpgrade, bool isUpTech, bool isFullUpgrade, bool isExpand)
+        {
+            var pks = new TurretArrayEntityPacket();
+            pks.packets = new TurretEntityPacket[count];
+            pks.IsExpand = isExpand;
+
+            for (int i = 0; i < count; i++)
+            {
+                var raw = Turret.TurretData.Create();
+                var entity = Turret.Entity.TurretEntity.Create();
+                if (isFullUpgrade) entity.SetMaxUpgrade_Test();
+                entity.Initialize(raw, orbitIndex);
+
+                var pk = new TurretEntityPacket();
+                pk.Entity = entity;
+                pk.OrbitIndex = entity.OrbitIndex;
+                pk.Index = i;
+                pk.IsActiveUpgrade = isUpgrade;
+                pk.IsActiveUpTech = isUpTech;
+
+                pks.packets[i] = pk;
+            }
+
+            _uiGame.OnEntityPacketEvent(pks);
+        }
     }
 }
 #endif

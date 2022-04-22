@@ -30,6 +30,8 @@ namespace SDefence.UI
 
         private List<UITurretTab> _list;
 
+        private int _OrbitIndex;
+
         public void Initialize()
         {
             _list = new List<UITurretTab>();
@@ -64,6 +66,7 @@ namespace SDefence.UI
         public void Show()
         {
             gameObject.SetActive(true);
+            OnRefreshCommandPacketEvent();
         }
 
         public void Hide()
@@ -77,7 +80,6 @@ namespace SDefence.UI
             switch (packet)
             {
                 case TurretOrbitEntityPacket pk:
-                    //OrbitTurret
                     while (_list.Count <= pk.OrbitCount)
                     {
                         var btn = Instantiate(_tabBtn);
@@ -105,11 +107,17 @@ namespace SDefence.UI
                         _orbitTurret.Show();
                         _orbitTurret.OnEntityPacketEvent(packet);
                     }
+
+                    _OrbitIndex = pk.OrbitIndex;
+
                     break;
                 case TurretArrayEntityPacket pk:
                     _mainTurret.Hide();
                     _orbitTurret.Show();
                     _orbitTurret.OnEntityPacketEvent(packet);
+
+                    _OrbitIndex = pk.OrbitIndex;
+
                     break;
             }
 
@@ -125,6 +133,14 @@ namespace SDefence.UI
         {
             //HelpCommandPacket
             var pk = new HelpCommandPacket();
+            _cmdEvent?.Invoke(pk);
+        }
+
+        private void OnRefreshCommandPacketEvent()
+        {
+            var pk = new RefreshCommandPacket();
+            pk.TypeCmdKey = TYPE_COMMAND_KEY.Turret;
+            pk.ParentIndex = _OrbitIndex;
             _cmdEvent?.Invoke(pk);
         }
 

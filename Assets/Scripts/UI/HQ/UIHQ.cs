@@ -59,6 +59,7 @@ namespace SDefence.UI
         public void Show()
         {
             gameObject.SetActive(true);
+            OnRefreshCommandPacketEvent();
         }        
 
         public void Hide()
@@ -129,6 +130,13 @@ namespace SDefence.UI
         {
             //OpenTechCommandPacket
             var pk = new OpenTechCommandPacket();
+            _cmdEvent?.Invoke(pk);
+        }
+
+        private void OnRefreshCommandPacketEvent()
+        {
+            var pk = new RefreshCommandPacket();
+            pk.TypeCmdKey = TYPE_COMMAND_KEY.HQ;
             _cmdEvent?.Invoke(pk);
         }
 
