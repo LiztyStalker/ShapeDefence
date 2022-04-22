@@ -31,7 +31,7 @@ namespace SDefence.UI
         private void OnCommandPacketEvent()
         {
             var pk = new TabCommandPacket();
-            pk.Index = _index;
+            pk.OrbitIndex = _index;
             _cmdEvent?.Invoke(pk);
         }
         #endregion

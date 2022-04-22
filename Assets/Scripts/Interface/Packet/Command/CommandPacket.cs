@@ -62,7 +62,7 @@ namespace SDefence.Packet
 
     public class TabCommandPacket : ICommandPacket
     {
-        public int Index;
+        public int OrbitIndex;
     }
 
     public class HelpCommandPacket : ICommandPacket 

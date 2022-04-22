@@ -58,34 +58,13 @@ namespace SDefence.UI.Test
                     } 
                     break;
                 case TabCommandPacket tabPacket:
-                    if(tabPacket.Index == 0)
+                    if(tabPacket.OrbitIndex == 0)
                     {
-                        var raw = Turret.TurretData.Create();
-                        var entity = Turret.Entity.TurretEntity.Create();
-                        entity.Initialize(raw, 0);
-                        var pk = new TurretEntityPacket();
-                        pk.Entity = entity;
-                        pk.OrbitIndex = entity.OrbitIndex;
-                        pk.Index = 0;
-                        _uiGame.OnEntityPacketEvent(pk);
+                        OnTurretRefreshEvent(0, 0, false, false, false);
                     }
                     else
                     {
-                        var raw = Turret.TurretData.Create();
-                        var entity = Turret.Entity.TurretEntity.Create();
-                        entity.Initialize(raw, 1);
-
-                        var pk = new TurretEntityPacket();
-                        pk.Entity = entity;
-                        pk.OrbitIndex = entity.OrbitIndex;
-                        pk.Index = 0;
-
-                        var pks = new TurretArrayEntityPacket();
-                        pks.packets = new TurretEntityPacket[1];
-                        pks.packets[0] = pk;
-                        pks.IsExpand = false;
-
-                        _uiGame.OnEntityPacketEvent(pks);
+                        OnTurretArrayRefreshEvent(tabPacket.OrbitIndex, 1, false, false, false, false);
                     }
                     break;
             }
@@ -187,19 +166,19 @@ namespace SDefence.UI.Test
 
             if (GUILayout.Button("주 포탑 갱신"))
             {
-                OnHQRefreshEvent(false, false, false);
+                OnTurretRefreshEvent(0, 0, false, false, false);
             }
             if (GUILayout.Button("주 포탑 업글 가능"))
             {
-                OnHQRefreshEvent(true, false, false);
+                OnTurretRefreshEvent(0, 0, true, false, false);
             }
             if (GUILayout.Button("주 포탑 테크 / 재화 부족"))
             {
-                OnHQRefreshEvent(false, false, true);
+                OnTurretRefreshEvent(0, 0, false, false, true);
             }
             if (GUILayout.Button("주 포탑 테크 / 재화 충분"))
             {
-                OnHQRefreshEvent(false, true, true);
+                OnTurretRefreshEvent(0, 0, false, true, true);
             }
 
             GUILayout.EndHorizontal();
