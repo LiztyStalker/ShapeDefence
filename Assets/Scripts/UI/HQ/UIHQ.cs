@@ -99,8 +99,8 @@ namespace SDefence.UI
 
             //Upgrade - Asset
             //Tech - Asset
-            _upgradeBtn.gameObject.SetActive(!entity.IsMaxUpgrade());
-            _techBtn.gameObject.SetActive(entity.IsMaxUpgrade());
+            _upgradeBtn.SetActive(!entity.IsMaxUpgrade());
+            _techBtn.SetActive(entity.IsMaxUpgrade());
 
             _upgradeBtn.interactable = packet.IsActiveUpgrade;
             _techBtn.interactable = packet.IsActiveUpTech;

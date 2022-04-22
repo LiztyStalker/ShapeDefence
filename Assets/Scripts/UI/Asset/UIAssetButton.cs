@@ -27,5 +27,10 @@ namespace SDefence.UI
         {
 
         }
+
+        public void SetActive(bool isActive)
+        {
+            gameObject.SetActive(isActive);
+        }
     }
 }
