@@ -152,7 +152,8 @@ namespace SDefence.Turret
         private void OnEntityPacketEvent(int index, TurretEntity entity) 
         {
             var packet = new TurretEntityPacket();
-            packet.SetData(index, entity);
+            packet.Entity = entity;
+            packet.Index = index;
             _entityEvent?.Invoke(packet);
         }
 

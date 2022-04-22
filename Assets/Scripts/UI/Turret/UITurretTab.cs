@@ -1,5 +1,6 @@
 namespace SDefence.UI
 {
+    using Packet;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -15,20 +16,24 @@ namespace SDefence.UI
 
         protected override void Awake()
         {
-            onClick.AddListener(OnClickEvent);
+            onClick.AddListener(OnCommandPacketEvent);
         }
 
         protected override void OnDestroy()
         {
-            onClick.RemoveListener(OnClickEvent);
+            onClick.RemoveListener(OnCommandPacketEvent);
         }
 
         #region ##### Listener #####
 
-        private System.Action<int> _clickEvent;
-        public void SetOnClickListener(System.Action<int> act) => _clickEvent = act;
-        private void OnClickEvent() => _clickEvent?.Invoke(_index);
-
+        private System.Action<ICommandPacket> _cmdEvent;
+        public void SetOnCommandPacketListener(System.Action<ICommandPacket> act) => _cmdEvent = act;
+        private void OnCommandPacketEvent()
+        {
+            var pk = new TabCommandPacket();
+            pk.Index = _index;
+            _cmdEvent?.Invoke(pk);
+        }
         #endregion
     }
 }

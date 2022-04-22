@@ -113,6 +113,21 @@ namespace SDefence.Turret.Entity
             _durableEntity.Set(_data.DurableRawDataArray, _upgradeData.GetValue());
         }
 
+#if UNITY_EDITOR
+        public void SetMaxUpgrade_Test()
+        {
+            while (!IsMaxUpgrade())
+            {
+                _upgradeData.IncreaseNumber();
+            }
+            _upgradeAssetData = null;
+            _recoveryData = null;
+
+            _durableEntity.Set(_data.DurableRawDataArray, _upgradeData.GetValue());
+
+        }
+#endif
+
         public void UpTech(TurretData data)
         {
             SetData(data);

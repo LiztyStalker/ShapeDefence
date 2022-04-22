@@ -45,6 +45,7 @@ namespace SDefence.UI
 
             _uiAsset.Initialize();
 
+            _orbitTurret.Initialize();
             _orbitTurret.Hide();
 
         }
@@ -57,6 +58,7 @@ namespace SDefence.UI
             _exitBtn.onClick.RemoveListener(Hide);
 
             _uiAsset.CleanUp();
+            _orbitTurret.CleanUp();
         }
 
         public void Show()
@@ -71,13 +73,46 @@ namespace SDefence.UI
 
         public void OnEntityPacketEvent(IEntityPacket packet)
         {
-            if (packet is TurretEntityPacket)
+
+            switch (packet)
             {
-                //UIAsset
-                //tab SetText SetIndex
-                //MainTurret
-                //OrbitTurret
+                case TurretOrbitEntityPacket pk:
+                    //OrbitTurret
+                    while (_list.Count <= pk.OrbitCount)
+                    {
+                        var btn = Instantiate(_tabBtn);
+                        btn.transform.SetParent(_tabFrame);
+                        btn.transform.localScale = Vector2.one;
+                        if(_list.Count == 0)
+                            btn.SetText($"ÁÖÆ÷Å¾");
+                        else
+                            btn.SetText($"±Ëµµ{_list.Count}");
+                        btn.SetIndex(_list.Count);
+                        btn.SetOnCommandPacketListener(OnCommandPacketEvent);
+                        _list.Add(btn);
+                    }
+                    break;
+                case TurretEntityPacket pk:
+                    if(pk.OrbitIndex == 0)
+                    {
+                        _orbitTurret.Hide();
+                        _mainTurret.Show();
+                        _mainTurret.OnEntityPacketEvent(packet);
+                    }
+                    else
+                    {
+                        _mainTurret.Hide();
+                        _orbitTurret.Show();
+                        _orbitTurret.OnEntityPacketEvent(packet);
+                    }
+                    break;
+                case TurretArrayEntityPacket pk:
+                    _mainTurret.Hide();
+                    _orbitTurret.Show();
+                    _orbitTurret.OnEntityPacketEvent(packet);
+                    break;
             }
+
             _uiAsset.OnEntityPacketEvent(packet);
         }
 

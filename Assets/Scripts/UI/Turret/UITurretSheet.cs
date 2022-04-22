@@ -22,13 +22,16 @@ namespace SDefence.UI
         {
             _list = new List<UITurretBlock>();
 
-            var expandBlock = DataStorage.Instance.GetDataOrNull<GameObject>("UI@TurretExpand");
+            var expandObject = DataStorage.Instance.GetDataOrNull<GameObject>("UI@TurretExpand");
+            var expandBlock = Instantiate(expandObject);
             _uiExpand = expandBlock.GetComponent<UITurretExpand>();
             _uiExpand.SetOnCommandPacketListener(OnCommandPacketEvent);
 
+            _uiExpand.transform.SetParent(_scrollRect.content);
+            _uiExpand.transform.localScale = Vector3.one;
+
             var block = DataStorage.Instance.GetDataOrNull<GameObject>("UI@TurretBlock");
             _uiBlock = block.GetComponent<UITurretBlock>();
-            _uiBlock.SetOnCommandPacketListener(OnCommandPacketEvent);
         }
         public void CleanUp()
         {
@@ -45,10 +48,52 @@ namespace SDefence.UI
             gameObject.SetActive(false);
         }
 
-        public void OnEntityPacketEvent(IEntityPacket pk)
+        public void OnEntityPacketEvent(IEntityPacket packet)
         {
-            //Turret을 찾아서 OnEntityPacketEvent 실행
-            //_list[index].OnEntityPacketEvent(pk);
+            switch (packet)
+            {
+                case TurretEntityPacket pk:
+                    _list[pk.Index].OnEntityPacketEvent(pk);
+                    break;
+                case TurretArrayEntityPacket pk:
+                    Clear();
+                    var packets = pk.packets;
+                    for(int i = 0; i < packets.Length; i++)
+                    {
+                        if(i >= _list.Count)
+                        {
+                            var block = Create();
+                            block.Hide();
+                        }
+                        _list[i].OnEntityPacketEvent(packets[i]);
+                        _list[i].Show();
+                    }
+                    Debug.Log(pk.IsExpand);
+
+                    _uiExpand.SetActive(pk.IsExpand);
+                    _uiExpand.transform.SetAsLastSibling();
+                    break;
+            }
+        }
+
+
+        private void Clear()
+        {
+            for(int i = 0; i < _list.Count; i++)
+            {
+                _list[i].Hide();
+            }
+        }
+
+        private UITurretBlock Create()
+        {
+            var block = Instantiate(_uiBlock);
+            block.name = $"UI@TurretBlock{_list.Count}";
+            block.transform.SetParent(_scrollRect.content);
+            block.transform.localScale = Vector3.one;
+            block.SetOnCommandPacketListener(OnCommandPacketEvent);
+            _list.Add(block);
+            return block;
         }
 
         #region ##### Listener #####

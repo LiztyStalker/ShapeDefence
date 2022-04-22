@@ -18,6 +18,11 @@ namespace SDefence.UI
             _uiExpandBtn.onClick.RemoveListener(OnCommandPacketEvent);
         }
 
+        public void SetActive(bool isActive)
+        {
+            gameObject.SetActive(isActive);
+        }
+
         #region ##### Listener #####
         private System.Action<ICommandPacket> _cmdEvent;
         public void SetOnCommandPacketListener(System.Action<ICommandPacket> act) => _cmdEvent = act;

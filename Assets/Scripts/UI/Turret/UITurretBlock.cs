@@ -1,6 +1,7 @@
 namespace SDefence.UI
 {
     using SDefence.Packet;
+    using SDefence.Turret.Entity;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -21,6 +22,9 @@ namespace SDefence.UI
         [SerializeField]
         private UIAssetButton _techBtn;
 
+        private int _orbitIndex;
+        private int _index;
+
         private void Awake()
         {
             _disassembleBtn.onClick.AddListener(OnDisassembleCommandPacketEvent);
@@ -35,10 +39,42 @@ namespace SDefence.UI
             _techBtn.onClick.RemoveListener(OnTechCommandPacketEvent);
         }
 
-        public void OnEntityPacketEvent(IEntityPacket pk)
+        public void Show()
         {
-            //Text
-            //Activate Inactivate            
+            gameObject.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+        public void OnEntityPacketEvent(IEntityPacket packet)
+        {
+            if(packet is TurretEntityPacket)
+            {
+                var pk = (TurretEntityPacket)packet;
+                var entity = pk.Entity;
+
+                //Index
+                _orbitIndex = pk.OrbitIndex;
+                _index = pk.Index;
+                
+                
+                //Text
+
+
+
+
+
+                _upgradeBtn.SetActive(!entity.IsMaxUpgrade());
+                _techBtn.SetActive(entity.IsMaxUpgrade());
+
+                //_disassembleBtn.interactable = //Tech 0 = false
+                _upgradeBtn.interactable = pk.IsActiveUpgrade;
+                _techBtn.interactable = pk.IsActiveUpTech;
+
+
+            }
         }
 
         #region ##### Listener #####
@@ -50,6 +86,9 @@ namespace SDefence.UI
         {
             //UpgradeCommandPacket
             var pk = new UpgradeCommandPacket();
+            pk.typeCmdKey = TYPE_COMMAND_KEY.Turret;
+            pk.ParentIndex = _orbitIndex;
+            pk.Index = _index;
             _cmdEvent?.Invoke(pk);
         }
 
@@ -57,12 +96,18 @@ namespace SDefence.UI
         {
             //OpenTechCommandPacket
             var pk = new OpenTechCommandPacket();
+            pk.typeCmdKey = TYPE_COMMAND_KEY.Turret;
+            pk.ParentIndex = _orbitIndex;
+            pk.Index = _index;
             _cmdEvent?.Invoke(pk);
         }
 
         private void OnDisassembleCommandPacketEvent()
         {
             var pk = new OpenDisassembleCommandPacket();
+            pk.TypeCmdKey = TYPE_COMMAND_KEY.Turret;
+            pk.ParentIndex = _orbitIndex;
+            pk.Index = _index;
             _cmdEvent?.Invoke(pk);
         }
         #endregion
