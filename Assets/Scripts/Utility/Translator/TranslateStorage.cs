@@ -3,20 +3,22 @@ namespace Storage
     using UnityEngine;
     using LitJson;
     using System.Collections.Generic;
+    using UtilityManager;
 
     public class TranslateStorage
     {
-        private readonly string SETTINGS_LANGUAGE_KEY = "LANGUAGE_KEY";
+        
 
-
+        private readonly string SETTINGS_LANGUAGE_KEY = "SETTINGS_LANGUAGE_KEY";
+        private readonly string DEFAULT_LANGUAGE_KEY = "Korean";
 
         private static TranslateStorage _instance;
 
         private Dictionary<string, JsonData> _dic;
 
-        private UtilityManager.GameLanguageData _gameLangData;
+        private TranslateLanguageData _languageData;
 
-        private int _languageIndex = 0;
+        private string _languageKey;
 
         public static TranslateStorage Instance
         {
@@ -40,40 +42,18 @@ namespace Storage
                 _dic.Add(arr[i].name, JsonMapper.ToObject(arr[i].text));
             }
 
-            _gameLangData = DataStorage.Instance.GetDataOrNull<UtilityManager.GameLanguageData>("GameLanguageData", null, null);
+            var obj = DataStorage.Instance.GetDataOrNull<ScriptableObject>("TranslateLanguageData_Language");
+            _languageData = (TranslateLanguageData)obj;
+            _languageKey = DEFAULT_LANGUAGE_KEY;
+
+            //System 언어 적용하기
 
             Load();
         }
-        public SystemLanguage NowLanguage()
-        {
-            //Debug.Log(_languageIndex);
-            return _gameLangData.UsableLanguages[_languageIndex];
-        }
-        public void PrevLanguageIndex()
-        {
-            if(_languageIndex - 1 < 0)
-            {
-                _languageIndex = _gameLangData.UsableLanguages.Length - 1;
-            }
-            else
-            {
-                _languageIndex--;
-            }
-            OnChangedTranslateEvent();
-        }
 
-        public void NextLanguageIndex()
-        {
-            if (_languageIndex + 1 >= _gameLangData.UsableLanguages.Length)
-            {
-                _languageIndex = 0;
-            }
-            else
-            {
-                _languageIndex++;
-            }
-            OnChangedTranslateEvent();
-        }
+        public TranslateLanguageData GetLanguages() => _languageData;
+
+        public string NowLanguage() => _languageKey;
 
         public void ChangedLanguage()
         {
@@ -82,21 +62,15 @@ namespace Storage
 
         public void Load() 
         {
-            var language = PlayerPrefs.GetString(SETTINGS_LANGUAGE_KEY, SystemLanguage.Korean.ToString());
-            for(int i = 0; i < _gameLangData.UsableLanguages.Length; i++)
-            {
-                if(_gameLangData.UsableLanguages[i].ToString() == language)
-                {
-                    _languageIndex = i;
-                    return;
-                }
-            }
-            _languageIndex = 0;
-
+            var languageKey = PlayerPrefs.GetString(SETTINGS_LANGUAGE_KEY, DEFAULT_LANGUAGE_KEY);
+            //찾기
+            //없으면 default
+            //있으면 languageKey
+            _languageKey = languageKey;
         }
         public void Save() 
         {
-            PlayerPrefs.SetString(SETTINGS_LANGUAGE_KEY, _gameLangData.UsableLanguages[_languageIndex].ToString());
+            PlayerPrefs.SetString(SETTINGS_LANGUAGE_KEY, _languageKey);
         }
 
         public string GetTranslateData(string title, string key, string verb = null, int index = 0)

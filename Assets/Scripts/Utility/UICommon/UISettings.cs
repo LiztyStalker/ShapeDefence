@@ -26,7 +26,7 @@ namespace Utility.UI
         private Text _frameValueLabel;
 
         [SerializeField]
-        private GameObject _langSheet;
+        private UILanguageSheet _langSheet;
         [SerializeField]
         private Text _langLabel;
         [SerializeField]
@@ -87,6 +87,8 @@ namespace Utility.UI
             Debug.Assert(_qnaBtn != null, $"_qnaButton 구성하지 못했습니다");
             Debug.Assert(_exitBtn != null, $"_exitButton 구성하지 못했습니다");
 
+            _langSheet.Initialize();
+            _langSheet.Hide();
 
             Load();
 
@@ -102,6 +104,7 @@ namespace Utility.UI
         {
             _closedEvent = null;
 
+            _langSheet.CleanUp();
             UnRegisterEvents();
         }
 
@@ -119,13 +122,15 @@ namespace Utility.UI
         private void RegisterEvents()
         {
             _frameSlider.onValueChanged.AddListener(OnFrameEvent);
+            _langBtn.onClick.AddListener(OnLanguageSheetEvent);
+            _langSheet.SetOnClickLanguageListener(OnClickLanguageEvent);
             _exitBtn.onClick.AddListener(Hide);
         }
 
         private void UnRegisterEvents()
         {
             _frameSlider.onValueChanged.RemoveListener(OnFrameEvent);
-
+            _langBtn.onClick.RemoveListener(OnLanguageSheetEvent);
             _exitBtn.onClick.RemoveListener(Hide);
         }
 
@@ -135,27 +140,31 @@ namespace Utility.UI
             _frameValueLabel.text = string.Format("{0:d0}", (value * 100f));
         }
 
-        private void OnLeftLanguageEvent() 
+        //private void OnLeftLanguageEvent() 
+        //{
+        //    Storage.TranslateStorage.Instance.PrevLanguageIndex();
+        //}
+
+        //private void OnRightLanguageEvent() 
+        //{
+        //    Storage.TranslateStorage.Instance.NextLanguageIndex();
+        //}
+
+        private void OnClickLanguageEvent(string key)
         {
-            Storage.TranslateStorage.Instance.PrevLanguageIndex();
+            //Storage.TranslateStorage.Instance.get
+            //SetTranslateStorage - Language
         }
 
-        private void OnRightLanguageEvent() 
+        private void OnLanguageSheetEvent()
         {
-            Storage.TranslateStorage.Instance.NextLanguageIndex();
+            _langSheet.Show();
         }
 
         private void SetLanguageLabel()
         {
             _langLabel.text = Storage.TranslateStorage.Instance.GetTranslateData("System_Tr", "Sys_Settings_Language");
         }
-
-        private void SetToggleText()
-        {
-            //_uiHitActivateToggle.GetComponentInChildren<Text>().text = Storage.TranslateStorage.Instance.GetTranslateData("System_Tr", "Sys_Settings_Hit"); ;
-            //_effectActivateToggle.GetComponentInChildren<Text>().text = Storage.TranslateStorage.Instance.GetTranslateData("System_Tr", "Sys_Settings_Effect"); ;
-        }
-
 
         private void OnSaveEvent() 
         {
@@ -181,7 +190,6 @@ namespace Utility.UI
         private void SetText()
         {
             SetLanguageLabel();
-            SetToggleText();
         }
 
         public void Show(System.Action closedCallback = null)
