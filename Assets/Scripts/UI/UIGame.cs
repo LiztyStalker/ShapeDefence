@@ -187,6 +187,14 @@ namespace SDefence.UI
 
         public void OnEntityPacketEvent(IEntityPacket packet)
         {
+
+            switch (packet) {
+                case RewardOfflineEntityPacket pk:
+                    //IAsset
+                    _uiGamePopup.ShowRewardOfflinePopup();
+                    break;
+            }
+
             //¸ðµÎ »Ñ¸®±â
             //IEntityPacketUser
             for (int i = 0; i < _entityList.Count; i++)
@@ -248,7 +256,13 @@ namespace SDefence.UI
                     _uiLobby.Hide();
                     _uiBattle.Show();
                     break;
-
+                case OpenExpandCommandPacket pk:
+                    _uiGamePopup.ShowAssetPopup(() =>
+                    {
+                        var epk = new ExpandCommandPacket();
+                        _cmdEvent?.Invoke(epk);
+                    });
+                    break;
                 case CategoryCommandPacket pk:
                     //Menu Category
                     if (_dic.ContainsKey(pk.Category))

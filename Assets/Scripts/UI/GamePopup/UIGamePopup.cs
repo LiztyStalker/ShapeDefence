@@ -8,6 +8,7 @@ namespace SDefence.UI
         private UIClearPopup _uiClearPopup;
         private UIDefeatPopup _uiDefeatPopup;
         private UITechPopup _uiTechPopup;
+        private UIAssetPopup _uiAssetPopup;
         private UIDisassemblePopup _uiDisassemblePopup;
         private UIRewardOfflinePopup _uiRewardOfflinePopup;
 
@@ -16,17 +17,21 @@ namespace SDefence.UI
             _uiClearPopup = GetComponentInChildren<UIClearPopup>(true);
             _uiDefeatPopup = GetComponentInChildren<UIDefeatPopup>(true);
             _uiTechPopup = GetComponentInChildren<UITechPopup>(true);
+            _uiAssetPopup = GetComponentInChildren<UIAssetPopup>(true);
             _uiDisassemblePopup = GetComponentInChildren<UIDisassemblePopup>(true);
             _uiRewardOfflinePopup = GetComponentInChildren<UIRewardOfflinePopup>(true);
+
 
             _uiClearPopup.Initialize();
             _uiDefeatPopup.Initialize();
             _uiTechPopup.Initialize();
+            _uiAssetPopup.Initialize();
             _uiDisassemblePopup.Initialize();
             _uiRewardOfflinePopup.Initialize();
 
             _uiClearPopup.Hide();
             _uiDefeatPopup.Hide();
+            _uiAssetPopup.Hide();
             _uiTechPopup.Hide();
             _uiDisassemblePopup.Hide();
             _uiRewardOfflinePopup.Hide();
@@ -34,6 +39,7 @@ namespace SDefence.UI
             _uiClearPopup.SetOnClosedListener(Hide);
             _uiDefeatPopup.SetOnClosedListener(Hide);
             _uiTechPopup.SetOnClosedListener(Hide);
+            _uiAssetPopup.SetOnClosedListener(Hide);
             _uiDisassemblePopup.SetOnClosedListener(Hide);
             _uiRewardOfflinePopup.SetOnClosedListener(Hide);
 
@@ -91,6 +97,12 @@ namespace SDefence.UI
         {
             Show();
             _uiRewardOfflinePopup.Show();
+        }
+
+        public void ShowAssetPopup(System.Action applyCallback)
+        {
+            Show();
+            _uiAssetPopup.Show(applyCallback);
         }
 
         private void Show()

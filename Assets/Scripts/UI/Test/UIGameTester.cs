@@ -341,6 +341,13 @@ namespace SDefence.UI.Test
             }
 
 
+            if (GUILayout.Button("오프라인 보상"))
+            {
+                var pk = new RewardOfflineEntityPacket();
+                _uiGame.OnEntityPacketEvent(pk);
+            }
+
+
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();

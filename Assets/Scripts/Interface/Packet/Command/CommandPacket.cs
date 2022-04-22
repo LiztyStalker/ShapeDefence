@@ -50,6 +50,7 @@ namespace SDefence.Packet
     }
     public class DisassembleCommandPacket : ICommandPacket { }
     public class RefreshCommandPacket : ICommandPacket { }
+    public class OpenExpandCommandPacket : ICommandPacket { }
     public class ExpandCommandPacket : ICommandPacket { }
 
     public class SettingsCommandPacket : ICommandPacket { }
@@ -59,7 +60,10 @@ namespace SDefence.Packet
         public int Index;
     }
 
-    public class HelpCommandPacket : ICommandPacket { }
+    public class HelpCommandPacket : ICommandPacket 
+    { 
+    }
+
     public class CategoryCommandPacket : ICommandPacket 
     {
         public string Category;

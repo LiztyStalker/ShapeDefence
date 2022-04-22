@@ -77,7 +77,7 @@ namespace SDefence.Test
             }
             if (GUILayout.Button("확장"))
             {
-                var cmd = new ExpandCommandPacket();
+                var cmd = new OpenExpandCommandPacket();
                 _gameManager.OnCommandPacketEvent(cmd);
             }
             if (GUILayout.Button("테크열기"))

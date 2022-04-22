@@ -29,7 +29,7 @@ namespace SDefence.UI
 
         private void OnCommandPacketEvent()
         {
-            var pk = new ExpandCommandPacket();
+            var pk = new OpenExpandCommandPacket();
             _cmdEvent?.Invoke(pk);
         }
         #endregion

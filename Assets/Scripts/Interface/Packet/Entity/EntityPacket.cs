@@ -36,4 +36,10 @@ namespace SDefence.Packet
         public AssetUsableEntity Entity;
     }
 
+
+    public class RewardOfflineEntityPacket : IEntityPacket
+    {
+        //AssetEntity
+    }
+
 }

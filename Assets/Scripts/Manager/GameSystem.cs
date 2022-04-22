@@ -50,7 +50,7 @@ namespace SDefence.Manager
                 case UpTechCommandPacket pk:
                     // HQ Turret
                     break;
-                case ExpandCommandPacket pk:
+                case OpenExpandCommandPacket pk:
                     // Turret
                     break;
                 case OpenDisassembleCommandPacket pk:

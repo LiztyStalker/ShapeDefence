@@ -12,6 +12,9 @@ namespace SDefence.UI
         [SerializeField]
         private ScrollRect _scrollRect;
 
+        [SerializeField]
+        private Text _turretCountText;
+
         private UITurretBlock _uiBlock;
 
         private UITurretExpand _uiExpand;
@@ -52,6 +55,7 @@ namespace SDefence.UI
         {
             switch (packet)
             {
+                //TurretOrbitEntityPacket - 포탑 가용 수 출력
                 case TurretEntityPacket pk:
                     _list[pk.Index].OnEntityPacketEvent(pk);
                     break;

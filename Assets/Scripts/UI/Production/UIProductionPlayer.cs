@@ -6,21 +6,30 @@ namespace SDefence.UI
     public class UIProductionPlayer : MonoBehaviour
     {
         [SerializeField]
+        private Text _text;
+
+        [SerializeField]
         private Button _applyBtn;
 
-        public void Initialize()
-        {
+        [SerializeField]
+        private Button _skipBtn;
 
-        }
-
-        public void CleanUp()
-        {
-
-        }
+        private float _nowTime;
 
         public void Show(System.Action endCallback)
         {
+            _applyBtn.gameObject.SetActive(false);
+            _skipBtn.gameObject.SetActive(true);
+
+            _nowTime = 1f;
+
             gameObject.SetActive(true);
+
+            _skipBtn.onClick.AddListener(() =>
+            {
+                _nowTime = 0f;
+            });
+
             _applyBtn.onClick.AddListener(() =>
             {
                 endCallback?.Invoke();
@@ -31,10 +40,26 @@ namespace SDefence.UI
 
         public void Hide()
         {
+            _skipBtn.onClick.RemoveAllListeners();
             _applyBtn.onClick.RemoveAllListeners();
             gameObject.SetActive(false);
         }
 
+        private void Update()
+        {
+            if(_nowTime < 0f)
+            {
+                _text.text = "연출 완료";
+                _applyBtn.gameObject.SetActive(true);
+                _skipBtn.gameObject.SetActive(false);
+            }
+            else
+            {
+                _nowTime -= Time.deltaTime;
+            }
+
+            _text.text =  "연출 " + _nowTime.ToString();
+        }
 
     }
 }

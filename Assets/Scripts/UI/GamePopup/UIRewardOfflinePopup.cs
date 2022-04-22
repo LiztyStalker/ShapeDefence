@@ -56,6 +56,7 @@ namespace SDefence.UI
             var pk = new RewardOfflineCommandPacket();
             pk.IsAdb = false;
             _cmdEvent?.Invoke(pk);
+            Hide();
         }
         private void OnAdbRewardCommandPacketEvent()
         {
@@ -63,6 +64,7 @@ namespace SDefence.UI
             var pk = new RewardOfflineCommandPacket();
             pk.IsAdb = true;
             _cmdEvent?.Invoke(pk);
+            Hide();
         }
 
 
