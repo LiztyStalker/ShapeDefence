@@ -5,7 +5,7 @@ namespace SDefence.UI
     using UnityEngine;
     using UnityEngine.UI;
 
-    public class UITechButton : Button
+    public class UITechPopupButton : Button
     {
         [SerializeField]
         private Text _text;
@@ -58,7 +58,7 @@ namespace SDefence.UI
 
         public void OnEntityPacketEvent(IEntityPacket packet)
         {
-            //AssetEntityPacket
+            //IAssetUsableData
         }
         #endregion
     }
