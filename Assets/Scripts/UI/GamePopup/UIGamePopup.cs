@@ -1,9 +1,10 @@
 namespace SDefence.UI
 {
+    using SDefence.Entity;
     using SDefence.Packet;
     using UnityEngine;
 
-    public class UIGamePopup : MonoBehaviour, IBattlePacketUser
+    public class UIGamePopup : MonoBehaviour, IBattlePacketUser, IEntityPacketUser
     {
         private UIClearPopup _uiClearPopup;
         private UIDefeatPopup _uiDefeatPopup;
@@ -81,10 +82,10 @@ namespace SDefence.UI
         /// <summary>
         /// TechData
         /// </summary>
-        public void ShowTechPopup()
+        private void ShowTechPopup(IEntity entity)
         {
             Show();
-            _uiTechPopup.Show();
+            _uiTechPopup.Show(entity);
         }
 
         public void ShowDisassemblePopup()
@@ -121,6 +122,9 @@ namespace SDefence.UI
         public void SetOnCommandPacketListener(System.Action<ICommandPacket> act) => _cmdEvent = act;
         private void OnCommandPacketEvent(ICommandPacket pk) => _cmdEvent?.Invoke(pk);
 
+
+
+
         public void OnBattlePacketEvent(IBattlePacket packet)
         {
             switch (packet)
@@ -130,6 +134,19 @@ namespace SDefence.UI
                     break;
                 case DefeatBattlePacket pk:
                     ShowDefeatPopup();
+                    break;
+            }
+        }
+
+
+
+
+        public void OnEntityPacketEvent(IEntityPacket packet)
+        {
+            switch (packet)
+            {
+                case OpenTechEntityPacket pk:
+                    ShowTechPopup(pk.Entity);
                     break;
             }
         }

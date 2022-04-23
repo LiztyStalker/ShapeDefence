@@ -83,6 +83,7 @@ namespace SDefence.UI
 
             _entityList = new List<IEntityPacketUser>();
             _entityList.Add(_uiAsset);
+            _entityList.Add(_uiGamePopup);
 
 
 
@@ -239,10 +240,10 @@ namespace SDefence.UI
                     //Production Disassemble 
                     _uiProduction.ShowDisassembleProduction(null);
                     break;
-                case OpenTechCommandPacket pk:
+                //case OpenTechCommandPacket pk:
                     //GamePopup Tech -> Apply UpTechCommandPacket
-                    _uiGamePopup.ShowTechPopup();
-                    break;
+                    //_uiGamePopup.ShowTechPopup();
+                    //break;
                 case UpTechCommandPacket pk:
                     //Production UpTech
                     _uiProduction.ShowTechProduction(null);

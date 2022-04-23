@@ -71,7 +71,7 @@ namespace SDefence.HQ
 
             _orbitCount = 1;
 
-            _techRawData = null;
+            _techRawData = TechRawData.Create();
         }
 
         public override void AddData(string[] arr) { }

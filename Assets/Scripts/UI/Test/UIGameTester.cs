@@ -54,6 +54,21 @@ namespace SDefence.UI.Test
 
             switch (packet)
             {
+                case OpenTechCommandPacket pk:
+                    switch (pk.typeCmdKey)
+                    {
+                        case TYPE_COMMAND_KEY.HQ:
+
+                            var raw = HQ.HQData.Create();
+                            var entity = HQ.Entity.HQEntity.Create();
+                            entity.SetData(raw);
+
+                            var techPK = new OpenTechEntityPacket();
+                            techPK.Entity = entity;
+                            OnEntityPacketEvent(techPK);
+                            break;
+                    }
+                    break;
                 case RefreshCommandPacket refPk:
 
                     switch (refPk.TypeCmdKey)
@@ -307,14 +322,14 @@ namespace SDefence.UI.Test
             pk.Entity = entity;
             pk.IsActiveUpgrade = isActiveUpgrade;
             pk.IsActiveUpTech = isActiveUpTech;
-            _uiGame.OnEntityPacketEvent(pk);
+            OnEntityPacketEvent(pk);
         }
 
         private void OnTurretOrbitRefreshEntity()
         {
             var pk = new TurretOrbitEntityPacket();
             pk.OrbitCount = 1;
-            _uiGame.OnEntityPacketEvent(pk);
+            OnEntityPacketEvent(pk);
         }
 
 
@@ -331,7 +346,7 @@ namespace SDefence.UI.Test
             pk.Index = index;
             pk.IsActiveUpgrade = isUpgrade;
             pk.IsActiveUpTech = isUpTech;
-            _uiGame.OnEntityPacketEvent(pk);
+            OnEntityPacketEvent(pk);
         }
 
         private void OnTurretArrayRefreshEvent(int orbitIndex, int count, bool isUpgrade, bool isUpTech, bool isFullUpgrade, bool isExpand)
@@ -357,8 +372,10 @@ namespace SDefence.UI.Test
                 pks.packets[i] = pk;
             }
 
-            _uiGame.OnEntityPacketEvent(pks);
+            OnEntityPacketEvent(pks);
         }
+
+        private void OnEntityPacketEvent(IEntityPacket packet) => _uiGame.OnEntityPacketEvent(packet);
     }
 }
 #endif

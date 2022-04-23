@@ -1,6 +1,8 @@
 namespace SDefence.UI
 {
     using Packet;
+    using SDefence.Entity;
+    using SDefence.HQ.Entity;
     using Storage;
     using System.Collections.Generic;
     using UnityEngine;
@@ -48,26 +50,28 @@ namespace SDefence.UI
             _list.Clear();
         }
 
-        public void Show()//TechData
+        public void Show(IEntity entity)//TechData
         {
-            //Test
-            if (_list.Count == 0)
-            {
-                var btn = Create();
-                btn.SetData("Test");
-                _list.Add(btn);
-            }
-            else
-            {
-                for(int i = 0; i < _list.Count; i++)
-                {
-                    _list[i].SetData("Test");
-                    _list[i].Show();
-                }
-            }
-           
+
+            Clear();
 
             gameObject.SetActive(true);
+
+            if (entity is ITechable)
+            {
+                var techable = (ITechable)entity;
+                var elements = techable.TechRawData.TechRawElements;
+                for(int i = 0; i < elements.Length; i++)
+                {
+                    if(i >= _list.Count)
+                    {
+                        _list.Add(Create());
+                    }
+
+                    _list[i].SetData(elements[i].TechDataKey);
+                }
+            }
+
         }
 
         public void Hide()

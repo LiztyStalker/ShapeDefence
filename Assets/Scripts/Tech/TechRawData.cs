@@ -108,11 +108,15 @@ namespace SDefence.Tech
 
         public TechRawElement[] TechRawElements => _techRawElements;
 #if UNITY_EDITOR
-        
+
+        public static TechRawData Create() => new TechRawData();
+
         public TechRawData()
         {
-            
-        }               
+            _techRawElements = new TechRawElement[1];
+            _techRawElements[0] = TechRawElement.Create();
+
+        }
 
         private void SetData(TechRawData raw)
         {

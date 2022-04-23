@@ -3,6 +3,7 @@ namespace SDefence.Packet
     using HQ.Entity;
     using Asset.Entity;
     using Turret.Entity;
+    using SDefence.Entity;
 
     public class HQEntityPacket : IEntityPacket
     {
@@ -35,6 +36,12 @@ namespace SDefence.Packet
     public class AssetEntityPacket : IEntityPacket
     {
         public AssetUsableEntity Entity;
+    }
+
+
+    public class OpenTechEntityPacket : IEntityPacket
+    {
+        public IEntity Entity;
     }
 
 

@@ -11,7 +11,13 @@ namespace SDefence.HQ.Entity
     using Tech;
     using SDefence.Entity;
 
-    public class HQEntity : ISavable, IEntity
+
+    public interface ITechable
+    {
+        public TechRawData TechRawData { get; }
+    }
+
+    public class HQEntity : ISavable, IEntity, ITechable
     {
 
         #region ##### Parent Savable Data #####
@@ -56,6 +62,8 @@ namespace SDefence.HQ.Entity
         public int UpgradeValue => _upgradeData.GetValue();
 
         public int OrbitCount => _data.OrbitCount;
+
+        public TechRawData TechRawData => _data.TechRawData;
 
         public static HQEntity Create() => new HQEntity();
 
