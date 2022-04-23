@@ -25,7 +25,7 @@ namespace SDefence.UI
 
         public void SetAsset()
         {
-
+            //IAssetUsableData
         }
 
         public void SetActive(bool isActive)

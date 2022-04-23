@@ -26,16 +26,16 @@ namespace SDefence.UI
         [SerializeField]
         private Button _closeBtn;
 
-        private UITechButton _techBtn;
+        private UITechPopupButton _techBtn;
 
-        private List<UITechButton> _list;
+        private List<UITechPopupButton> _list;
 
         public void Initialize()
         {
-            _list = new List<UITechButton>();
+            _list = new List<UITechPopupButton>();
 
             var obj = DataStorage.Instance.GetDataOrNull<GameObject>("UI@TechBtn");
-            _techBtn = obj.GetComponent<UITechButton>();
+            _techBtn = obj.GetComponent<UITechPopupButton>();
             _techBtn.SetOnCommandPacketListener(OnCommandPacketEvent);
 
             _closeBtn.onClick.AddListener(OnCloseEvent);
@@ -50,15 +50,14 @@ namespace SDefence.UI
             _list.Clear();
         }
 
-        public void Show(IEntity entity)//TechData
+        public void Show(IEntity entity)
         {
-
             Clear();
-
-            gameObject.SetActive(true);
 
             if (entity is ITechable)
             {
+                gameObject.SetActive(true);
+
                 var techable = (ITechable)entity;
                 var elements = techable.TechRawData.TechRawElements;
                 for(int i = 0; i < elements.Length; i++)
@@ -73,6 +72,7 @@ namespace SDefence.UI
                     _list[i].Show();
                 }
             }
+            
 
         }
 
@@ -83,7 +83,7 @@ namespace SDefence.UI
             OnClosedEvent();
         }
 
-        private UITechButton Create()
+        private UITechPopupButton Create()
         {
             var btn = Instantiate(_techBtn);
             btn.transform.SetParent(_techFrame);
@@ -115,8 +115,6 @@ namespace SDefence.UI
         {
             Hide();
         }
-
-
 
         private System.Action _closedEvent;
         public void SetOnClosedListener(System.Action act) => _closedEvent = act;

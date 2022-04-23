@@ -1,7 +1,7 @@
 namespace SDefence.UI
 {
-    using SDefence.Packet;
-    using SDefence.Turret.Entity;
+    using Packet;
+    using Turret.Entity;
     using UnityEngine;
     using UnityEngine.UI;
 

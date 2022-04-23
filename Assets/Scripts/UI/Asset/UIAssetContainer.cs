@@ -8,10 +8,6 @@ namespace SDefence.UI
 
     public class UIAssetContainer : MonoBehaviour, IEntityPacketUser
     {
-
-        //재화 종류만큼 보이기
-        //
-
         private Dictionary<string, UIAssetBlock> _dic;
 
         public void Initialize()

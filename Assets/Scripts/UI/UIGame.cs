@@ -75,19 +75,21 @@ namespace SDefence.UI
 
 #endif
 
+            //IBattlePacketUser
             _battleList = new List<IBattlePacketUser>();
             _battleList.Add(_uiBattle);
             _battleList.Add(_uiGamePopup);
             _battleList.Add(_uiLevel);
 
 
+            //IEntityPacketUser
             _entityList = new List<IEntityPacketUser>();
             _entityList.Add(_uiAsset);
             _entityList.Add(_uiGamePopup);
             _entityList.Add(_uiProduction);
 
 
-
+            //ICategory
             _dic = new Dictionary<string, ICategory>();
 
             for (int i = 0; i < transform.childCount; i++)
@@ -108,6 +110,8 @@ namespace SDefence.UI
                 value.SetOnCommandPacketListener(OnCommandPacketEvent);
             }
 
+
+            //Initialize
             _uiLobby.Initialize();
             _uiLobby.AddOnCommandPacketListener(OnCommandPacketEvent);
             _uiLobby.Show();
@@ -192,12 +196,11 @@ namespace SDefence.UI
 
             switch (packet) {
                 case RewardOfflineEntityPacket pk:
-                    //IAsset
+                    //IAssetUsableData
                     _uiGamePopup.ShowRewardOfflinePopup();
                     break;
             }
 
-            //¸ðµÎ »Ñ¸®±â
             //IEntityPacketUser
             for (int i = 0; i < _entityList.Count; i++)
             {
@@ -207,7 +210,7 @@ namespace SDefence.UI
 
         public void OnBattlePacketEvent(IBattlePacket packet)
         {
-            //¸ðµÎ »Ñ¸®±â
+
             //IBattlePacketUser
             for(int i = 0; i < _battleList.Count; i++)
             {
@@ -233,22 +236,6 @@ namespace SDefence.UI
                     //UICommon Settings
                     _uiCommon.ShowSettings();
                     break;
-                //case OpenDisassembleCommandPacket pk:
-                    //GamePopup Disassemble -> Apply DisassembleCommandPacket
-                    //_uiGamePopup.ShowDisassemblePopup();
-                    //break;
-                //case DisassembleCommandPacket pk:
-                    //Production Disassemble 
-                    //_uiProduction.ShowDisassembleProduction(null);
-                    //break;
-                //case OpenTechCommandPacket pk:
-                    //GamePopup Tech -> Apply UpTechCommandPacket
-                    //_uiGamePopup.ShowTechPopup();
-                    //break;
-                //case UpTechCommandPacket pk:
-                    //Production UpTech
-                    //_uiProduction.ShowTechProduction(null);
-                    //break;
                 case HelpCommandPacket pk:
                     //UIHelp Show - UICategory
                     _uiHelp.Show();

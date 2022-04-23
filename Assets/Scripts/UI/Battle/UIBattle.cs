@@ -42,13 +42,6 @@ namespace SDefence.UI
         {
             gameObject.SetActive(false);
         }
-        public void SetData()
-        {
-            //LevelWave
-            //AlarmBoss
-            //DurableContainer
-        }
-
         public void OnBattlePacketEvent(IBattlePacket packet)
         {
             switch (packet)

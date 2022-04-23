@@ -1,6 +1,6 @@
 namespace SDefence.UI
 {
-    using SDefence.Packet;
+    using Packet;
     using UnityEngine;
     using UnityEngine.UI;
 

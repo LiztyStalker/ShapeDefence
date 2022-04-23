@@ -24,6 +24,7 @@ namespace SDefence.UI
         }
 
         #region ##### Listener #####
+
         private System.Action<ICommandPacket> _cmdEvent;
         public void SetOnCommandPacketListener(System.Action<ICommandPacket> act) => _cmdEvent = act;
 

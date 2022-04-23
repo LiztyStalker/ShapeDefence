@@ -39,9 +39,9 @@ namespace SDefence.UI
 
         public void Show(IEntity entity)
         {
-
             //Entity
-
+            //Return IAssetUsableData
+            //StarAssetUsableData
 
             gameObject.SetActive(true);
         }
@@ -67,7 +67,8 @@ namespace SDefence.UI
         }
         private void OnDisassembleEvent()
         {
-            //DisassembleCommandPacket
+            //DisassembleCommandPacket - 50%
+            //PerfectDisassembleCommandPacket - 100%
             var pk = new DisassembleCommandPacket();
             _cmdEvent?.Invoke(pk);
             OnCloseEvent();

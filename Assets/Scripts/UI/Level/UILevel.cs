@@ -1,7 +1,6 @@
 namespace SDefence.UI
 {
-    using Data;
-    using SDefence.Packet;
+    using Packet;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -30,13 +29,13 @@ namespace SDefence.UI
             gameObject.SetActive(false);
         }
 
-        public void SetData(LevelWaveData levelWaveData)
-        {
-            _levelText.text = $"Level {levelWaveData.GetLevel()}";
-        }
-
         public void OnBattlePacketEvent(IBattlePacket packet)
         {
+            if(packet is NextWaveBattlePacket)
+            {
+                var pk = (NextWaveBattlePacket)packet;
+                _levelText.text = $"Level {pk.data.GetLevel()}";
+            }
 
         }
     }

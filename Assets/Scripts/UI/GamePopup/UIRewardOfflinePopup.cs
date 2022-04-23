@@ -43,7 +43,8 @@ namespace SDefence.UI
 
         public void SetData()
         {
-            //AssetData
+            //TimeSpan
+            //IAssetUsableData
         }
 
         #region ##### Listener #####
@@ -66,8 +67,6 @@ namespace SDefence.UI
             _cmdEvent?.Invoke(pk);
             Hide();
         }
-
-
 
         private System.Action _closedEvent;
         public void SetOnClosedListener(System.Action act) => _closedEvent = act;

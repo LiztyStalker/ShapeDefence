@@ -1,8 +1,8 @@
 namespace SDefence.UI
 {
     using Packet;
-    using SDefence.Durable.Usable;
-    using SDefence.Recovery.Usable;
+    using Durable.Usable;
+    using Recovery.Usable;
     using Storage;
     using System;
     using UnityEngine;

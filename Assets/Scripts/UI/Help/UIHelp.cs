@@ -21,6 +21,8 @@ namespace SDefence.UI
 
         public void Show()
         {
+            //TYPE_CATEGORY
+            //Description
             gameObject.SetActive(true);
         }
 

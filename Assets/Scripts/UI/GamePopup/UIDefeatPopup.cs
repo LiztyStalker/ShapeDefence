@@ -40,7 +40,7 @@ namespace SDefence.UI
 
         public void SetData()
         {
-            //AssetData
+            //IAssetUsableData
         }
 
         #region ##### Listener #####

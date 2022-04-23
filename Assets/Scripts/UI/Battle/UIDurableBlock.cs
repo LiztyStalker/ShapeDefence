@@ -1,18 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class UIDurableBlock : MonoBehaviour
+namespace SDefence.UI
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    using UnityEngine;
 
-    // Update is called once per frame
-    void Update()
+    public class UIDurableBlock : MonoBehaviour
     {
-        
+        //HP Slider
+        //Shield Slider
+        //Position
     }
 }

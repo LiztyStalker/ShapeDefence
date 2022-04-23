@@ -2,7 +2,7 @@ namespace SDefence.UI
 {
     using UnityEngine.UI;
     using UnityEngine;
-    using SDefence.Packet;
+    using Packet;
 
     public class UILobby : MonoBehaviour
     {

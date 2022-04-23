@@ -67,6 +67,16 @@ namespace SDefence.UI
             _uiRewardOfflinePopup.CleanUp();
         }
 
+        private void Show()
+        {
+            gameObject.SetActive(true);
+        }
+
+        private void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
         public void ShowClearPopup()
         {
             Show();
@@ -79,9 +89,6 @@ namespace SDefence.UI
             _uiDefeatPopup.Show();
         }
 
-        /// <summary>
-        /// TechData
-        /// </summary>
         private void ShowTechPopup(IEntity entity)
         {
             Show();
@@ -106,25 +113,22 @@ namespace SDefence.UI
             _uiAssetPopup.Show(applyCallback);
         }
 
-        private void Show()
-        {
-            gameObject.SetActive(true);
-        }
 
-        private void Hide()
-        {
-            gameObject.SetActive(false);
-        }
+
+
 
 
         #region ##### Listener #####
+
         private System.Action<ICommandPacket> _cmdEvent;
         public void SetOnCommandPacketListener(System.Action<ICommandPacket> act) => _cmdEvent = act;
         private void OnCommandPacketEvent(ICommandPacket pk) => _cmdEvent?.Invoke(pk);
 
 
-
-
+        /// <summary>
+        /// BattlePacket
+        /// </summary>
+        /// <param name="packet"></param>
         public void OnBattlePacketEvent(IBattlePacket packet)
         {
             switch (packet)
@@ -138,9 +142,10 @@ namespace SDefence.UI
             }
         }
 
-
-
-
+        /// <summary>
+        /// EntityPacket
+        /// </summary>
+        /// <param name="packet"></param>
         public void OnEntityPacketEvent(IEntityPacket packet)
         {
             switch (packet)

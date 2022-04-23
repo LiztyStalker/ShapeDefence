@@ -26,8 +26,8 @@ namespace SDefence.UI
 
             gameObject.SetActive(true);
 
-            //과거 Entity 필요
-            //현재 Entity 필요
+            //과거 Entity or Data 필요
+            //현재 Entity or Data 필요
 
             _skipBtn.onClick.AddListener(() =>
             {
