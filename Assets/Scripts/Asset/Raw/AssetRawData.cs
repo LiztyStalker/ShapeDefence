@@ -39,6 +39,14 @@ namespace SDefence.Asset.Raw {
             _increaseValue = increaseValue;
             _increaseRate = increaseRate;
         }
+
+
+        public AssetRawData Clone()
+        {
+            var data = Create();
+            data.SetData(_typeData, _startValue, _increaseValue, _increaseRate);
+            return data;
+        }
 #endif
 
         public IAssetUsableData GetUsableData(int upgrade = 0)

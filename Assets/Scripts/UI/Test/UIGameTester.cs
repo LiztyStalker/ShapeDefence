@@ -55,7 +55,7 @@ namespace SDefence.UI.Test
             switch (packet)
             {
                 case OpenTechCommandPacket pk:
-                    switch (pk.typeCmdKey)
+                    switch (pk.TypeCmdKey)
                     {
                         case TYPE_COMMAND_KEY.HQ:
 
@@ -64,6 +64,23 @@ namespace SDefence.UI.Test
                             entity.SetData(raw);
 
                             var techPK = new OpenTechEntityPacket();
+                            techPK.Entity = entity;
+                            OnEntityPacketEvent(techPK);
+                            break;
+                    }
+                    break;
+                case UpTechCommandPacket pk:
+                    switch (pk.TypeCmdKey)
+                    {
+                        case TYPE_COMMAND_KEY.HQ:
+
+                            //AssetUsable 소비
+                            //Key로 Data 찾기
+                            var raw = HQ.HQData.Create();
+                            var entity = HQ.Entity.HQEntity.Create();
+                            entity.SetData(raw);
+
+                            var techPK = new UpTechEntityPacket();
                             techPK.Entity = entity;
                             OnEntityPacketEvent(techPK);
                             break;

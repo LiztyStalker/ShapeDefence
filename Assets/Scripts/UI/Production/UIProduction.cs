@@ -1,7 +1,9 @@
 namespace SDefence.UI
 {
+    using Entity;
+    using Packet;
     using UnityEngine;
-    public class UIProduction : MonoBehaviour
+    public class UIProduction : MonoBehaviour, IEntityPacketUser
     {
 
         [SerializeField]
@@ -24,19 +26,16 @@ namespace SDefence.UI
         public void ShowDisassembleProduction(System.Action endCallback)
         {
             gameObject.SetActive(true);
-            _disassembleProduction.Show(() => {
+            _disassembleProduction.Show(null, () => {
                 endCallback?.Invoke();
                 Hide();
                 });
         }
 
-        public void ShowTechProduction(System.Action endCallback)
+        private void ShowTechProduction(IEntity entity)
         {
             gameObject.SetActive(true);
-            _techProduction.Show(() => {
-                endCallback?.Invoke();
-                Hide();
-            });
+            _techProduction.Show(entity, Hide);
         }
 
         public void Hide()
@@ -44,5 +43,14 @@ namespace SDefence.UI
             gameObject.SetActive(false);
         }
 
+        public void OnEntityPacketEvent(IEntityPacket packet)
+        {
+            switch (packet)
+            {
+                case UpTechEntityPacket pk:
+                    ShowTechProduction(pk.Entity);
+                    break;
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 namespace SDefence.UI
 {
+    using Entity;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -16,7 +17,7 @@ namespace SDefence.UI
 
         private float _nowTime;
 
-        public void Show(System.Action endCallback)
+        public void Show(IEntity entity, System.Action endCallback)
         {
             _applyBtn.gameObject.SetActive(false);
             _skipBtn.gameObject.SetActive(true);
@@ -24,6 +25,9 @@ namespace SDefence.UI
             _nowTime = 1f;
 
             gameObject.SetActive(true);
+
+            //과거 Entity 필요
+            //현재 Entity 필요
 
             _skipBtn.onClick.AddListener(() =>
             {

@@ -1,6 +1,8 @@
+
+
 namespace SDefence.Packet
 {
-
+    using Asset;
 
     //CommandKey
     //HQ
@@ -26,20 +28,25 @@ namespace SDefence.Packet
 
     public class UpgradeCommandPacket : ICommandPacket 
     {
-        public TYPE_COMMAND_KEY typeCmdKey;
+        public TYPE_COMMAND_KEY TypeCmdKey;
         public int ParentIndex;
         public int Index;
     }
 
     public class OpenTechCommandPacket : ICommandPacket 
     {
-        public TYPE_COMMAND_KEY typeCmdKey;
+        public TYPE_COMMAND_KEY TypeCmdKey;
         public int ParentIndex;
         public int Index;
     }
 
     public class UpTechCommandPacket : ICommandPacket 
     {
+        public TYPE_COMMAND_KEY TypeCmdKey;
+        public string Key;
+        public int ParentIndex;
+        public int Index;
+        public IAssetUsableData AssetUsableData;
     }
 
     public class OpenDisassembleCommandPacket : ICommandPacket 

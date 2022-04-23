@@ -86,7 +86,7 @@ namespace SDefence.UI
         {
             //UpgradeCommandPacket
             var pk = new UpgradeCommandPacket();
-            pk.typeCmdKey = TYPE_COMMAND_KEY.Turret;
+            pk.TypeCmdKey = TYPE_COMMAND_KEY.Turret;
             pk.ParentIndex = _orbitIndex;
             pk.Index = _index;
             _cmdEvent?.Invoke(pk);
@@ -96,7 +96,7 @@ namespace SDefence.UI
         {
             //OpenTechCommandPacket
             var pk = new OpenTechCommandPacket();
-            pk.typeCmdKey = TYPE_COMMAND_KEY.Turret;
+            pk.TypeCmdKey = TYPE_COMMAND_KEY.Turret;
             pk.ParentIndex = _orbitIndex;
             pk.Index = _index;
             _cmdEvent?.Invoke(pk);

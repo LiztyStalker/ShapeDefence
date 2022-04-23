@@ -1,6 +1,7 @@
 namespace SDefence.UI
 {
     using Packet;
+    using Asset;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -8,6 +9,11 @@ namespace SDefence.UI
     {
         [SerializeField]
         private Text _text;
+
+
+        private string _type;
+        private string _key;
+        private IAssetUsableData _usableData;
 
         protected override void Awake()
         {
@@ -29,10 +35,12 @@ namespace SDefence.UI
             gameObject.SetActive(false);
         }
 
-        public void SetData(string text)
+        public void SetData(string type, string key, IAssetUsableData usableData)
         {
-            _text.text = text;
-            //AssetData
+            _text.text = key; //Translate
+            _type = type;
+            _key = key;
+            _usableData = usableData; //Icon Asset
         }
 
         #region ##### Listener #####
@@ -42,8 +50,15 @@ namespace SDefence.UI
         private void OnUpTechEvent()
         {
             var pk = new UpTechCommandPacket();
-            //TechData
+            pk.TypeCmdKey = (TYPE_COMMAND_KEY)System.Enum.Parse(typeof(TYPE_COMMAND_KEY), _type);
+            pk.Key = _key;
+            pk.AssetUsableData = _usableData;
             _cmdEvent?.Invoke(pk);
+        }
+
+        public void OnEntityPacketEvent(IEntityPacket packet)
+        {
+            //AssetEntityPacket
         }
         #endregion
     }

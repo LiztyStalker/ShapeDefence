@@ -63,12 +63,14 @@ namespace SDefence.UI
                 var elements = techable.TechRawData.TechRawElements;
                 for(int i = 0; i < elements.Length; i++)
                 {
+                    var element = elements[i];
                     if(i >= _list.Count)
                     {
                         _list.Add(Create());
                     }
 
-                    _list[i].SetData(elements[i].TechDataKey);
+                    _list[i].SetData(element.TypeTechData, element.TechDataKey, element.GetUsableData());
+                    _list[i].Show();
                 }
             }
 

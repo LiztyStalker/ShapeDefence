@@ -44,6 +44,10 @@ namespace SDefence.Packet
         public IEntity Entity;
     }
 
+    public class UpTechEntityPacket : IEntityPacket
+    {
+        public IEntity Entity;
+    }
 
     public class RewardOfflineEntityPacket : IEntityPacket
     {

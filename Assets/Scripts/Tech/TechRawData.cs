@@ -1,9 +1,11 @@
 namespace SDefence.Tech
 {
-    using SDefence.Tech.Generator;
+    using Tech.Generator;
     using System.Collections.Generic;
     using UnityEngine;
     using Utility;
+    using Asset.Raw;
+    using SDefence.Asset;
 
     //public class TechData : ScriptableObjectData
     //{
@@ -57,43 +59,59 @@ namespace SDefence.Tech
         //private int _typeConditionTech;
         //[SerializeField]
         //private int _conditionTechValue;
+
         [SerializeField]
-        private string _typeAssetData;
-        [SerializeField]
-        private int _techAssetValue;
+        private AssetRawData _assetData;
 
         public string TypeTechData => _typeTechData;
         public string TechDataKey => _techDataKey;
+
         //public int TypeConditionTech => _typeConditionTech;
         //public int ConditionTechValue => _conditionTechValue;
-        public string TypeAssetData => _typeAssetData;
-        public int TechAssetValue => _techAssetValue;
 
 
         public static TechRawElement Create() => new TechRawElement();
-        public TechRawElement()
+
+        public TechRawElement() 
         {
             _typeTechData = "Test";
             _techDataKey = "Test";
             //_typeConditionTech = typeConditionTech;
             //_conditionTechValue = conditionTechValue;
-            _typeAssetData = "Neutral";
-            _techAssetValue = 100;
+            _assetData = AssetRawData.Create();
         }
+
+        public void SetTypeTechData(string typeTechData)
+        {
+            _typeTechData = typeTechData;
+        }
+
         public void SetData(string typeTechData, string techDataKey, string typeAssetData, string techAssetValue)
         {
             _typeTechData = typeTechData;
             _techDataKey = techDataKey;
             //_typeConditionTech = typeConditionTech;
             //_conditionTechValue = conditionTechValue;
-            _typeAssetData = typeAssetData;
-            _techAssetValue = int.Parse(techAssetValue);
+
+            _assetData = AssetRawData.Create();
+            _assetData.SetData(typeAssetData, techAssetValue, "0", "0");
         }
+
+        private void SetData(string typeTechData, string techDataKey, AssetRawData assetData)
+        {
+            _typeTechData = typeTechData;
+            _techDataKey = techDataKey;
+            //_typeConditionTech = typeConditionTech;
+            //_conditionTechValue = conditionTechValue;
+            _assetData = assetData.Clone();
+        }
+
+        public IAssetUsableData GetUsableData() => _assetData.GetUsableData();
 
         public TechRawElement Clone()
         {
             var data = Create();
-            data.SetData(_typeTechData, _techDataKey, _typeAssetData, _techAssetValue.ToString());
+            data.SetData(_typeTechData, _techDataKey, _assetData);
             return data;
         }
     }
@@ -109,12 +127,15 @@ namespace SDefence.Tech
         public TechRawElement[] TechRawElements => _techRawElements;
 #if UNITY_EDITOR
 
-        public static TechRawData Create() => new TechRawData();
+        public static TechRawData Create(string type) => new TechRawData(type);
 
-        public TechRawData()
+        public TechRawData() { }
+
+        private TechRawData(string type)
         {
             _techRawElements = new TechRawElement[1];
             _techRawElements[0] = TechRawElement.Create();
+            _techRawElements[0].SetTypeTechData(type);
 
         }
 
