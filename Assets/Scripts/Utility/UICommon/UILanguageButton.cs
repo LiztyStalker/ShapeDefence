@@ -40,9 +40,9 @@ namespace Utility.UI
         }
 
         #region ##### Listener #####
-        private System.Action<string> _clickEvent;
-        public void SetOnClickListener(System.Action<string> act) => _clickEvent = act;
-        private void OnClickEvent() => _clickEvent?.Invoke(_key);
+        private System.Action<string, string, Sprite> _clickEvent;
+        public void SetOnClickListener(System.Action<string, string, Sprite> act) => _clickEvent = act;
+        private void OnClickEvent() => _clickEvent?.Invoke(_key, _text.text, _icon.sprite);
         #endregion
     }
 }

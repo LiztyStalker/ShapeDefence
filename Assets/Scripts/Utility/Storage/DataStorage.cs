@@ -6,6 +6,7 @@ namespace Storage
     using System.IO;
     using UtilityManager;
     using Utility.ScriptableObjectData;
+    using UnityEngine.Audio;
 
     [ExecuteAlways]
     public class DataStorage
@@ -30,6 +31,7 @@ namespace Storage
             InitializeDatasFromAssetDatabaseDirectory<GameObject>("Prefabs");
             InitializeDatasFromAssetDatabaseDirectory<ScriptableObject>("Data");
             InitializeDatasFromAssetDatabaseDirectory<AudioClip>("Sounds");
+            InitializeDatasFromAssetDatabaseDirectory<AudioMixer>("AudioMixer");
             //#if UNITY_EDITOR
             //            InitializeDatasFromAssetDatabase<Sprite>("Images/Icons/Assets");
             //            InitializeDatasFromAssetDatabase<SkeletonDataAsset>("Data/Spine");

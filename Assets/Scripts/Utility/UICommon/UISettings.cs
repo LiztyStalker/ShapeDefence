@@ -2,16 +2,15 @@ namespace Utility.UI
 {
     using UnityEngine;
     using UnityEngine.UI;
+    using UtilityManager;
 
     public class UISettings : MonoBehaviour
     {
         private readonly static string UGUI_NAME = "UI@Settings";
 
-        private readonly string SETTINGS_BGM_KEY = "BGM_VALUE";
-        private readonly string SETTINGS_SFX_KEY = "SFX_VALUE";
-        private readonly string SETTINGS_FRAME_KEY = "FRAME_VALUE";
-        private readonly string SETTINGS_HIT_KEY = "ISHIT";
-        private readonly string SETTINGS_EFFECT_KEY = "ISEFFECT";
+        private readonly string SETTINGS_BGM_KEY = "SETTINGS_BGM_VALUE";
+        private readonly string SETTINGS_SFX_KEY = "SETTINGS_SFX_VALUE";
+        private readonly string SETTINGS_FRAME_KEY = "SETTINGS_FRAME_VALUE";
 
         [SerializeField]
         private Text _versionLabel;
@@ -33,7 +32,7 @@ namespace Utility.UI
         private Button _langBtn;
 
         [SerializeField]
-        private GameObject _creditSheet;
+        private UICreditsSheet _creditSheet;
         [SerializeField]
         private Button _creditsBtn;
 
@@ -90,11 +89,14 @@ namespace Utility.UI
             _langSheet.Initialize();
             _langSheet.Hide();
 
-            Load();
+            _creditSheet.Initialize();
+            _creditSheet.Hide();
 
             _versionLabel.text = Application.version;
 
             RegisterEvents();
+
+            Load();
 
             Hide();
 
@@ -121,44 +123,56 @@ namespace Utility.UI
 
         private void RegisterEvents()
         {
+            _bgmTg.onValueChanged.AddListener(OnBGMToggleEvent);
+            _sfxTg.onValueChanged.AddListener(OnSFXToggleEvent);
             _frameSlider.onValueChanged.AddListener(OnFrameEvent);
             _langBtn.onClick.AddListener(OnLanguageSheetEvent);
             _langSheet.SetOnClickLanguageListener(OnClickLanguageEvent);
+            _creditsBtn.onClick.AddListener(OnCreditSheetEvent);
             _exitBtn.onClick.AddListener(Hide);
         }
 
         private void UnRegisterEvents()
         {
+            _bgmTg.onValueChanged.RemoveListener(OnBGMToggleEvent);
+            _sfxTg.onValueChanged.RemoveListener(OnSFXToggleEvent);
             _frameSlider.onValueChanged.RemoveListener(OnFrameEvent);
             _langBtn.onClick.RemoveListener(OnLanguageSheetEvent);
+            _creditsBtn.onClick.RemoveListener(OnCreditSheetEvent);
             _exitBtn.onClick.RemoveListener(Hide);
         }
 
 
         private void OnFrameEvent(float value)
         {
-            _frameValueLabel.text = string.Format("{0:d0}", (value * 100f));
+            _frameValueLabel.text = string.Format("{0}", value);
+            Application.targetFrameRate = (int)value;
         }
 
-        //private void OnLeftLanguageEvent() 
-        //{
-        //    Storage.TranslateStorage.Instance.PrevLanguageIndex();
-        //}
-
-        //private void OnRightLanguageEvent() 
-        //{
-        //    Storage.TranslateStorage.Instance.NextLanguageIndex();
-        //}
-
-        private void OnClickLanguageEvent(string key)
+        private void OnBGMToggleEvent(bool isOn)
         {
-            //Storage.TranslateStorage.Instance.get
-            //SetTranslateStorage - Language
+            AudioManager.Current.SetMute(AudioManager.TYPE_AUDIO.BGM, !isOn);
+        }
+
+        private void OnSFXToggleEvent(bool isOn)
+        {
+            AudioManager.Current.SetMute(AudioManager.TYPE_AUDIO.SFX, !isOn);
+        }
+
+        private void OnClickLanguageEvent(string text, Sprite sprite)
+        {
+            _langBtn.GetComponentInChildren<Text>().text = text;
+            _langBtn.GetComponentInChildren<Image>().sprite = sprite;
         }
 
         private void OnLanguageSheetEvent()
         {
             _langSheet.Show();
+        }
+
+        private void OnCreditSheetEvent()
+        {
+            _creditSheet.Show();
         }
 
         private void SetLanguageLabel()
@@ -211,55 +225,41 @@ namespace Utility.UI
         }
 
 
+        private void Load()
+        {
+            _bgmTg.isOn = (PlayerPrefs.GetInt(SETTINGS_BGM_KEY, 1) == 1) ? true : false ;
+            _sfxTg.isOn = (PlayerPrefs.GetInt(SETTINGS_SFX_KEY, 1) == 1) ? true : false;
+
+            OnFrameEvent((float)PlayerPrefs.GetInt(SETTINGS_FRAME_KEY, 30));
+
+            _langSheet.Load();
+        }
+
+        private void Save()
+        {
+            PlayerPrefs.SetInt(SETTINGS_BGM_KEY, (_bgmTg.isOn) ? 1 : 0);
+            PlayerPrefs.SetInt(SETTINGS_SFX_KEY, (_sfxTg.isOn) ? 1 : 0);
+            PlayerPrefs.SetInt(SETTINGS_FRAME_KEY, (int)_frameSlider.value);
+
+            _langSheet.Save();
+        }
 
 
 
-#region ##### Event #####
+        #region ##### Listener #####
 
 
         private System.Action _closedEvent;
-
-
         private void OnExitEvent()
         {
             Hide();
         }
-
         private void OnClosedEvent()
         {
             _closedEvent?.Invoke();
         }
 
-#endregion
+        #endregion
 
-
-        private void Load()
-        {
-            //_bgmVolumeLabel.text = _bgmSlider.value.ToString();
-
-            //_sfxVolumeLabel.text = _sfxSlider.value.ToString();
-
-            //_frameSlider.value = (float)PlayerPrefs.GetInt(SETTINGS_FRAME_KEY, 30);
-            //_frameValueLabel.text = _frameSlider.value.ToString();
-
-            ////Translator에서 가져오기 - 이미 불러와져 있음
-            //Storage.TranslateStorage.Instance.ChangedLanguage();
-
-            //_uiHitActivateToggle.isOn = (PlayerPrefs.GetInt(SETTINGS_HIT_KEY, 1) == 1) ? true : false;
-            //_effectActivateToggle.isOn = (PlayerPrefs.GetInt(SETTINGS_EFFECT_KEY, 1) == 1) ? true : false;
-        }
-
-        private void Save()
-        {
-            //PlayerPrefs.SetInt(SETTINGS_BGM_KEY, (int)_bgmSlider.value);
-            //PlayerPrefs.SetInt(SETTINGS_SFX_KEY, (int)_sfxSlider.value);
-            //PlayerPrefs.SetInt(SETTINGS_FRAME_KEY, (int)_frameSlider.value);
-
-            ////Translator에서 저장하기
-            //Storage.TranslateStorage.Instance.Save();
-
-            //PlayerPrefs.SetInt(SETTINGS_HIT_KEY, (_uiHitActivateToggle.isOn) ? 1 : 0);
-            //PlayerPrefs.SetInt(SETTINGS_EFFECT_KEY, (_effectActivateToggle.isOn) ? 1 : 0);
-        }
     }
 }

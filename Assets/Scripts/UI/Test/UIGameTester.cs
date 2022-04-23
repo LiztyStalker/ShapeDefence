@@ -7,11 +7,22 @@ namespace SDefence.UI.Test
     using UnityEngine;
     using SDefence.Asset.Entity;
     using SDefence.Asset.Raw;
+    using UtilityManager;
 
     public class UIGameTester : MonoBehaviour
     {
         private UIGame _uiGame;
         private LevelWaveData _levelWaveData;
+
+        [SerializeField]
+        private AudioClip _bgm;
+
+        [SerializeField]
+        private AudioClip _sfx;
+
+        private AudioActor _bgmActor;
+
+        private string _frameText;
 
         void Start()
         {
@@ -27,6 +38,8 @@ namespace SDefence.UI.Test
 
 
             _levelWaveData = new LevelWaveData();
+
+            QualitySettings.vSyncCount = 0;
         }
 
         private void OnDestroy()
@@ -77,6 +90,8 @@ namespace SDefence.UI.Test
             GUILayout.BeginHorizontal();
 
             GUILayout.BeginVertical();
+
+            GUILayout.Label(_frameText);
 
             GUILayout.Label("전투 패킷");
 
@@ -245,6 +260,28 @@ namespace SDefence.UI.Test
                 _uiGame.OnEntityPacketEvent(pk);
             }
 
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("BGM 재생"))
+            {
+                _bgmActor = AudioManager.Current.Activate(_bgm, AudioManager.TYPE_AUDIO.BGM, true);
+            }
+
+            if (GUILayout.Button("BGM 종료"))
+            {
+                if (_bgmActor != null)
+                {
+                    AudioManager.Current.Inactivate(_bgmActor);
+                    _bgmActor = null;
+                }
+            }
+
+            if (GUILayout.Button("SFX 재생"))
+            {
+                AudioManager.Current.Activate(_sfx, AudioManager.TYPE_AUDIO.SFX, false);
+            }
+
+            GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
 
@@ -253,6 +290,11 @@ namespace SDefence.UI.Test
             GUILayout.EndArea();
         }
 
+        private void Update()
+        {
+            var frame = 1f / Time.deltaTime;
+            _frameText = $"fps({frame}ms)";
+        }
 
         private void OnHQRefreshEvent(bool isActiveUpgrade, bool isActiveUpTech, bool isFullUpgrade)
         {

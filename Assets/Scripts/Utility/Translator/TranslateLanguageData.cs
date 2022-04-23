@@ -21,6 +21,14 @@ namespace UtilityManager
         private TranslateLanguageElement[] _usableLanguages;      
         public TranslateLanguageElement[] UsableLanguages => _usableLanguages;
 
+        public bool HasKey(string key)
+        {
+            for(int i = 0; i < _usableLanguages.Length; i++)
+            {
+                if (_usableLanguages[i].Key == key) return true;
+            }
+            return false;
+        }
         public override void AddData(string[] arr)
         {
 

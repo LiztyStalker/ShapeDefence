@@ -55,6 +55,12 @@ namespace Storage
 
         public string NowLanguage() => _languageKey;
 
+        public void SetLanguage(string key)
+        {
+            _languageKey = key;
+            OnChangedTranslateEvent();
+        }
+
         public void ChangedLanguage()
         {
             OnChangedTranslateEvent();
@@ -63,10 +69,14 @@ namespace Storage
         public void Load() 
         {
             var languageKey = PlayerPrefs.GetString(SETTINGS_LANGUAGE_KEY, DEFAULT_LANGUAGE_KEY);
-            //찾기
-            //없으면 default
-            //있으면 languageKey
+
+            if (!_languageData.HasKey(languageKey))
+            {
+                _languageKey = DEFAULT_LANGUAGE_KEY;
+            }
             _languageKey = languageKey;
+
+            OnChangedTranslateEvent();
         }
         public void Save() 
         {
@@ -90,6 +100,7 @@ namespace Storage
 
                         var langVerb = NowLanguage().ToString() + ((!string.IsNullOrEmpty(verb)) ? $"_{verb}" : null);
 
+                        //아직 언어 적용 되어있지 않음
                         //verb = "Language_Verb" Gamesettings - CurrentLanguage
                         if (dicValues.ContainsKey(langVerb))
                         {

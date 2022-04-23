@@ -33,6 +33,15 @@ namespace Utility.UI
             _exitBtn.onClick.RemoveListener(Hide);
         }
 
+        public void Load()
+        {
+            TranslateStorage.Instance.Load();
+        }
+
+        public void Save()
+        {
+            TranslateStorage.Instance.Save();
+        }
 
         public void Show()
         {
@@ -81,12 +90,13 @@ namespace Utility.UI
 
         #region ##### Listener #####
 
-        private System.Action<string> _clickEvent;
+        private System.Action<string, Sprite> _clickEvent;
 
-        public void SetOnClickLanguageListener(System.Action<string> act) => _clickEvent = act;
-        private void OnClickLanguageEvent(string key)
+        public void SetOnClickLanguageListener(System.Action<string, Sprite> act) => _clickEvent = act;
+        private void OnClickLanguageEvent(string key, string text, Sprite sprite)
         {
-            _clickEvent?.Invoke(key);
+            TranslateStorage.Instance.SetLanguage(key);
+            _clickEvent?.Invoke(text, sprite);            
             Hide();
         }
         #endregion
