@@ -1614,6 +1614,7 @@ MonoBehaviour:
   _creditSheet: {fileID: 4302680777547117958}
   _creditsBtn: {fileID: 8901385399857201950}
   _saveBtn: {fileID: 4318036644202567346}
+  _gpgsIDField: {fileID: 0}
   _gpgsBtn: {fileID: 638865669419640125}
   _qnaBtn: {fileID: 2980148242478947393}
   _serviceBtn: {fileID: 138553935916050464}
@@ -2336,7 +2337,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4889473742137971644
 RectTransform:
   m_ObjectHideFlags: 0

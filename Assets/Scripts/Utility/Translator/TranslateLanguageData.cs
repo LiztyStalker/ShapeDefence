@@ -21,14 +21,38 @@ namespace UtilityManager
         private TranslateLanguageElement[] _usableLanguages;      
         public TranslateLanguageElement[] UsableLanguages => _usableLanguages;
 
+
+
         public bool HasKey(string key)
+        {
+            return (GetIndex(key) < 0);
+        }
+
+        /// <summary>
+        /// 0 - n : index
+        /// -1 : fail
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public int GetIndex(string key)
         {
             for(int i = 0; i < _usableLanguages.Length; i++)
             {
-                if (_usableLanguages[i].Key == key) return true;
+                if (_usableLanguages[i].Key == key) return i;
             }
-            return false;
+            return -1;
         }
+
+        public TranslateLanguageElement? GetLanguageElement(string key)
+        {
+            var index = GetIndex(key);
+            if(index >= 0)
+            {
+                return _usableLanguages[index];
+            }
+            return null;
+        }
+
         public override void AddData(string[] arr)
         {
 

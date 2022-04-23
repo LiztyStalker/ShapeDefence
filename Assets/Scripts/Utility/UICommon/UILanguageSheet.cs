@@ -36,6 +36,13 @@ namespace Utility.UI
         public void Load()
         {
             TranslateStorage.Instance.Load();
+            var element = TranslateStorage.Instance.NowLanguageElement();
+            if(element != null)
+            {
+                var value = element.Value;
+                var icon = DataStorage.Instance.GetDataOrNull<Sprite>(value.IconKey, "Icon_Language");
+                OnLanguageEvent(value.Value, icon);
+            }
         }
 
         public void Save()
@@ -96,9 +103,15 @@ namespace Utility.UI
         private void OnClickLanguageEvent(string key, string text, Sprite sprite)
         {
             TranslateStorage.Instance.SetLanguage(key);
-            _clickEvent?.Invoke(text, sprite);            
+            OnLanguageEvent(text, sprite);
+        }
+
+        private void OnLanguageEvent(string text, Sprite sprite)
+        {
+            _clickEvent?.Invoke(text, sprite);
             Hide();
         }
+
         #endregion
     }
 }

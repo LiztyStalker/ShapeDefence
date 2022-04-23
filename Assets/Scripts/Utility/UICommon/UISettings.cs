@@ -24,6 +24,7 @@ namespace Utility.UI
         [SerializeField]
         private Text _frameValueLabel;
 
+
         [SerializeField]
         private UILanguageSheet _langSheet;
         [SerializeField]
@@ -40,6 +41,8 @@ namespace Utility.UI
         [SerializeField]
         private Button _saveBtn;
 
+        [SerializeField]
+        private InputField _gpgsIDField;
         [SerializeField]
         private Button _gpgsBtn;
         [SerializeField]
@@ -129,6 +132,11 @@ namespace Utility.UI
             _langBtn.onClick.AddListener(OnLanguageSheetEvent);
             _langSheet.SetOnClickLanguageListener(OnClickLanguageEvent);
             _creditsBtn.onClick.AddListener(OnCreditSheetEvent);
+            _gpgsBtn.onClick.AddListener(OnGPGSEvent);
+            _qnaBtn.onClick.AddListener(OnQnAEvent);
+            _serviceBtn.onClick.AddListener(OnServiceEvent);
+            _personalBtn.onClick.AddListener(OnPersonalEvent);
+            _saveBtn.onClick.AddListener(OnCloudSaveEvent);
             _exitBtn.onClick.AddListener(Hide);
         }
 
@@ -139,6 +147,11 @@ namespace Utility.UI
             _frameSlider.onValueChanged.RemoveListener(OnFrameEvent);
             _langBtn.onClick.RemoveListener(OnLanguageSheetEvent);
             _creditsBtn.onClick.RemoveListener(OnCreditSheetEvent);
+            _qnaBtn.onClick.RemoveListener(OnQnAEvent);
+            _serviceBtn.onClick.RemoveListener(OnServiceEvent);
+            _personalBtn.onClick.RemoveListener(OnPersonalEvent);
+            _gpgsBtn.onClick.RemoveListener(OnGPGSEvent);
+            _saveBtn.onClick.RemoveListener(OnCloudSaveEvent);
             _exitBtn.onClick.RemoveListener(Hide);
         }
 
@@ -180,24 +193,37 @@ namespace Utility.UI
             _langLabel.text = Storage.TranslateStorage.Instance.GetTranslateData("System_Tr", "Sys_Settings_Language");
         }
 
-        private void OnSaveEvent() 
+        private void OnCloudSaveEvent() 
         {
+            //Cloud Save
             Debug.Log("OnSaveEvent");
-        }
-
-        private void OnLoadEvent()
-        {
-            Debug.Log("OnLoadEvent");
         }
 
         private void OnGPGSEvent() 
         {
+            //GPGS LogIn
             Debug.Log("OnGPGSEvent");
         }
 
         private void OnQnAEvent() 
         {
+            //QnA Link
+            //Application.OpenURL("");
             Debug.Log("OnQnAEvent");
+        }
+
+        private void OnServiceEvent()
+        {
+            //Service Link
+            //Application.OpenURL("");
+            Debug.Log("OnServiceEvent");
+        }
+
+        private void OnPersonalEvent()
+        {
+            //Personal Link
+            //Application.OpenURL("");
+            Debug.Log("OnPersonalEvent");
         }
 
 
@@ -205,6 +231,8 @@ namespace Utility.UI
         {
             SetLanguageLabel();
         }
+
+
 
         public void Show(System.Action closedCallback = null)
         {

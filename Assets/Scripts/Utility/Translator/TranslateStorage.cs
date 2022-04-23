@@ -55,6 +55,8 @@ namespace Storage
 
         public string NowLanguage() => _languageKey;
 
+        public TranslateLanguageElement? NowLanguageElement() => _languageData.GetLanguageElement(_languageKey);
+
         public void SetLanguage(string key)
         {
             _languageKey = key;
