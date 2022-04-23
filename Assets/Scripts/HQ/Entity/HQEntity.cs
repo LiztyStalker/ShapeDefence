@@ -12,11 +12,6 @@ namespace SDefence.HQ.Entity
     using SDefence.Entity;
 
 
-    public interface ITechable
-    {
-        public TechRawData TechRawData { get; }
-    }
-
     public class HQEntity : ISavable, IEntity, ITechable
     {
 

@@ -48,6 +48,12 @@ namespace SDefence.Tech
     //    }
     //}
 
+    public interface ITechable
+    {
+        public TechRawData TechRawData { get; }
+    }
+
+
     [System.Serializable]
     public class TechRawElement
     {
