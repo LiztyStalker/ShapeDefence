@@ -88,10 +88,10 @@ namespace SDefence.UI
             _uiTechPopup.Show(entity);
         }
 
-        public void ShowDisassemblePopup()
+        private void ShowDisassemblePopup(IEntity entity)
         {
             Show();
-            _uiDisassemblePopup.Show();
+            _uiDisassemblePopup.Show(entity);
         }
 
         public void ShowRewardOfflinePopup()
@@ -145,6 +145,9 @@ namespace SDefence.UI
         {
             switch (packet)
             {
+                case OpenDisassembleEntityPacket pk:
+                    ShowDisassemblePopup(pk.Entity);
+                    break;
                 case OpenTechEntityPacket pk:
                     ShowTechPopup(pk.Entity);
                     break;

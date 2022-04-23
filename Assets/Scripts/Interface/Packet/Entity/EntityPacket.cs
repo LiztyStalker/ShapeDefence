@@ -49,6 +49,16 @@ namespace SDefence.Packet
         public IEntity Entity;
     }
 
+    public class OpenDisassembleEntityPacket : IEntityPacket
+    {
+        public IEntity Entity;
+    }
+
+    public class DisassembleEntityPacket : IEntityPacket
+    {
+        public IEntity Entity;
+    }
+
     public class RewardOfflineEntityPacket : IEntityPacket
     {
         //AssetEntity

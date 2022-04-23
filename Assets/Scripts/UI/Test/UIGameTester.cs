@@ -54,18 +54,53 @@ namespace SDefence.UI.Test
 
             switch (packet)
             {
+                case OpenDisassembleCommandPacket pk:
+                    {
+                        var raw = Turret.TurretData.Create();
+                        var entity = Turret.Entity.TurretEntity.Create();
+                        entity.Initialize(raw, pk.ParentIndex);
+
+                        var techPK = new OpenDisassembleEntityPacket();
+                        techPK.Entity = entity;
+                        OnEntityPacketEvent(techPK);
+                    }
+                    break;
+                case DisassembleCommandPacket pk:
+                    {
+                        var raw = Turret.TurretData.Create();
+                        var entity = Turret.Entity.TurretEntity.Create();
+                        entity.Initialize(raw, pk.ParentIndex);
+
+                        var techPK = new DisassembleEntityPacket();
+                        techPK.Entity = entity;
+                        OnEntityPacketEvent(techPK);
+                    }
+
+                    break;
                 case OpenTechCommandPacket pk:
                     switch (pk.TypeCmdKey)
                     {
                         case TYPE_COMMAND_KEY.HQ:
+                            {
+                                var raw = HQ.HQData.Create();
+                                var entity = HQ.Entity.HQEntity.Create();
+                                entity.SetData(raw);
 
-                            var raw = HQ.HQData.Create();
-                            var entity = HQ.Entity.HQEntity.Create();
-                            entity.SetData(raw);
+                                var techPK = new OpenTechEntityPacket();
+                                techPK.Entity = entity;
+                                OnEntityPacketEvent(techPK);
+                            }
+                            break;
+                        case TYPE_COMMAND_KEY.Turret:
+                            {
+                                var raw = Turret.TurretData.Create();
+                                var entity = Turret.Entity.TurretEntity.Create();
+                                entity.Initialize(raw, pk.ParentIndex);
 
-                            var techPK = new OpenTechEntityPacket();
-                            techPK.Entity = entity;
-                            OnEntityPacketEvent(techPK);
+                                var techPK = new OpenTechEntityPacket();
+                                techPK.Entity = entity;
+                                OnEntityPacketEvent(techPK);
+                            }
                             break;
                     }
                     break;
@@ -73,16 +108,28 @@ namespace SDefence.UI.Test
                     switch (pk.TypeCmdKey)
                     {
                         case TYPE_COMMAND_KEY.HQ:
+                            {
+                                //AssetUsable 소비
+                                //Key로 Data 찾기
+                                var raw = HQ.HQData.Create();
+                                var entity = HQ.Entity.HQEntity.Create();
+                                entity.SetData(raw);
 
-                            //AssetUsable 소비
-                            //Key로 Data 찾기
-                            var raw = HQ.HQData.Create();
-                            var entity = HQ.Entity.HQEntity.Create();
-                            entity.SetData(raw);
+                                var techPK = new UpTechEntityPacket();
+                                techPK.Entity = entity;
+                                OnEntityPacketEvent(techPK);
+                            }
+                            break;
+                        case TYPE_COMMAND_KEY.Turret:
+                            {
+                                var raw = Turret.TurretData.Create();
+                                var entity = Turret.Entity.TurretEntity.Create();
+                                entity.Initialize(raw, pk.ParentIndex);
 
-                            var techPK = new UpTechEntityPacket();
-                            techPK.Entity = entity;
-                            OnEntityPacketEvent(techPK);
+                                var techPK = new UpTechEntityPacket();
+                                techPK.Entity = entity;
+                                OnEntityPacketEvent(techPK);
+                            }
                             break;
                     }
                     break;

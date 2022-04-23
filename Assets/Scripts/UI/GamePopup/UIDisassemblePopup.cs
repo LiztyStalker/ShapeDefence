@@ -1,6 +1,7 @@
 namespace SDefence.UI
 {
     using Packet;
+    using Entity;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -36,8 +37,12 @@ namespace SDefence.UI
             _applyBtn.onClick.AddListener(OnDisassembleEvent);
         }
 
-        public void Show()
+        public void Show(IEntity entity)
         {
+
+            //Entity
+
+
             gameObject.SetActive(true);
         }
 

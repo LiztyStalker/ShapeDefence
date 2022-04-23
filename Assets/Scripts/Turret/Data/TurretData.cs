@@ -87,6 +87,8 @@ namespace SDefence.Turret
             _attackData.SetDelay("0.25", "0", "0.01");
 
             _repairTime = 5f;
+
+            _techRawData = TechRawData.Create("Turret");
         }
 
         public override void AddData(string[] arr) { }

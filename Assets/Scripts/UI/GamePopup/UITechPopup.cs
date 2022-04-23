@@ -1,8 +1,8 @@
 namespace SDefence.UI
 {
     using Packet;
-    using SDefence.Entity;
-    using SDefence.HQ.Entity;
+    using Entity;
+    using Tech;
     using Storage;
     using System.Collections.Generic;
     using UnityEngine;

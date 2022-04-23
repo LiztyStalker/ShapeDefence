@@ -23,13 +23,10 @@ namespace SDefence.UI
 
         }
 
-        public void ShowDisassembleProduction(System.Action endCallback)
+        private void ShowDisassembleProduction(IEntity entity)
         {
             gameObject.SetActive(true);
-            _disassembleProduction.Show(null, () => {
-                endCallback?.Invoke();
-                Hide();
-                });
+            _disassembleProduction.Show(entity, Hide);
         }
 
         private void ShowTechProduction(IEntity entity)
@@ -47,6 +44,9 @@ namespace SDefence.UI
         {
             switch (packet)
             {
+                case DisassembleEntityPacket pk:
+                    ShowDisassembleProduction(pk.Entity);
+                    break;
                 case UpTechEntityPacket pk:
                     ShowTechProduction(pk.Entity);
                     break;

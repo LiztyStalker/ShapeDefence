@@ -55,7 +55,12 @@ namespace SDefence.Packet
         public int ParentIndex;
         public int Index;
     }
-    public class DisassembleCommandPacket : ICommandPacket { }
+    public class DisassembleCommandPacket : ICommandPacket 
+    {
+        public TYPE_COMMAND_KEY TypeCmdKey;
+        public int ParentIndex;
+        public int Index;
+    }
     public class RefreshCommandPacket : ICommandPacket 
     {
         public TYPE_COMMAND_KEY TypeCmdKey;

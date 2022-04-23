@@ -4,15 +4,13 @@ namespace SDefence.Turret.Entity
     using Durable;
     using Durable.Entity;
     using Recovery;
-    using Perk.Usable;
-    using Perk.Entity;
     using SDefence.Data;
     using Utility.IO;
+    using Attack;
     using Tech;
     using SDefence.Entity;
-    using SDefence.Attack;
 
-    public class TurretEntity : ISavable, IEntity
+    public class TurretEntity : ISavable, IEntity, ITechable
     {
 
         #region ##### Parent Savable Data #####
@@ -63,6 +61,8 @@ namespace SDefence.Turret.Entity
         public int OrbitIndex => _orbitIndex;
 
         public string BulletKey => _data.BulletDataKey;
+
+        public TechRawData TechRawData => _data.TechRawData;
 
         public static TurretEntity Create() => new TurretEntity();
 

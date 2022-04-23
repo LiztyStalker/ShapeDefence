@@ -233,14 +233,14 @@ namespace SDefence.UI
                     //UICommon Settings
                     _uiCommon.ShowSettings();
                     break;
-                case OpenDisassembleCommandPacket pk:
+                //case OpenDisassembleCommandPacket pk:
                     //GamePopup Disassemble -> Apply DisassembleCommandPacket
-                    _uiGamePopup.ShowDisassemblePopup();
-                    break;
-                case DisassembleCommandPacket pk:
+                    //_uiGamePopup.ShowDisassemblePopup();
+                    //break;
+                //case DisassembleCommandPacket pk:
                     //Production Disassemble 
-                    _uiProduction.ShowDisassembleProduction(null);
-                    break;
+                    //_uiProduction.ShowDisassembleProduction(null);
+                    //break;
                 //case OpenTechCommandPacket pk:
                     //GamePopup Tech -> Apply UpTechCommandPacket
                     //_uiGamePopup.ShowTechPopup();
