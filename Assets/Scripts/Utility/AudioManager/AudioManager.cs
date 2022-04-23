@@ -47,12 +47,14 @@ namespace UtilityManager
 
         private PoolSystem<AudioActor> _pool;
 
-        private Dictionary<TYPE_AUDIO, List<AudioActor>> _dic;
+        private Dictionary<TYPE_AUDIO, List<AudioActor>> _actorDic;
 
         //Channel
-        private List<AudioMixer> _mixerList = new List<AudioMixer>();
+        private AudioMixer _mixer;
 
-        private AudioClip GetClip(string clipKey) => DataStorage.Instance.GetDataOrNull<AudioClip>(clipKey, null, null);
+        private Dictionary<TYPE_AUDIO, AudioMixerGroup> _mixerDic;
+
+        private AudioClip GetClip(string clipKey) => DataStorage.Instance.GetDataOrNull<AudioClip>(clipKey);
 
 
         private AudioManager()
@@ -64,13 +66,25 @@ namespace UtilityManager
         {
             _pool = new PoolSystem<AudioActor>();
             _pool.Initialize(Create);
-            _dic = new Dictionary<TYPE_AUDIO, List<AudioActor>>();
+            _actorDic = new Dictionary<TYPE_AUDIO, List<AudioActor>>();
+            _mixerDic = new Dictionary<TYPE_AUDIO, AudioMixerGroup>();
+
+            _mixer = DataStorage.Instance.GetDataOrNull<AudioMixer>("AudioMixer");
+
+            var groups = _mixer.FindMatchingGroups(string.Empty);
+            for(int i = 0; i < groups.Length; i++)
+            {
+                if (System.Enum.TryParse(groups[i].name, out TYPE_AUDIO type))
+                {
+                    _mixerDic.Add(type, groups[i]);
+                }
+            }
         }
 
         public void CleanUp()
         {
             _pool.CleanUp();
-            _dic.Clear();
+            _actorDic.Clear();
         }
 
         /// <summary>
@@ -140,12 +154,13 @@ namespace UtilityManager
                         inactiveCallback?.Invoke(actor);
                         RetrieveActor(actor);
                     });
+                    actor.SetMixerGroup(_mixerDic[typeAudio]);
                     actor.Activate();
 
-                    if (!_dic.ContainsKey(typeAudio))
-                        _dic.Add(typeAudio, new List<AudioActor>());
+                    if (!_actorDic.ContainsKey(typeAudio))
+                        _actorDic.Add(typeAudio, new List<AudioActor>());
 
-                    _dic[typeAudio].Add(actor);
+                    _actorDic[typeAudio].Add(actor);
 
 
                     //과거 - 줄이기
@@ -156,6 +171,11 @@ namespace UtilityManager
             return null;
         }
 
+
+        public void SetMute(TYPE_AUDIO typeAudio, bool isMute)
+        {
+            _mixer.SetFloat(typeAudio.ToString(), (isMute) ? -80f : 0f);
+        }
 
 
         //개발중
@@ -217,9 +237,9 @@ namespace UtilityManager
 
         private void RetrieveActor(AudioActor actor)
         {
-            if (_dic.ContainsKey(actor.typeAudio))
+            if (_actorDic.ContainsKey(actor.typeAudio))
             {
-                var list = _dic[actor.typeAudio];
+                var list = _actorDic[actor.typeAudio];
                 list.Remove(actor);
                 _pool.RetrieveElement(actor);
             }

@@ -4,6 +4,7 @@ namespace UtilityManager
     using System.Collections.Generic;
     using UnityEngine;
     using PoolSystem;
+    using UnityEngine.Audio;
 
     [RequireComponent(typeof(AudioSource))]
     public class AudioActor : MonoBehaviour, IPoolElement
@@ -40,6 +41,12 @@ namespace UtilityManager
             _typeAudio = typeAudio;
             SetName();
         }
+
+        public void SetMixerGroup(AudioMixerGroup group) 
+        {
+            AudioSource.outputAudioMixerGroup = group;
+        }
+
 
         public void Activate()
         {
