@@ -21,8 +21,7 @@
 ## 6. 사용기술
 + AssetBundle을 활용하여 데이터 통합 및 데이터 저장소 시스템 구현
 + TestFramework를 활용하여 PlayMode, EditMode 단위 및 통합 테스트
-	- EditMode - 제작한 루틴 단위 테스트 (블록 범위, 위치, 목표 데이터 처리)
-	- PlayMode - 제작한 스킬, 병사, 명령, 밸런스 통합 테스트
+	- EditMode - 제작한 루틴 단위 테스트
 + GoogleSheetToUnity를 활용하여 Google Sheet 데이터를 가져와 ScriptableObject 또는 TextAsset으로 출력
 ## 7. 실행방법
 ## 8. 개발단계
