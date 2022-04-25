@@ -10,8 +10,6 @@ namespace Utility.Statistics
     {
         private List<StatisticsEntity> _list;
 
-
-
         public static StatisticsPackage Create() => new StatisticsPackage();
 
         private StatisticsPackage()
@@ -178,6 +176,7 @@ namespace Utility.Statistics
             var data = SavableData.Create();
             for (int i = 0; i < _list.Count; i++)
             {
+                //StatisticsData Remove?
                 data.AddData(_list[i].GetStatisticsType().Name, _list[i].GetStatisticsValue().ToString());
             }
             return data;
@@ -188,8 +187,7 @@ namespace Utility.Statistics
 
             foreach(var key in data.Children.Keys)
             {
-                UnityEngine.Debug.Log(key);
-                var type = System.Type.GetType($"Utility.Statistics.{key}"); //StatisticsData
+                var type = System.Type.GetType($"Utility.Statistics.{key}"); //StatisticsData Added?
                 var child = data.Children[key];
                 SetStatisticsData(type, new BigDecimal(child.ToString()));
             }
