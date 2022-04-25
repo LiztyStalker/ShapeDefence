@@ -78,9 +78,11 @@ namespace Utility.Statistics
     public class AchievedGoalStatisticsData : IStatisticsData { }
 
 
-    
 
 
 
+#if UNITY_EDITOR
+    public class TestStatisticsData : IStatisticsData { }
+#endif
 
 }
