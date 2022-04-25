@@ -2,6 +2,7 @@ namespace SDefence.HQ
 {
     using Entity;
     using Packet;
+    using Asset;
     using Utility.IO;
 
     public class HQManager : ISavable
@@ -21,10 +22,12 @@ namespace SDefence.HQ
             _entity.ClearUpgrade();
         }
 
-        public void Upgrade()
+        public IAssetUsableData Upgrade()
         {
+            var assetData = _entity.GetUpgradeData().Clone();
             _entity.Upgrade();
             Refresh();
+            return assetData;
         }
 
         public void UpTech(HQData data)

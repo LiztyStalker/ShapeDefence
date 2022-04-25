@@ -105,7 +105,7 @@ namespace TestFrameworks
             {
                 Debug.Log("Refresh");
             });
-            mgr.Upgrade(0);
+            mgr.Upgrade(0, 0);
 
             LogAssert.Expect(LogType.Log, "Refresh");
         }
@@ -118,7 +118,7 @@ namespace TestFrameworks
             {
                 Debug.Log("Refresh");
             });
-            mgr.UpTech(0, TurretData.Create());
+            mgr.UpTech(0, 0, TurretData.Create());
 
             LogAssert.Expect(LogType.Log, "Refresh");
         }
@@ -152,7 +152,7 @@ namespace TestFrameworks
                 Assert.IsFalse(packet.IsActiveUpgrade);
                 Assert.IsFalse(packet.IsActiveUpTech);
             });
-            mgr.Upgrade(0);
+            mgr.Upgrade(0, 0);
         }
         [Test]
         public void TurretTest_Manager_Expand()

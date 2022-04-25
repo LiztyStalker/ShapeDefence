@@ -2,6 +2,7 @@ namespace SDefence.Turret
 {
     using Entity;
     using Packet;
+    using Asset;
     using Storage;
     using System.Collections.Generic;
     using UnityEngine;
@@ -56,7 +57,7 @@ namespace SDefence.Turret
     {
         private OrbitEntity _orbitEntity;
 
-        private List<TurretEntity> _list;
+        private Dictionary<int, List<TurretEntity>> _dic;
 
         private TurretData _defaultTurretData;
 
@@ -64,9 +65,9 @@ namespace SDefence.Turret
         public void Initialize()
         {
             _orbitEntity = OrbitEntity.Create();
-            _list = new List<TurretEntity>();
+            _dic = new Dictionary<int, List<TurretEntity>>();
 
-            var turret = AdditiveEntity();
+            var turret = AdditiveEntity(0);
 
             //기본 터렛 필요
             turret.Initialize(GetDefaultData(), 0);
@@ -74,32 +75,46 @@ namespace SDefence.Turret
         
         public void CleanUp()
         {
-            for(int i = 0; i < _list.Count; i++)
+            foreach(var key in _dic.Keys)
             {
-                _list[i].CleanUp();
+                for (int i = 0; i < _dic[key].Count; i++)
+                {
+                    _dic[key][i].CleanUp();
+                }
             }
-            _list.Clear();
+
+            _dic.Clear();
             _orbitEntity = null;
         }
 
-        public void Upgrade(int index)
+        public IAssetUsableData Upgrade(int orbitIndex, int index)
         {
-            _list[index].Upgrade();
-            Refresh(index);
+            if (_dic.ContainsKey(orbitIndex))
+            {
+                var entity = _dic[orbitIndex][index];
+                var assetData = entity.GetUpgradeData().Clone();
+                _dic[orbitIndex][index].Upgrade();
+                Refresh(orbitIndex, index);
+                return assetData;
+            }
+            return null;
         }
 
-        public void UpTech(int index, TurretData data)
+        public void UpTech(int orbitIndex, int index, TurretData data)
         {
-            _list[index].UpTech(data);
-            Refresh(index);
+            if (_dic.ContainsKey(orbitIndex))
+            {
+                _dic[orbitIndex][index].UpTech(data);
+                Refresh(orbitIndex, index);
+            }
         }
 
         public void Expand(int orbitIndex)
         {
             //기본 터렛 필요
-            var turret = AdditiveEntity();
+            var turret = AdditiveEntity(orbitIndex);
             turret.Initialize(GetDefaultData(), orbitIndex);
-            Refresh(_list.Count - 1);
+            Refresh(orbitIndex);
         }
 
         public void ExpandOrbit(int turretCount)
@@ -116,32 +131,41 @@ namespace SDefence.Turret
             return _defaultTurretData;
         }
 
-        private TurretEntity AdditiveEntity()
+        private TurretEntity AdditiveEntity(int orbitIndex)
         {
+            if (!_dic.ContainsKey(orbitIndex))
+            {
+                _dic.Add(orbitIndex, new List<TurretEntity>());
+            }
+
             var turret = TurretEntity.Create();
-            _list.Add(turret);
+            _dic[orbitIndex].Add(turret);
             return turret;
         }
 
-        public void Refresh()
+        public void Refresh(int orbitIndex)
         {
-            for (int i = 0; i < _list.Count; i++)
+            if (_dic.ContainsKey(orbitIndex))
             {
-                Refresh(i);
+                OnEntityPacketEvent(orbitIndex);
             }
         }
 
-        private void Refresh(int index)
+        private void Refresh(int orbitIndex, int index)
         {
-            OnEntityPacketEvent(index, _list[index]);
+            if (_dic.ContainsKey(orbitIndex))
+            {
+                OnEntityPacketEvent(orbitIndex, index, _dic[orbitIndex][index]);
+            }
+
         }
 
 
-        public void OnCommandPacketEvent(TurretCommandPacket packet)
-        {
-            if (packet.IsUpgrade) Upgrade(packet.Index);
-            if (packet.IsExpand) Expand(packet.OrbitIndex);
-        }
+        //public void OnCommandPacketEvent(TurretCommandPacket packet)
+        //{
+        //    if (packet.IsUpgrade) Upgrade(packet.Index);
+        //    if (packet.IsExpand) Expand(packet.OrbitIndex);
+        //}
 
 
         #region ##### Listener #####
@@ -149,12 +173,35 @@ namespace SDefence.Turret
         private System.Action<IEntityPacket> _entityEvent;
         public void AddOnEntityPacketListener(System.Action<IEntityPacket> act) => _entityEvent += act;
         public void RemoveOnEntityPacketListener(System.Action<IEntityPacket> act) => _entityEvent -= act;
-        private void OnEntityPacketEvent(int index, TurretEntity entity) 
+        private void OnEntityPacketEvent(int orbitIndex, int index, TurretEntity entity) 
+        {
+            var packet = CreateEntityPacket(orbitIndex, index, entity);
+            _entityEvent?.Invoke(packet);
+        }
+
+        private void OnEntityPacketEvent(int orbitIndex)
+        {
+            var packet = new TurretArrayEntityPacket();
+            if (_dic.ContainsKey(orbitIndex))
+            {
+                var arr = new TurretEntityPacket[_dic[orbitIndex].Count];
+                for(int i = 0; i < _dic[orbitIndex].Count; i++)
+                {
+                    var trPacket = CreateEntityPacket(orbitIndex, i, _dic[orbitIndex][i]);
+                    arr[i] = trPacket;
+                }
+                packet.packets = arr;
+            }
+            _entityEvent?.Invoke(packet);
+        }
+
+        private TurretEntityPacket CreateEntityPacket(int orbitIndex, int index, TurretEntity entity)
         {
             var packet = new TurretEntityPacket();
             packet.Entity = entity;
+            packet.OrbitIndex = orbitIndex;
             packet.Index = index;
-            _entityEvent?.Invoke(packet);
+            return packet;
         }
 
 
@@ -168,12 +215,20 @@ namespace SDefence.Turret
 
         public SavableData GetSavableData()
         {
-            var arr = new KeyValuePair<string, SavableData>[_list.Count];
-            for (int i = 0; i < _list.Count; i++) 
+            var arr = new KeyValuePair<int, object>[_dic.Count];
+            foreach(var key in _dic.Keys)
             {
-                var entity = _list[i];
-                arr[i] = new KeyValuePair<string, SavableData>(entity.Key, entity.GetSavableData());
+
+                var list = _dic[key];
+                var entityArr = new KeyValuePair<string, SavableData>[list.Count];
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var entity = list[i];
+                    entityArr[i] = new KeyValuePair<string, SavableData>(entity.Key, entity.GetSavableData());
+                }
+                arr[key] = new KeyValuePair<int, object>(key, entityArr);
             }
+
             var data = SavableData.Create();
             data.AddData(SavableKey(), arr);
             data.AddData(_orbitEntity.SavableKey(), _orbitEntity.GetSavableData());
@@ -182,21 +237,27 @@ namespace SDefence.Turret
 
         public void SetSavableData(SavableData data)
         {
-            var arr = data.GetValue<KeyValuePair<string, SavableData>[]>(SavableKey());
+            _orbitEntity.SetSavableData(data.GetValue(_orbitEntity.SavableKey()));
+
+            var arr = data.GetValue<KeyValuePair<int, object>[]>(SavableKey());
             for (int i = 0; i < arr.Length; i++)
             {
-                if(i >= _list.Count)
+                var obj = arr[i];
+                var entityArr = (KeyValuePair<string, SavableData>[])obj.Value;
+                for (int j = 0; j < entityArr.Length; j++)
                 {
-                    AdditiveEntity();
-                }
+                    if (!_dic.ContainsKey(obj.Key))
+                    {
+                        _dic.Add(obj.Key, new List<TurretEntity>());
+                    }
 
-                var savable = arr[i];
-                // 포탑 데이터 불러오기
-                //_list[i].SetData(savable.Key);
-                _list[i].SetSavableData(savable.Value);
+                    var list = _dic[obj.Key];
+                    var turret = TurretEntity.Create();
+                    turret.SetSavableData(entityArr[j].Value);
+                    list.Add(turret);
+                }
             }
 
-            _orbitEntity.SetSavableData(data.GetValue(_orbitEntity.SavableKey()));
         }
 
         #endregion
