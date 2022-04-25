@@ -12,9 +12,11 @@ namespace Utility.Statistics
 
 
 
-        public static StatisticsPackage Create()
+        public static StatisticsPackage Create() => new StatisticsPackage();
+
+        private StatisticsPackage()
         {
-            return new StatisticsPackage();
+            Initialize();
         }
 
         public void Initialize()
@@ -26,6 +28,8 @@ namespace Utility.Statistics
         {
             _list.Clear();
         }
+
+        public bool IsEmpty() => _list.Count == 0;
 
         public void Refresh()
         {
@@ -99,6 +103,29 @@ namespace Utility.Statistics
             }
         }
 
+        public bool RemoveStatisticsData<T>() where T : IStatisticsData
+        {
+            return RemoveStatisticsData(typeof(T));
+        }
+
+        public bool RemoveStatisticsData(System.Type type)
+        {
+            if (type != null)
+            {
+                var iType = type.GetInterface(typeof(IStatisticsData).Name);
+                if (iType != null)
+                {
+                    var index = GetIndex(type);
+                    if (index != -1)
+                    {
+                        _list.RemoveAt(index);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         private int GetIndex(System.Type type) => _list.FindIndex(entity => entity.GetStatisticsType() == type);
         public BigDecimal? GetStatisticsValue<T>() where T : IStatisticsData
         {
@@ -131,6 +158,7 @@ namespace Utility.Statistics
         }
         public static System.Type FindType(string key, System.Type classType) => System.Type.GetType($"Utility.Statistics.{key}{classType.Name}");
 
+
         #region ##### Listener #####
         private System.Action<StatisticsEntity> _refreshEvent;
         public void SetOnRefreshStatisticsListener(System.Action<StatisticsEntity> act) => _refreshEvent = act;
@@ -160,6 +188,7 @@ namespace Utility.Statistics
 
             foreach(var key in data.Children.Keys)
             {
+                UnityEngine.Debug.Log(key);
                 var type = System.Type.GetType($"Utility.Statistics.{key}"); //StatisticsData
                 var child = data.Children[key];
                 SetStatisticsData(type, new BigDecimal(child.ToString()));
