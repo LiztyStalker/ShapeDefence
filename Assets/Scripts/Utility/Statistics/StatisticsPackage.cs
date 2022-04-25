@@ -241,7 +241,7 @@ namespace Utility.Statistics
             _dic.Add(typeof(UpTechTurretStatisticsData), "포탑 테크 수");
             _dic.Add(typeof(DisassembleTurretStatisticsData), "포탑 분해 수");
 
-            _dic.Add(typeof(ArriveLevelStatisticsData), "레벨 도달");
+            _dic.Add(typeof(MaximumArriveLevelStatisticsData), "최대 레벨 도달");
             _dic.Add(typeof(DestroyEnemyStatisticsData), "적 파괴 수");
             _dic.Add(typeof(DestroyBossEnemyStatisticsData), "보스 파괴 수");
             _dic.Add(typeof(DestroyMiddleBossEnemyStatisticsData), "중간 보스 파괴 수");

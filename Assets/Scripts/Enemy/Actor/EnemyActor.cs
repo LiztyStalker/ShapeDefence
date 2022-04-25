@@ -8,9 +8,10 @@ namespace SDefence.Actor
     using Attack;
     using Packet;
     using Durable;
-    using SDefence.Durable.Usable;
+    using Durable.Usable;
     using Movement;
-    using SDefence.Attack.Usable;
+    using Attack.Usable;
+    using Enemy;
 
     public class EnemyActor : MonoBehaviour, IDamagable, IPoolElement, IActor, IAttackable, IMoveable
     {
@@ -30,6 +31,7 @@ namespace SDefence.Actor
         public Vector2 AttackPos => transform.position;
         public Vector2 NowPosition => transform.position;
         public bool IsDamagable => !_isBroken;
+        public TYPE_ENEMY_STYLE TypeEnemyStyle => _entity.TypeEnemyStyle;
         public IAttackUsableData AttackUsableData => _entity.GetAttackUsableData();
 
         public void SetPosition(Vector2 pos) => transform.position = pos;

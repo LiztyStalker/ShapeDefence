@@ -22,7 +22,7 @@ namespace Utility.Statistics
 
     #region ##### Battle #####
 
-    public class ArriveLevelStatisticsData : IStatisticsData { }
+    public class MaximumArriveLevelStatisticsData : IStatisticsData { }
     public class DestroyEnemyStatisticsData : IStatisticsData { }
     public class DestroyBossEnemyStatisticsData : IStatisticsData { }
     public class DestroyMiddleBossEnemyStatisticsData : IStatisticsData { }

@@ -507,7 +507,7 @@ namespace SDefence.Manager
 
         private void OnNextWaveBattlePacketEvent()
         {
-            var packet = new NextWaveBattlePacket();
+            var packet = new LevelWaveBattlePacket();
             packet.data = _levelWaveData;
             _battleEvent?.Invoke(packet);
         }

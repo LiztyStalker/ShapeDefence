@@ -39,6 +39,8 @@ namespace SDefence.Turret.Entity
 
         public bool IsAttack => _data.IsAttack;
 
+        public TYPE_ENEMY_STYLE TypeEnemyStyle => _data.TypeEnemyStyle;
+
         public static EnemyEntity Create() => new EnemyEntity();
 
         private EnemyEntity()

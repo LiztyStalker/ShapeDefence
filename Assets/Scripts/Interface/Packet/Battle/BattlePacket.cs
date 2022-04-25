@@ -34,7 +34,7 @@ namespace SDefence.Packet
         public bool IsDestroy;
     }
 
-    public class NextWaveBattlePacket : IBattlePacket
+    public class LevelWaveBattlePacket : IBattlePacket
     {
         public LevelWaveData data;
     }

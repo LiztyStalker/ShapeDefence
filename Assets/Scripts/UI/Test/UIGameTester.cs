@@ -217,7 +217,7 @@ namespace SDefence.UI.Test
 
             if (GUILayout.Button("웨이브 진행"))
             {
-                var pk = new NextWaveBattlePacket();
+                var pk = new LevelWaveBattlePacket();
                 pk.data = _levelWaveData;
                 _uiGame.OnBattlePacketEvent(pk);
                 _levelWaveData.IncreaseNumber();

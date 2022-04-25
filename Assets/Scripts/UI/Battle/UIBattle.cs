@@ -46,7 +46,7 @@ namespace SDefence.UI
         {
             switch (packet)
             {
-                case NextWaveBattlePacket pk:
+                case LevelWaveBattlePacket pk:
                     _uiLevelWave.SetData(pk.data.GetWave(), pk.data.MaxWave());
                     break;
                 case AppearEnemyBattlePacket pk:

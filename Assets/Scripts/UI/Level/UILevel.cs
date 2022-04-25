@@ -31,9 +31,9 @@ namespace SDefence.UI
 
         public void OnBattlePacketEvent(IBattlePacket packet)
         {
-            if(packet is NextWaveBattlePacket)
+            if(packet is LevelWaveBattlePacket)
             {
-                var pk = (NextWaveBattlePacket)packet;
+                var pk = (LevelWaveBattlePacket)packet;
                 _levelText.text = $"Level {pk.data.GetLevel()}";
             }
 
