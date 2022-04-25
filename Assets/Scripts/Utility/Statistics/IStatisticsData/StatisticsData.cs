@@ -1,83 +1,78 @@
 namespace Utility.Statistics
 {
-    public class AccumulativelyGoldGetAssetStatisticsData : IStatisticsData { }
-    public class AccumulativelyMeteoriteGetAssetStatisticsData : IStatisticsData { }
-    public class AccumulativelyResearchGetAssetStatisticsData : IStatisticsData { }
-    public class AccumulativelyResourceGetAssetStatisticsData : IStatisticsData { }
 
 
-    public class AccumulativelyGoldUsedAssetStatisticsData : IStatisticsData { }
-    public class AccumulativelyMeteoriteUsedAssetStatisticsData : IStatisticsData { }
-    public class AccumulativelyResourceUsedAssetStatisticsData : IStatisticsData { }
-    public class AccumulativelyResearchUsedAssetStatisticsData : IStatisticsData { }
-
-
-    public class ArrivedWaveStatisticsData : IStatisticsData { }
-    public class ArrivedLevelStatisticsData : IStatisticsData { }
-    public class MaxArrivedLevelStatisticsData : IStatisticsData { }
-    public class Lv1ArrivedLevelStatisticsData : IStatisticsData { }
-
-
-
-    #region ##### Unit & Workshop #####
-
-
-    public class CreateUnitStatisticsData : IStatisticsData { }
-#if UNITY_EDITOR || UNITY_INCLUDE_TESTS
-    public class TestCreateUnitStatisticsData : IStatisticsData { }
-#endif
-
-    public class DestroyUnitStatisticsData : IStatisticsData { }
-#if UNITY_EDITOR || UNITY_INCLUDE_TEST
-    public class TestDestroyUnitStatisticsData : IStatisticsData { }
-#endif
-    public class UpgradeUnitStatisticsData : IStatisticsData { }
-#if UNITY_EDITOR || UNITY_INCLUDE_TESTS
-    public class TestUpgradeUnitStatisticsData : IStatisticsData { }
-#endif
-
-    public class ExpandWorkshopLineStatisticsData : IStatisticsData { }
+    #region ##### Account #####
+    public class DailyLoginCountStatisticsData : IStatisticsData { }
 
     #endregion
 
 
-    #region ##### Enemy #####
+
+    #region ##### Entity #####
+
+    public class UpgradeHQStatisticsData : IStatisticsData { }
+    public class UpgradeTurretStatisticsData : IStatisticsData { }
+    public class UpTechHQStatisticsData : IStatisticsData { }
+    public class UpTechTurretStatisticsData : IStatisticsData { }
+    public class DisassembleTurretStatisticsData : IStatisticsData { }
+    #endregion
+
+
+
+    #region ##### Battle #####
+
+    public class ArriveLevelStatisticsData : IStatisticsData { }
     public class DestroyEnemyStatisticsData : IStatisticsData { }
-    public class DestroyBossStatisticsData : IStatisticsData { }
-    public class DestroyThemeBossStatisticsData : IStatisticsData { }
-#if UNITY_EDITOR || UNITY_INCLUDE_TEST
-    public class TestDestroyEnemyStatisticsData : IStatisticsData { }
-#endif
+    public class DestroyBossEnemyStatisticsData : IStatisticsData { }
+    public class DestroyMiddleBossEnemyStatisticsData : IStatisticsData { }
+    public class DestroySpecialEnemyStatisticsData : IStatisticsData { }
+    public class DestroyThemeBossEnemyStatisticsData : IStatisticsData { }
+    public class ClearCountStatisticsData : IStatisticsData { }
+    public class DefeatCountStatisticsData : IStatisticsData { }
+
 
     #endregion
 
+    //
+    //public abstract class AbstractStatisticsData 
+    //{
+    //    private string _key;
+    //    public string Key { get => _key; set => _key = value; }
+    //}
 
-    public class SuccessResearchStatisticsData : IStatisticsData { }
 
+    //#region ##### Account #####
+    //public class DailyLoginCountStatisticsData : AbstractStatisticsData, IStatisticsData { }
 
-
-
-    public class TechUnitStatisticsData : IStatisticsData { }
-#if UNITY_EDITOR || UNITY_INCLUDE_TESTS
-    public class TestTechUnitStatisticsData : IStatisticsData { }
-#endif
-
-    public class UpgradeSmithyStatisticsData : IStatisticsData { }
-    public class TechSmithyStatisticsData : IStatisticsData { }
-    public class UpgradeVillageStatisticsData : IStatisticsData { }
-    public class TechVillageStatisticsData : IStatisticsData { }
-    public class UpgradeMineStatisticsData : IStatisticsData { }
-    public class TechMineStatisticsData : IStatisticsData { }
-    public class ExpandMineStatisticsData : IStatisticsData { }
+    //#endregion
 
 
 
-    public class AchievedDailyStatisticsData : IStatisticsData { }
-    public class AchievedWeeklyStatisticsData : IStatisticsData { }
-    public class AchievedChallengeStatisticsData : IStatisticsData { }
-    public class AchievedGoalStatisticsData : IStatisticsData { }
+    //#region ##### Entity #####
+
+    //public class UpgradeHQStatisticsData : AbstractStatisticsData, IStatisticsData { }
+    //public class UpgradeTurretStatisticsData : AbstractStatisticsData, IStatisticsData { }
+    //public class UpTechHQStatisticsData : AbstractStatisticsData, IStatisticsData { }
+    //public class UpTechTurretStatisticsData : AbstractStatisticsData, IStatisticsData { }
+    //public class DisassembleTurretStatisticsData : AbstractStatisticsData, IStatisticsData { }
+    //#endregion
 
 
+
+    //#region ##### Battle #####
+
+    //public class ArriveLevelStatisticsData : AbstractStatisticsData, IStatisticsData { }
+    //public class DestroyEnemyStatisticsData : AbstractStatisticsData, IStatisticsData { }
+    //public class DestroyBossEnemyStatisticsData : AbstractStatisticsData, IStatisticsData { }
+    //public class DestroyMiddleBossEnemyStatisticsData : AbstractStatisticsData, IStatisticsData { }
+    //public class DestroySpecialEnemyStatisticsData : AbstractStatisticsData, IStatisticsData { }
+    //public class DestroyThemeBossEnemyStatisticsData : AbstractStatisticsData, IStatisticsData { }
+    //public class ClearCountStatisticsData : AbstractStatisticsData, IStatisticsData { }
+    //public class DefeatCountStatisticsData : AbstractStatisticsData, IStatisticsData { }
+
+
+    //#endregion
 
 
 

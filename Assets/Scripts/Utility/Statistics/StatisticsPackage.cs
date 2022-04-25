@@ -233,50 +233,22 @@ namespace Utility.Statistics
         {
             _dic = new Dictionary<System.Type, string>();
 
-            _dic.Add(typeof(CreateUnitStatisticsData), "유닛 생산 수");
-            
-            _dic.Add(typeof(DestroyUnitStatisticsData), "유닛 파괴된 수");
+            _dic.Add(typeof(DailyLoginCountStatisticsData), "일일 접속 수");
 
-            _dic.Add(typeof(AccumulativelyGoldUsedAssetStatisticsData), "누적 골드 소비");
-            _dic.Add(typeof(AccumulativelyResourceUsedAssetStatisticsData), "누적 자원 소비");
-            _dic.Add(typeof(AccumulativelyMeteoriteUsedAssetStatisticsData), "누적 운철 소비");
-            _dic.Add(typeof(AccumulativelyResearchUsedAssetStatisticsData), "누적 연구 소비");
+            _dic.Add(typeof(UpgradeHQStatisticsData), "본부 업글 수");
+            _dic.Add(typeof(UpgradeTurretStatisticsData), "포탑 업글 수");
+            _dic.Add(typeof(UpTechHQStatisticsData), "본부 증축 수");
+            _dic.Add(typeof(UpTechTurretStatisticsData), "포탑 테크 수");
+            _dic.Add(typeof(DisassembleTurretStatisticsData), "포탑 분해 수");
 
-            _dic.Add(typeof(AccumulativelyGoldGetAssetStatisticsData), "누적 골드 획득");
-            _dic.Add(typeof(AccumulativelyResourceGetAssetStatisticsData), "누적 자원 획득");
-            _dic.Add(typeof(AccumulativelyMeteoriteGetAssetStatisticsData), "누적 운철 획득");
-            _dic.Add(typeof(AccumulativelyResearchGetAssetStatisticsData), "누적 연구 획득");
-
-            _dic.Add(typeof(TechUnitStatisticsData), "유닛 테크 진행 수");
-
-            _dic.Add(typeof(UpgradeUnitStatisticsData), "유닛 업글 진행 수");
-
+            _dic.Add(typeof(ArriveLevelStatisticsData), "레벨 도달");
             _dic.Add(typeof(DestroyEnemyStatisticsData), "적 파괴 수");
-            _dic.Add(typeof(DestroyBossStatisticsData), "보스 파괴 수");
-            _dic.Add(typeof(DestroyThemeBossStatisticsData), "테마 보스 파괴 수");
-
-            _dic.Add(typeof(ArrivedLevelStatisticsData), "누적 레벨 도달");
-            _dic.Add(typeof(MaxArrivedLevelStatisticsData), "최대 레벨 도달");
-
-            _dic.Add(typeof(ExpandWorkshopLineStatisticsData), "제작소 라인 증축 수");
-
-            _dic.Add(typeof(UpgradeVillageStatisticsData), "마을 업글 진행 수");
-            _dic.Add(typeof(TechVillageStatisticsData), "마을 테크 진행 수");
-
-            _dic.Add(typeof(UpgradeSmithyStatisticsData), "대장간 업글 진행 수");
-            _dic.Add(typeof(TechSmithyStatisticsData), "대장간 테크 진행 수");
-
-            _dic.Add(typeof(SuccessResearchStatisticsData), "연구 진행 수 (미개발)");
-            //_dic.Add(typeof(UpgradeCommanderStatisticsData), "지휘관 업글 진행 수");
-
-            _dic.Add(typeof(AchievedDailyStatisticsData), "누적 일일 퀘스트 진행 수");
-            _dic.Add(typeof(AchievedWeeklyStatisticsData), "누적 주간 퀘스트 진행 수");
-            _dic.Add(typeof(AchievedChallengeStatisticsData), "누적 도전 퀘스트 진행 수");
-            _dic.Add(typeof(AchievedGoalStatisticsData), "누적 목표 퀘스트 진행 수");
-
-            //_dic.Add(typeof(SuccessExpeditionStatisticsData), "누적 원정 진행 수 (미개발)");
-
-
+            _dic.Add(typeof(DestroyBossEnemyStatisticsData), "보스 파괴 수");
+            _dic.Add(typeof(DestroyMiddleBossEnemyStatisticsData), "중간 보스 파괴 수");
+            _dic.Add(typeof(DestroySpecialEnemyStatisticsData), "특수 보스 파괴 수");
+            _dic.Add(typeof(DestroyThemeBossEnemyStatisticsData), "테마 보스 파괴 수");
+            _dic.Add(typeof(ClearCountStatisticsData), "승리 수");
+            _dic.Add(typeof(DefeatCountStatisticsData), "패배 수");
 
         }
     }
