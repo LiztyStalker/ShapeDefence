@@ -11,6 +11,8 @@
 + AssetBundle
 + GoogleSheetToUnity - AssetStore
 + MVP Pattern
++ ScriptableObject
++ LitJson
 ## 4. 실행방법
 ## 5. 개발단계
 + 벤치마킹 - 완료
