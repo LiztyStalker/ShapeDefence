@@ -230,6 +230,7 @@ namespace Utility.IO
         /// </summary>
         public void SaveFileData(object data, string fileName, System.Action<TYPE_IO_RESULT> endCallback)
         {
+            //비동기 필요 async await
             try
             {
                 using(MemoryStream mem = new MemoryStream())
@@ -296,6 +297,7 @@ namespace Utility.IO
         /// </summary>
         public void LoadFileData(string fileName, Action<float> processCallback, Action<TYPE_IO_RESULT, object> endCallback)
         {
+            //비동기 필요 async await
             //파일 유무 판단
             if (isFile(fileName))
             {

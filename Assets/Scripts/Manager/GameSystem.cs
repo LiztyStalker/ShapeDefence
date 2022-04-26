@@ -9,7 +9,7 @@ namespace SDefence.Manager
     using Actor;
     using SDefence.Enemy;
 
-    public class GameSystem
+    public class GameSystem : ISavable
     {
         private HQManager _hqMgr;
         private TurretManager _turretMgr;
@@ -17,8 +17,6 @@ namespace SDefence.Manager
 
         private AssetUsableEntity _asset;
         private StatisticsPackage _statistics;
-
-        private SavableEntity _savableEntity;
 
         public static GameSystem Create() => new GameSystem();
 
@@ -55,11 +53,7 @@ namespace SDefence.Manager
             _turretMgr.Refresh(0);
         }
 
-        public void Save()
-        {
-
-        }
-
+    
         public void Load()
         {
             //일 로그인 적용
@@ -199,6 +193,32 @@ namespace SDefence.Manager
         public void AddOnRefreshEntityPacketListener(System.Action<IEntityPacket> act) => _packetEvent += act;
         public void RemoveOnRefreshEntityPacketListener(System.Action<IEntityPacket> act) => _packetEvent -= act;
         private void OnEntityPacketEvent(IEntityPacket packet) => _packetEvent?.Invoke(packet);
+        #endregion
+
+        #region ##### Savable #####
+
+        public string SavableKey() => typeof(GameSystem).Name;
+
+        public SavableData GetSavableData()
+        {
+            var data = SavableData.Create();
+            data.AddData(_hqMgr.SavableKey(), _hqMgr.GetSavableData());
+            data.AddData(_turretMgr.SavableKey(), _turretMgr.GetSavableData());
+            return data;
+        }
+
+        public void SetSavableData(SavableData data)
+        {
+            if (data != null)
+            {
+                var hqSavable = data.GetValue<SavableData>(_hqMgr.SavableKey());
+                _hqMgr.SetSavableData(hqSavable);
+
+                var turretSavable = data.GetValue<SavableData>(_turretMgr.SavableKey());
+                _turretMgr.SetSavableData(turretSavable);
+            }
+        }
+
 
         #endregion
     }

@@ -3,6 +3,7 @@ namespace SDefence.Manager
     using UnityEngine;
     using UI;
     using Storage;
+    using Utility.IO;
 
     public class GameManager : MonoBehaviour
     {
@@ -12,6 +13,8 @@ namespace SDefence.Manager
 
         private void Awake()
         {
+            Application.quitting += OnQuitEvent;
+
             _uiGame = FindObjectOfType<UIGame>(true);
             if(_uiGame == null)
             {
@@ -20,10 +23,6 @@ namespace SDefence.Manager
             }
 
             _uiGame.Initialize();
-
-
-
-
 
             _battle = BattleManager.Create();
             _system = GameSystem.Create();
@@ -35,6 +34,8 @@ namespace SDefence.Manager
             _battle.AddOnBattlePacketListener(packet => {
                 Debug.Log($"Packet {packet.GetType().Name}");
             });
+
+            LoadData();
         }
 
         private void Start()
@@ -61,6 +62,38 @@ namespace SDefence.Manager
             _system = null;
         }
 
+        private void LoadData()
+        {
+            var savable = SavablePackage.Current.GetSavableData();
+
+            if (savable != null)
+            {
+                //Version
+                var systemSavable = savable.GetValue<SavableData>(_system.SavableKey());
+                _system.SetSavableData(systemSavable);
+
+                var battleSavable = savable.GetValue<SavableData>(_battle.SavableKey());
+                _battle.SetSavableData(battleSavable);
+            }
+        }
+
+        private void SaveData(System.Action endCallback)
+        {
+            var data = SavableData.Create();
+
+            data.AddData("Version", Application.version);
+            data.AddData(_system.SavableKey(), _system.GetSavableData());
+            data.AddData(_battle.SavableKey(), _battle.GetSavableData());
+
+            SavablePackage.Current.SetSavableData(data);
+            SavablePackage.Current.Save(result =>
+            {
+#if UNITY_EDITOR
+                Debug.Log($"Save {result}");
+#endif
+                endCallback?.Invoke();
+            });
+        }
 
 #if UNITY_EDITOR
         public void OnCommandPacketEvent(Packet.ICommandPacket packet)
@@ -70,5 +103,29 @@ namespace SDefence.Manager
         }
 #endif
 
+        //포커스 저장
+        private void OnApplicationFocus(bool focus)
+        {
+            if(focus) SaveData(null);
+        }
+
+        //백그라운드 저장
+        private void OnApplicationPause(bool pause)
+        {
+            if(pause) SaveData(null);
+        }
+
+        //게임 종료시 저장 후 종료
+        private void OnQuitEvent()
+        {
+            SaveData(() =>
+            {
+#if !UNITY_EDITOR
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+#endif
+                Application.quitting -= OnQuitEvent;
+                SavablePackage.Dispose();
+            });
+        }
     }
 }

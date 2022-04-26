@@ -17,6 +17,7 @@ namespace SDefence.Manager
     using Attack.Usable;
     using BattleGen.Entity;
     using Enemy;
+    using Utility.IO;
 
     #region ##### Orbit #####
     public class OrbitCase
@@ -112,7 +113,7 @@ namespace SDefence.Manager
 
     #endregion
 
-    public class BattleManager
+    public class BattleManager : ISavable
     {
 
 #if UNITY_EDITOR
@@ -749,7 +750,27 @@ namespace SDefence.Manager
             return pos;
         }
 
-#endregion
+        #endregion
+
+        #region ##### Savable #####
+        public string SavableKey() => typeof(BattleManager).Name;
+
+        public SavableData GetSavableData()
+        {
+            var data = SavableData.Create();
+            data.AddData(typeof(LevelWaveData).Name, _levelWaveData.GetValue());
+            return data;
+        }
+
+        public void SetSavableData(SavableData data)
+        {
+            if (data != null)
+            {
+                _levelWaveData.SetValue(data.GetValue<int>(typeof(LevelWaveData).Name));
+            }
+        }
+
+        #endregion
 
     }
 }
