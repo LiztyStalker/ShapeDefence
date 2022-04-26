@@ -3,6 +3,8 @@ namespace SDefence.Packet
     using Actor;
     using Data;
     using Enemy;
+    using Manager;
+    using Asset.Entity;
     using UnityEngine;
 
     public class AppearEnemyBattlePacket : IBattlePacket
@@ -24,6 +26,7 @@ namespace SDefence.Packet
     public class DestroyBattlePacket : IBattlePacket
     {
         public IActor Actor;
+        public BattleManager.TYPE_BATTLE_ACTION TypeBattleAction;
     }
 
     public class HitBattlePacket : IBattlePacket
@@ -43,5 +46,10 @@ namespace SDefence.Packet
     {
         public Sprite BossIcon;
         public LevelWaveData data;
+    }
+
+    public class AssetBattlePacket : IBattlePacket
+    {
+        public AssetUsableEntity AssetEntity;
     }
 }
