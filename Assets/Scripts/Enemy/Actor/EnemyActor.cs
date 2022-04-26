@@ -12,6 +12,7 @@ namespace SDefence.Actor
     using Movement;
     using Attack.Usable;
     using Enemy;
+    using Asset;
 
     public class EnemyActor : MonoBehaviour, IDamagable, IPoolElement, IActor, IAttackable, IMoveable
     {
@@ -34,8 +35,9 @@ namespace SDefence.Actor
         public TYPE_ENEMY_STYLE TypeEnemyStyle => _entity.TypeEnemyStyle;
         public IAttackUsableData AttackUsableData => _entity.GetAttackUsableData();
 
-        public void SetPosition(Vector2 pos) => transform.position = pos;
+        public IAssetUsableData RewardAssetUsableData => _entity.GetRewardAssetUsableData();
 
+        public void SetPosition(Vector2 pos) => transform.position = pos;
 
         public void Activate() 
         {

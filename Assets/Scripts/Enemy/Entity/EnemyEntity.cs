@@ -16,7 +16,7 @@ namespace SDefence.Turret.Entity
 
         private DurableUsableEntity _durableEntity;
 
-        private IAssetUsableData _upgradeAssetData;
+        private IAssetUsableData _rewardAssetData;
         private IAttackUsableData _attackData;
         private IMovementUsableData _movementData;
 
@@ -62,7 +62,7 @@ namespace SDefence.Turret.Entity
         public void CleanUp()
         {
             _data = null;
-            _upgradeAssetData = null;
+            _rewardAssetData = null;
             _attackData = null;
             _durableEntity.CleanUp();
         }
@@ -75,13 +75,13 @@ namespace SDefence.Turret.Entity
         public DurableBattleEntity GetDurableBattleEntity() => _durableEntity.CreateDurableBattleEntity();
 
 
-        public IAssetUsableData GetUpgradeData()
+        public IAssetUsableData GetRewardAssetUsableData()
         {
-            if(_upgradeAssetData == null)
+            if(_rewardAssetData == null)
             {
-                _upgradeAssetData = _data.RewardAssetRawData.GetUsableData(_levelWaveData.GetLevel());
+                _rewardAssetData = _data.RewardAssetRawData.GetUsableData(_levelWaveData.GetLevel());
             }
-            return _upgradeAssetData;
+            return _rewardAssetData;
         }
 
         public IAttackUsableData GetAttackUsableData()
