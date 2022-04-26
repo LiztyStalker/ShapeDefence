@@ -53,6 +53,12 @@ namespace SDefence.UI
 
         public void Initialize()
         {
+            var arr = FindObjectsOfType<Canvas>();
+            for(int i = 0; i < arr.Length; i++)
+            {
+                arr[i].worldCamera = Camera.main;
+            }
+
             _uiCommon = UICommon.Current;
             _uiLobby = GetCanvas(_uiLobby, "UI@Lobby");
             _uiBattle = GetCanvas(_uiBattle, "UI@Battle");
