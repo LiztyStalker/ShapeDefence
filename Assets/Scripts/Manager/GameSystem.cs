@@ -7,7 +7,7 @@ namespace SDefence.Manager
     using Utility.Statistics;
     using Utility.IO;
     using Actor;
-    using SDefence.Enemy;
+    using Enemy;
 
     public class GameSystem : ISavable
     {
@@ -54,12 +54,6 @@ namespace SDefence.Manager
         }
 
     
-        public void Load()
-        {
-            //일 로그인 적용
-            _statistics.AddStatisticsData<DailyLoginCountStatisticsData>();
-        }
-
         public void OnBattlePacketEvent(IBattlePacket packet)
         {
             switch (packet)
@@ -70,10 +64,22 @@ namespace SDefence.Manager
                         _statistics.SetStatisticsData<MaximumArriveLevelStatisticsData>(pk.data.GetLevel());
                     break;
                 case DestroyBattlePacket pk:
-                    if (pk.Actor is EnemyActor)
+
+
+                    switch (pk.Actor)
                     {
-                        var eActor = (EnemyActor)pk.Actor;
-                        AddStatisticsData(eActor.TypeEnemyStyle);
+                        case EnemyActor eActor:
+
+                            switch (pk.TypeBattleAction)
+                            {
+                                case BattleManager.TYPE_BATTLE_ACTION.Lobby:
+                                    _asset.Add(eActor.RewardAssetUsableData);
+                                    break;
+                                case BattleManager.TYPE_BATTLE_ACTION.Battle:
+                                    AddStatisticsData(eActor.TypeEnemyStyle);
+                                    break;
+                            }
+                            break;
                     }
                     break;
                 case ClearBattlePacket pk:
@@ -111,8 +117,7 @@ namespace SDefence.Manager
             switch (packet)
             {
                 case UpgradeCommandPacket pk:
-                    // HQ / Turret
-                                        
+                    // HQ / Turret                                       
 
 
                     switch (pk.TypeCmdKey)
@@ -154,11 +159,13 @@ namespace SDefence.Manager
                     {
                         case TYPE_COMMAND_KEY.HQ:
                             {
+                                //Asset
                                 _statistics.AddStatisticsData<UpTechHQStatisticsData>();
                             }
                             break;
                         case TYPE_COMMAND_KEY.Turret:
                             {
+                                //Asset
                                 _statistics.AddStatisticsData<UpTechTurretStatisticsData>();
                             }
                             break;
@@ -179,10 +186,31 @@ namespace SDefence.Manager
                     // Turret
 
                     //AddStatisticsData - Turret
+                    //Asset
                     _statistics.AddStatisticsData<DisassembleTurretStatisticsData>();
                     break;
                 case RefreshCommandPacket pk:
                     // HQ / Turret
+                    break;
+
+
+                //Battle
+                case RetryCommandPacket pk:
+                    _asset.Add(pk.AssetEntity);
+                    break;
+                case ToLobbyCommandPacket pk:
+                    //pk.AssetEntity
+                    _asset.Add(pk.AssetEntity);
+                    //Asset
+                    break;
+                case AdbToLobbyCommandPacket pk:
+                    _asset.Add(pk.AssetEntity);
+                    _asset.Add(pk.AssetEntity);
+                    //Asset * 2
+                    break;
+                case NextLevelCommandPacket pk:
+                    _asset.Add(pk.AssetEntity);
+                    //Asset
                     break;
             }
         }
@@ -190,20 +218,28 @@ namespace SDefence.Manager
         #region ##### Listener #####
 
         private System.Action<IEntityPacket> _packetEvent;
-        public void AddOnRefreshEntityPacketListener(System.Action<IEntityPacket> act) => _packetEvent += act;
+        public void AddOnEntityPacketListener(System.Action<IEntityPacket> act) => _packetEvent += act;
         public void RemoveOnRefreshEntityPacketListener(System.Action<IEntityPacket> act) => _packetEvent -= act;
         private void OnEntityPacketEvent(IEntityPacket packet) => _packetEvent?.Invoke(packet);
         #endregion
 
+
+
+
+
         #region ##### Savable #####
+
+        private readonly string SAVABLE_SAVETIME_KEY = "SaveTime";
 
         public string SavableKey() => typeof(GameSystem).Name;
 
         public SavableData GetSavableData()
         {
             var data = SavableData.Create();
+            data.AddData(SAVABLE_SAVETIME_KEY, System.DateTime.UtcNow);
             data.AddData(_hqMgr.SavableKey(), _hqMgr.GetSavableData());
             data.AddData(_turretMgr.SavableKey(), _turretMgr.GetSavableData());
+            //Date
             return data;
         }
 
@@ -214,8 +250,19 @@ namespace SDefence.Manager
                 var hqSavable = data.GetValue<SavableData>(_hqMgr.SavableKey());
                 _hqMgr.SetSavableData(hqSavable);
 
+
                 var turretSavable = data.GetValue<SavableData>(_turretMgr.SavableKey());
                 _turretMgr.SetSavableData(turretSavable);
+
+
+                var time = data.GetValue<System.DateTime>(SAVABLE_SAVETIME_KEY);
+                var year = System.DateTime.UtcNow.Year - time.Year;
+                var month = System.DateTime.UtcNow.Month - time.Month;
+                var day = System.DateTime.UtcNow.Day - time.Day;
+
+                //일 로그인 적용
+                if (day != 0 || month != 0 || year != 0)
+                    _statistics.AddStatisticsData<DailyLoginCountStatisticsData>();
             }
         }
 

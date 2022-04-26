@@ -28,12 +28,17 @@ namespace SDefence.Manager
             _system = GameSystem.Create();
 
             _system.Initialize();
+                        
+            //Event
+            _system.AddOnEntityPacketListener(_battle.OnEntityPacketEvent);
+            _system.AddOnEntityPacketListener(_uiGame.OnEntityPacketEvent);
 
-            _system.AddOnRefreshEntityPacketListener(_battle.OnEntityPacketEvent);
+            _battle.AddOnBattlePacketListener(_system.OnBattlePacketEvent);
+            _battle.AddOnBattlePacketListener(_uiGame.OnBattlePacketEvent);
 
-            _battle.AddOnBattlePacketListener(packet => {
-                Debug.Log($"Packet {packet.GetType().Name}");
-            });
+            _uiGame.AddOnCommandPacketListener(_system.OnCommandPacketEvent);
+            _uiGame.AddOnCommandPacketListener(_battle.OnCommandPacketEvent);
+
 
             LoadData();
         }
