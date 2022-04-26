@@ -3,6 +3,7 @@
 namespace SDefence.Packet
 {
     using Asset;
+    using Asset.Entity;
 
     //CommandKey
     //HQ
@@ -14,11 +15,23 @@ namespace SDefence.Packet
     }
 
 
-    public class NextLevelCommandPacket : ICommandPacket {}
-    public class RetryCommandPacket : ICommandPacket {}
-    public class ToLobbyCommandPacket : ICommandPacket {}
-    public class AdbToLobbyCommandPacket : ICommandPacket { }
-    public class PlayBattleCommandPacket : ICommandPacket {}
+    public class NextLevelCommandPacket : ICommandPacket 
+    {
+        public AssetUsableEntity AssetEntity;
+    }
+    public class RetryCommandPacket : ICommandPacket 
+    {
+        public AssetUsableEntity AssetEntity;
+    }
+    public class ToLobbyCommandPacket : ICommandPacket 
+    {
+        public AssetUsableEntity AssetEntity;
+    }
+    public class AdbToLobbyCommandPacket : ICommandPacket 
+    {
+        public AssetUsableEntity AssetEntity;
+    }
+    public class PlayBattleCommandPacket : ICommandPacket { }
     public class RewardOfflineCommandPacket : ICommandPacket 
     {
         public bool IsAdb = false;
@@ -60,6 +73,7 @@ namespace SDefence.Packet
         public TYPE_COMMAND_KEY TypeCmdKey;
         public int ParentIndex;
         public int Index;
+        public IAssetUsableData AssetUsableData;
     }
     public class RefreshCommandPacket : ICommandPacket 
     {
@@ -78,7 +92,8 @@ namespace SDefence.Packet
     }
 
     public class HelpCommandPacket : ICommandPacket 
-    { 
+    {
+        public TYPE_COMMAND_KEY TypeCmdKey;
     }
 
     public class CategoryCommandPacket : ICommandPacket 
