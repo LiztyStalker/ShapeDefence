@@ -23,8 +23,13 @@ namespace SDefence.Asset.Entity
 
         public void CleanUp()
         {
-            _dic.Clear();
+            Clear();
             _dic = null;
+        }
+
+        public void Clear()
+        {
+            _dic.Clear();
         }
 
 
@@ -60,6 +65,15 @@ namespace SDefence.Asset.Entity
 #endif
         }
 
+
+        public void Add(AssetUsableEntity assetEntity)
+        {
+            foreach(var value in assetEntity._dic.Values)
+            {
+                Add(value);
+            }
+        }
+
         public void Add(IAssetUsableData uData)
         {
             string key = GetKey(uData);
@@ -72,7 +86,6 @@ namespace SDefence.Asset.Entity
                 _dic[key].Add(uData);
             }
         }
-
 
         public void Subject(IAssetUsableData uData)
         {
