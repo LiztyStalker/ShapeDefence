@@ -1,7 +1,24 @@
 namespace Utility.IO
 {
-    public class SavableEntity
+    public class SavablePackage
     {
+        public static SavablePackage _current;
+
+        public static SavablePackage Current
+        {
+            get
+            {
+                if(_current == null)
+                {
+                    _current = new SavablePackage();
+                }
+                return _current;
+            }
+        }
+        public static void Dispose() => _current = null;
+
+
+
         private SavableData _savableData;
         public SavableData GetSavableData() => _savableData;
 
