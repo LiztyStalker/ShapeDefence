@@ -18,6 +18,7 @@ namespace SDefence.Manager
     using BattleGen.Entity;
     using Enemy;
     using Utility.IO;
+    using Asset.Entity;
 
     #region ##### Orbit #####
     public class OrbitCase
@@ -141,6 +142,8 @@ namespace SDefence.Manager
 
         private List<AttackActionUsableData> _attackActionList;
 
+        private AssetUsableEntity _battleAssetEntity;
+
         //터렛 위치 지정자
         private float _waveTime;
 
@@ -182,6 +185,8 @@ namespace SDefence.Manager
 
             _appearSize = new Vector2(6f, 6f);
 
+            _battleAssetEntity = AssetUsableEntity.Create();
+
             _battleGenEntity = BattleGenEntity.Create();
             _battleGenEntity.SetOnAppearEnemyListener(OnAppearEnemyEvent);
         }
@@ -196,6 +201,8 @@ namespace SDefence.Manager
 
             _enemyPool.CleanUp();
             _enemyActorList.Clear();
+
+            _battleAssetEntity.CleanUp();
 
             _battleGenEntity = null;
         }
@@ -252,8 +259,12 @@ namespace SDefence.Manager
             //LevelWave 적용하기
             _battleGenEntity.SetBattle(_levelWaveData);
 
+            //AssetEntity 초기화
+            _battleAssetEntity.Clear();
+
             //PlayBattle Event 보내기
             OnPlayBattlePacketEvent(_battleGenEntity.GetBossIconKey(), _levelWaveData);
+            OnAssetBattlePacketEvent(_battleAssetEntity);
         }
 
 
@@ -305,8 +316,6 @@ namespace SDefence.Manager
 
             //Lobby Gen
             _battleGenEntity.SetLobby();
-
-
 
             //LobbyBattle Event 보내기
         }
@@ -464,37 +473,47 @@ namespace SDefence.Manager
                     var destroyEffectKey = DataStorage.Instance.GetDataOrNull<GameObject>(destroyKey);
                     _effectMgr.Activate(destroyEffectKey, destroyBattlePacket.Actor.NowPosition, 1f);
 
+                    destroyBattlePacket.TypeBattleAction = _typeBattleAction;
+
                     //전투일때
                     if (_typeBattleAction == TYPE_BATTLE_ACTION.Battle)
                     {
-                        if (destroyBattlePacket.Actor is HQActor)
+
+                        switch (destroyBattlePacket.Actor)
                         {
-                            //HQ이면 게임 패배 이벤트
-                            var pk = new DefeatBattlePacket();
-                            _battleEvent?.Invoke(pk);
-                        }
+                            case HQActor actor:
+                                {
+                                    //HQ이면 게임 패배 이벤트
+                                    var pk = new DefeatBattlePacket();
+                                    _battleEvent?.Invoke(pk);
+                                }
+                                break;
+                            case EnemyActor actor:
+                                {
+                                    //전투 중 적 처치시 획득 재화
+                                    _battleAssetEntity.Add(actor.RewardAssetUsableData);
+                                    OnAssetBattlePacketEvent(_battleAssetEntity);
 
-                        //Enemy가 보스이면 게임 승리 이벤트
-                        //또는 적이 없으면 게임 승리 이벤트
-                        if (_enemyActorList.Count == 0 && _levelWaveData.IsLastWave())
-                        {
-                            var pk = new ClearBattlePacket();
-                            _battleEvent?.Invoke(pk);
-                            //UIClear
-
-                            //자동 게임 종료
-                            _levelWaveData.IncreaseNumber();
-                            SetLobby();
-
-                            //이어하기
-                            //_levelWaveData.IncreaseNumber();
-                            //SetBattleGen();
-                            //SetBattle();
-                        }
+                                    //Enemy가 보스이면 게임 승리 이벤트
+                                    //또는 적이 없으면 게임 승리 이벤트
+                                    if (_enemyActorList.Count == 0 && _levelWaveData.IsLastWave())
+                                    {
+                                        var pk = new ClearBattlePacket();
+                                        _battleEvent?.Invoke(pk);
+                                    }
+                                }
+                                break;
+                        }                        
                     }
-
                     break;
             }
+            _battleEvent?.Invoke(packet);
+        }
+
+        private void OnAssetBattlePacketEvent(AssetUsableEntity assetEntity)
+        {
+            var packet = new AssetBattlePacket();
+            packet.AssetEntity = assetEntity;
             _battleEvent?.Invoke(packet);
         }
 
@@ -527,7 +546,7 @@ namespace SDefence.Manager
             switch (packet)
             {
 #if UNITY_EDITOR
-                case EnemyCommandPacket enemyPacket:
+                case EnemyCommandPacket pk:
                     AppearEnemy();
                     break;
 #endif
