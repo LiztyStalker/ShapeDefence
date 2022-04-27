@@ -23,16 +23,16 @@ namespace SDefence.UI
 
         }
 
-        private void ShowDisassembleProduction(IEntity entity)
+        private void ShowDisassembleProduction(IEntity nowEntity, IEntity pastEntity)
         {
             gameObject.SetActive(true);
-            _disassembleProduction.Show(entity, Hide);
+            _disassembleProduction.Show(nowEntity, pastEntity, Hide);
         }
 
-        private void ShowTechProduction(IEntity entity)
+        private void ShowTechProduction(IEntity nowEntity, IEntity pastEntity)
         {
             gameObject.SetActive(true);
-            _techProduction.Show(entity, Hide);
+            _techProduction.Show(nowEntity, pastEntity, Hide);
         }
 
         public void Hide()
@@ -45,10 +45,10 @@ namespace SDefence.UI
             switch (packet)
             {
                 case DisassembleEntityPacket pk:
-                    ShowDisassembleProduction(pk.Entity);
+                    ShowDisassembleProduction(pk.NowEntity, pk.PastEntity);
                     break;
                 case UpTechEntityPacket pk:
-                    ShowTechProduction(pk.Entity);
+                    ShowTechProduction(pk.NowEntity, pk.PastEntity);
                     break;
             }
         }

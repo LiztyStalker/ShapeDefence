@@ -50,28 +50,44 @@ namespace SDefence.UI
             _list.Clear();
         }
 
-        public void Show(IEntity entity)
+        public void Show(TechPacketElement[] elements)
         {
             Clear();
 
-            if (entity is ITechable)
+            gameObject.SetActive(true);
+
+            for (int i = 0; i < elements.Length; i++)
             {
-                gameObject.SetActive(true);
-
-                var techable = (ITechable)entity;
-                var elements = techable.TechRawData.TechRawElements;
-                for(int i = 0; i < elements.Length; i++)
+                var element = elements[i];
+                if (i >= _list.Count)
                 {
-                    var element = elements[i];
-                    if(i >= _list.Count)
-                    {
-                        _list.Add(Create());
-                    }
-
-                    _list[i].SetData(element.TypeTechData, element.TechDataKey, element.GetUsableData());
-                    _list[i].Show();
+                    _list.Add(Create());
                 }
+
+                Debug.Log(element.Element.TypeTechData);
+
+                _list[i].SetData(element.Element.TypeTechData, element.Element.TechDataKey, element.Element.GetUsableData());
+                _list[i].Show();            
             }
+
+            //if (entity is ITechable)
+            //{
+            //    gameObject.SetActive(true);
+
+            //    var techable = (ITechable)entity;
+            //    var elements = techable.TechRawData.TechRawElements;
+            //    for(int i = 0; i < elements.Length; i++)
+            //    {
+            //        var element = elements[i];
+            //        if(i >= _list.Count)
+            //        {
+            //            _list.Add(Create());
+            //        }
+
+            //        _list[i].SetData(element.TypeTechData, element.TechDataKey, element.GetUsableData());
+            //        _list[i].Show();
+            //    }
+            //}
             
 
         }

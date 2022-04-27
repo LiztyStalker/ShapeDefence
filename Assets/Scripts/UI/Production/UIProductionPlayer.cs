@@ -17,7 +17,7 @@ namespace SDefence.UI
 
         private float _nowTime;
 
-        public void Show(IEntity entity, System.Action endCallback)
+        public void Show(IEntity nowEntity, IEntity pastEntity, System.Action endCallback)
         {
             _applyBtn.gameObject.SetActive(false);
             _skipBtn.gameObject.SetActive(true);
