@@ -3,8 +3,13 @@ namespace SDefence.Packet
     using HQ.Entity;
     using Asset.Entity;
     using Turret.Entity;
-    using SDefence.Entity;
-
+    using Entity;
+    using Tech;
+    public struct TechPacketElement
+    {
+        public TechRawElement Element;
+        public bool IsActiveTech;
+    }
     public class HQEntityPacket : IEntityPacket
     {
         public HQEntity Entity;
@@ -40,13 +45,14 @@ namespace SDefence.Packet
 
 
     public class OpenTechEntityPacket : IEntityPacket
-    {
-        public IEntity Entity;
+    {       
+        public TechPacketElement[] Elements;
     }
 
     public class UpTechEntityPacket : IEntityPacket
     {
-        public IEntity Entity;
+        public IEntity PastEntity;
+        public IEntity NowEntity;
     }
 
     public class OpenDisassembleEntityPacket : IEntityPacket
@@ -56,7 +62,8 @@ namespace SDefence.Packet
 
     public class DisassembleEntityPacket : IEntityPacket
     {
-        public IEntity Entity;
+        public IEntity PastEntity;
+        public IEntity NowEntity;
     }
 
     public class RewardOfflineEntityPacket : IEntityPacket
