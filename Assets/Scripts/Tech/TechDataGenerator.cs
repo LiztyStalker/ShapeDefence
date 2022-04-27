@@ -10,8 +10,8 @@ namespace SDefence.Tech.Generator
         public enum TYPE_SHEET_COLUMNS
         {
             Key,
-            TechDataKey,
             TypeTechData,
+            TechDataKey,
             TypeConditionTech,
             ConditionTechKey,
             ConditionTechValue,
