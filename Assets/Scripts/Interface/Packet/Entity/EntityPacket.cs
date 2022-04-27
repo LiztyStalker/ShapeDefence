@@ -36,6 +36,8 @@ namespace SDefence.Packet
         public TurretEntityPacket[] packets;
         public int OrbitIndex;
         public bool IsExpand;
+        public int TurretCapacity;
+        public int TurretCount;
     }
 
     public class AssetEntityPacket : IEntityPacket

@@ -51,6 +51,11 @@ namespace SDefence.UI
             gameObject.SetActive(false);
         }
 
+        private void SetTurretCountText(int turretCount, int capacity)
+        {
+            _turretCountText.text = $"포탑 가용 수 : {turretCount} / {capacity}";
+        }
+
         public void OnEntityPacketEvent(IEntityPacket packet)
         {
             switch (packet)
@@ -72,10 +77,12 @@ namespace SDefence.UI
                         _list[i].OnEntityPacketEvent(packets[i]);
                         _list[i].Show();
                     }
-                    Debug.Log(pk.IsExpand);
 
                     _uiExpand.SetActive(pk.IsExpand);
                     _uiExpand.transform.SetAsLastSibling();
+
+                    SetTurretCountText(pk.TurretCount, pk.TurretCapacity);
+
                     break;
             }
         }

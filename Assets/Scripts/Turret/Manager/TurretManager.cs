@@ -238,6 +238,8 @@ namespace SDefence.Turret
                     packet.packets = arr;
                 }
                 packet.IsExpand = _dic[orbitIndex].Count < _orbitEntity.GetCapacity(orbitIndex);
+                packet.TurretCapacity = _orbitEntity.GetCapacity(orbitIndex);
+                packet.TurretCount = _dic[orbitIndex].Count;
 
                 _entityEvent?.Invoke(packet);
             }
