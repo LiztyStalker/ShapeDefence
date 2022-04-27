@@ -65,6 +65,7 @@ namespace SDefence.UI
         public void Hide()
         {
             gameObject.SetActive(false);
+            OnClosedEvent();
         }
 
         public void OnEntityPacketEvent(IEntityPacket packet)
@@ -87,7 +88,7 @@ namespace SDefence.UI
             //UIGridText
             string str = "";
             str += entity.Name + "\n";
-            str += entity.TechLevel + "\n";
+            str += entity.TechLevel + ((entity.IsMaxUpgradeAndTech()) ? "Max\n" : "\n");
             str += entity.UpgradeValue + "\n";
             str += "내구도 " + entity.GetDurableUsableData<HealthDurableUsableData>() + "\n";
             str += "방어력 " + entity.GetDurableUsableData<ArmorDurableUsableData>() + "\n";
@@ -100,11 +101,17 @@ namespace SDefence.UI
 
             //Upgrade - Asset
             //Tech - Asset
-            _upgradeBtn.SetActive(!entity.IsMaxUpgrade());
-            _techBtn.SetActive(entity.IsMaxUpgrade());
-
-            _upgradeBtn.interactable = packet.IsActiveUpgrade;
-            _techBtn.interactable = packet.IsActiveUpTech;
+            if (!entity.IsMaxUpgradeAndTech())
+            {
+                _upgradeBtn.SetActive(!entity.IsMaxUpgrade());
+                _techBtn.SetActive(entity.IsMaxUpgrade());
+            }
+            else
+            {
+                //최대 업그레이드
+                _upgradeBtn.SetActive(false);
+                _techBtn.SetActive(false);
+            }
 
         }
 
@@ -141,6 +148,10 @@ namespace SDefence.UI
             pk.TypeCmdKey = TYPE_COMMAND_KEY.HQ;
             _cmdEvent?.Invoke(pk);
         }
+
+        private System.Action _closedEvent;
+        public void SetOnClosedListener(System.Action act) => _closedEvent = act;
+        private void OnClosedEvent() => _closedEvent?.Invoke();
 
         #endregion
     }

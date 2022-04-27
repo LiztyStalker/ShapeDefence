@@ -75,6 +75,7 @@ namespace SDefence.UI
         private void Hide()
         {
             gameObject.SetActive(false);
+            OnClosedEvent();
         }
 
         public void ShowClearPopup()
@@ -89,10 +90,10 @@ namespace SDefence.UI
             _uiDefeatPopup.Show();
         }
 
-        private void ShowTechPopup(IEntity entity)
+        private void ShowTechPopup(TechPacketElement[] elements)
         {
             Show();
-            _uiTechPopup.Show(entity);
+            _uiTechPopup.Show(elements);
         }
 
         private void ShowDisassemblePopup(IEntity entity)
@@ -125,6 +126,7 @@ namespace SDefence.UI
         private void OnCommandPacketEvent(ICommandPacket pk) => _cmdEvent?.Invoke(pk);
 
 
+
         /// <summary>
         /// BattlePacket
         /// </summary>
@@ -154,11 +156,17 @@ namespace SDefence.UI
                     ShowDisassemblePopup(pk.Entity);
                     break;
                 case OpenTechEntityPacket pk:
-                    ShowTechPopup(pk.Entity);
+                    ShowTechPopup(pk.Elements);
                     break;
             }
         }
 
+
+
+
+        private System.Action _closedvent;
+        public void SetOnClosedListener(System.Action act) => _closedvent = act;
+        private void OnClosedEvent() => _closedvent?.Invoke();
 
 
         #endregion

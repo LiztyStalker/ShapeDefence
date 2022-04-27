@@ -72,6 +72,7 @@ namespace SDefence.UI
         public void Hide()
         {
             gameObject.SetActive(false);
+            OnClosedEvent();
         }
 
         public void OnEntityPacketEvent(IEntityPacket packet)
@@ -80,7 +81,7 @@ namespace SDefence.UI
             switch (packet)
             {
                 case TurretOrbitEntityPacket pk:
-                    while (_list.Count <= pk.OrbitCount)
+                    while (_list.Count < pk.OrbitCount)
                     {
                         var btn = Instantiate(_tabBtn);
                         btn.transform.SetParent(_tabFrame);
@@ -143,6 +144,11 @@ namespace SDefence.UI
             pk.ParentIndex = _OrbitIndex;
             _cmdEvent?.Invoke(pk);
         }
+
+
+        private System.Action _closedEvent;
+        public void SetOnClosedListener(System.Action act) => _closedEvent = act;
+        private void OnClosedEvent() => _closedEvent?.Invoke();
 
         #endregion
     }

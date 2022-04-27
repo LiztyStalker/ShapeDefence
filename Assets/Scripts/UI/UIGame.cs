@@ -15,6 +15,7 @@ namespace SDefence.UI
         public void Show();
         public void Hide();
         public void SetOnCommandPacketListener(System.Action<ICommandPacket> act);
+        public void SetOnClosedListener(System.Action act);
     }
 
     #endregion
@@ -114,6 +115,7 @@ namespace SDefence.UI
                 value.Initialize();
                 value.Hide();
                 value.SetOnCommandPacketListener(OnCommandPacketEvent);
+                value.SetOnClosedListener(OnClosedEvent);
             }
 
 
@@ -127,6 +129,7 @@ namespace SDefence.UI
 
             _uiGamePopup.Initialize();
             _uiGamePopup.SetOnCommandPacketListener(OnCommandPacketEvent);
+            _uiGamePopup.SetOnClosedListener(OnClosedEvent);
 
             _uiProduction.Initialize();
             _uiProduction.Hide();
@@ -269,6 +272,11 @@ namespace SDefence.UI
             _cmdEvent?.Invoke(packet);
         }
 
+        private void OnClosedEvent()
+        {
+            var pk = new ClosedUICommandPacket();
+            _cmdEvent?.Invoke(pk);
+        }
         #endregion
     }
 }

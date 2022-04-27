@@ -1,7 +1,8 @@
 namespace SDefence.UI
 {
     using Packet;
-    using Turret.Entity;
+    using Durable.Usable;
+    using Recovery.Usable;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -12,6 +13,11 @@ namespace SDefence.UI
         private Image _icon;
 
         //Text
+        [SerializeField]
+        private Text _text;
+
+        [SerializeField]
+        private Text[] _texts;
 
         [SerializeField]
         private Button _disassembleBtn;
@@ -58,16 +64,63 @@ namespace SDefence.UI
                 //Index
                 _orbitIndex = pk.OrbitIndex;
                 _index = pk.Index;
-                
-                
-                //Text
+
+
+                if (_text != null)
+                {
+                    //Text
+                    string str = "";
+                    str += entity.Name + " " + entity.TechLevel + ((entity.IsMaxUpgradeAndTech()) ? "Max\n" : "\n");
+                    str += entity.UpgradeValue + "\n";
+                    str += "내구도 " + entity.GetDurableUsableData<HealthDurableUsableData>() + "\n";
+                    str += "방어력 " + entity.GetDurableUsableData<ArmorDurableUsableData>() + "\n";
+                    str += "수리속도" + entity.RepairTime + "s\n";
+                    str += "실드 " + entity.GetDurableUsableData<ShieldDurableUsableData>() + "\n";
+                    str += "실드회복 " + entity.GetRecoveryUsableData<ShieldRecoveryUsableData>() + "w\n";
+                    str += "실드한계 " + entity.GetDurableUsableData<LimitDamageShieldDurableUsableData>() + "\n";
+                    str += "공격력 " + entity.GetAttackUsableData().CreateUniversalUsableData().Value + "\n";
+                    str += "공격속도 " + entity.GetAttackUsableData().Delay + "s\n";
+                    str += "사거리" + entity.GetAttackUsableData().Range;
+
+                    _text.text = str;
+                }
+                else
+                {
+                    string str = "";
+                    str += entity.Name + " " + entity.TechLevel + ((entity.IsMaxUpgradeAndTech()) ? "Max\n" : "\n");
+                    str += entity.UpgradeValue;
+                    _texts[0].text = str;
+
+                    str = "내구도 " + entity.GetDurableUsableData<HealthDurableUsableData>() + "\n";
+                    str += "방어력 " + entity.GetDurableUsableData<ArmorDurableUsableData>() + "\n";
+                    str += "수리속도" + entity.RepairTime + "s";
+                    _texts[1].text = str;
+
+                    str = "실드 " + entity.GetDurableUsableData<ShieldDurableUsableData>() + "\n";
+                    str += "실드회복 " + entity.GetRecoveryUsableData<ShieldRecoveryUsableData>() + "w\n";
+                    str += "실드한계 " + entity.GetDurableUsableData<LimitDamageShieldDurableUsableData>();
+                    _texts[2].text = str;
+
+                    str = "공격력 " + entity.GetAttackUsableData().CreateUniversalUsableData().Value + "\n";
+                    str += "공격속도 " + entity.GetAttackUsableData().Delay + "s\n";
+                    str += "사거리 " + entity.GetAttackUsableData().Range;
+                    _texts[3].text = str;
+
+                }
 
 
 
-
-
-                _upgradeBtn.SetActive(!entity.IsMaxUpgrade());
-                _techBtn.SetActive(entity.IsMaxUpgrade());
+                if (!entity.IsMaxUpgradeAndTech())
+                {
+                    _upgradeBtn.SetActive(!entity.IsMaxUpgrade());
+                    _techBtn.SetActive(entity.IsMaxUpgrade());
+                }
+                else
+                {
+                    //최대 업그레이드
+                    _upgradeBtn.SetActive(false);
+                    _techBtn.SetActive(false);
+                }
 
                 //_disassembleBtn.interactable = //Tech 0 = false
                 _upgradeBtn.interactable = pk.IsActiveUpgrade;
