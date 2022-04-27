@@ -229,6 +229,9 @@ namespace SDefence.Manager
                     //Asset
                     _statistics.AddStatisticsData<DisassembleTurretStatisticsData>();
                     break;
+                case TabCommandPacket pk:
+                    _turretMgr.Refresh(pk.OrbitIndex);
+                    break;
                 case RefreshCommandPacket pk:
                     // HQ / Turret
                     switch (pk.TypeCmdKey)
@@ -321,6 +324,9 @@ namespace SDefence.Manager
                         var assetData = pk.Entity.GetUpgradeData();
                         pk.IsActiveUpgrade = (_assetEntity.Compare(assetData) <= 0);
                     }
+
+                    _turretMgr.SetOrbitCount(pk.Entity.OrbitCount);
+
                     break;
                 case TurretArrayEntityPacket pk:
                     for(int i = 0; i < pk.packets.Length; i++)
@@ -343,6 +349,7 @@ namespace SDefence.Manager
                         pk.Elements[i] = element;
                     }
                     break;
+                    
             }
             _entityEvent?.Invoke(packet);
         }
