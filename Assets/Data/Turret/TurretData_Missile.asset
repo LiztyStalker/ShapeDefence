@@ -41,7 +41,7 @@ MonoBehaviour:
     _increaseValue: 0
     _increaseRate: 0
   _upgradeRawData:
-    _typeData: SDefence.Asset.Usable.NeutralAssetUsableData
+    _typeData: Neutral
     _startValue: 20
     _increaseValue: 1
     _increaseRate: 0.1
@@ -53,10 +53,10 @@ MonoBehaviour:
     _startAttackValue: 20
     _increaseAttackValue: 3
     _increaseAttackRate: 0.1
-    _startAttackDelayValue: 4
+    _startAttackDelayValue: 1
     _decreaseAttackDelayValue: 0
     _decreaseAttackDelayRate: 0.01
-    _startAttackRangeValue: 5
+    _startAttackRangeValue: 4
     _increaseAttackRangeValue: 0
-    _increaseAttackRangeRate: 0.1
+    _increaseAttackRangeRate: 0.01
   _repairTime: 5

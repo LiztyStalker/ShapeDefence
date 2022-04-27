@@ -26,7 +26,7 @@ namespace SDefence.Asset.Raw {
         }
         private AssetRawData()
         {
-            _typeData = "SDefence.Asset.Usable.NeutralAssetUsableData";
+            _typeData = "Neutral";//SDefence.Asset.Usable.NeutralAssetUsableData";
             _startValue = "100";
             _increaseValue = "1";
             _increaseRate = "0.1";
@@ -34,7 +34,7 @@ namespace SDefence.Asset.Raw {
 
         public void SetData(string typeData, string startValue, string increaseValue, string increaseRate)
         {
-            _typeData = $"SDefence.Asset.Usable.{typeData}AssetUsableData";
+            _typeData = typeData;// $"SDefence.Asset.Usable.{typeData}AssetUsableData";
             _startValue = startValue;
             _increaseValue = increaseValue;
             _increaseRate = increaseRate;
@@ -51,7 +51,7 @@ namespace SDefence.Asset.Raw {
 
         public IAssetUsableData GetUsableData(int upgrade = 0)
         {
-            var type = System.Type.GetType(_typeData);
+            var type = System.Type.GetType($"SDefence.Asset.Usable.{_typeData}AssetUsableData");
             if (type != null)
             {
                 var data = (IAssetUsableData)System.Activator.CreateInstance(type);
