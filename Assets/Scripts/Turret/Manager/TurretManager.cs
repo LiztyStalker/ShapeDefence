@@ -20,6 +20,8 @@ namespace SDefence.Turret
             _capacity[0] = 1;
         }
 
+        public int Count => _capacity.Length;
+
         public int GetCapacity(int index) => _capacity[index];
 
         public void ExpandOrbit(int turretCount)
@@ -28,6 +30,8 @@ namespace SDefence.Turret
             list.Add(turretCount);
             _capacity = list.ToArray();
         }
+
+        #region ##### Savable #####
 
         public string SavableKey() => typeof(OrbitEntity).Name;
 
@@ -50,6 +54,7 @@ namespace SDefence.Turret
                 _capacity[index] = (int)data.Children[key];
             }
         }
+        #endregion
     }
 
 
@@ -100,13 +105,25 @@ namespace SDefence.Turret
             return null;
         }
 
-        public void UpTech(int orbitIndex, int index, TurretData data)
+        public bool UpTech(int orbitIndex, int index, string key)
         {
             if (_dic.ContainsKey(orbitIndex))
             {
-                _dic[orbitIndex][index].UpTech(data);
-                Refresh(orbitIndex, index);
+                var data = (TurretData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(key, "TurretData");
+                if (data != null)
+                {
+                    UpTech(orbitIndex, index, data);
+                    return true;
+                }
             }
+            return false;
+        }
+
+        public void UpTech(int orbitIndex, int index, TurretData data)
+        {
+            _dic[orbitIndex][index].UpTech(data);
+            OnUpTechEntityPacketEvent(orbitIndex, index);
+            Refresh(orbitIndex, index);
         }
 
         public void Expand(int orbitIndex)
@@ -120,6 +137,7 @@ namespace SDefence.Turret
         public void ExpandOrbit(int turretCount)
         {
             _orbitEntity.ExpandOrbit(turretCount);
+            OnOrbitEntityPacket();
         }
 
         private TurretData GetDefaultData()
@@ -145,6 +163,7 @@ namespace SDefence.Turret
 
         public void Refresh(int orbitIndex)
         {
+            OnOrbitEntityPacket();
             if (_dic.ContainsKey(orbitIndex))
             {
                 OnEntityPacketEvent(orbitIndex);
@@ -161,11 +180,20 @@ namespace SDefence.Turret
         }
 
 
-        //public void OnCommandPacketEvent(TurretCommandPacket packet)
-        //{
-        //    if (packet.IsUpgrade) Upgrade(packet.Index);
-        //    if (packet.IsExpand) Expand(packet.OrbitIndex);
-        //}
+        public void OnOpenTechCommandPacketEvent(int orbitindex, int index)
+        {
+            var techPacket = new OpenTechEntityPacket();
+            var elements = _dic[orbitindex][index].TechRawData.TechRawElements;
+
+            techPacket.Elements = new TechPacketElement[elements.Length];
+            for (int i = 0; i < techPacket.Elements.Length; i++)
+            {
+                var element = new TechPacketElement() { Element = elements[i], IsActiveTech = false };
+                techPacket.Elements[i] = element;
+            }
+
+            _entityEvent?.Invoke(techPacket);
+        }
 
 
         #region ##### Listener #####
@@ -181,17 +209,32 @@ namespace SDefence.Turret
 
         private void OnEntityPacketEvent(int orbitIndex)
         {
-            var packet = new TurretArrayEntityPacket();
-            if (_dic.ContainsKey(orbitIndex))
+            if (orbitIndex == 0)
             {
-                var arr = new TurretEntityPacket[_dic[orbitIndex].Count];
-                for(int i = 0; i < _dic[orbitIndex].Count; i++)
-                {
-                    var trPacket = CreateEntityPacket(orbitIndex, i, _dic[orbitIndex][i]);
-                    arr[i] = trPacket;
-                }
-                packet.packets = arr;
+                OnEntityPacketEvent(orbitIndex, 0, _dic[orbitIndex][0]);
             }
+            else
+            {
+                var packet = new TurretArrayEntityPacket();
+                if (_dic.ContainsKey(orbitIndex))
+                {
+                    var arr = new TurretEntityPacket[_dic[orbitIndex].Count];
+                    for (int i = 0; i < _dic[orbitIndex].Count; i++)
+                    {
+                        var trPacket = CreateEntityPacket(orbitIndex, i, _dic[orbitIndex][i]);
+                        arr[i] = trPacket;
+                    }
+                    packet.packets = arr;
+                }
+
+                _entityEvent?.Invoke(packet);
+            }
+        }
+
+        private void OnOrbitEntityPacket()
+        {
+            var packet = new TurretOrbitEntityPacket();
+            packet.OrbitCount = _orbitEntity.Count;
             _entityEvent?.Invoke(packet);
         }
 
@@ -201,7 +244,15 @@ namespace SDefence.Turret
             packet.Entity = entity;
             packet.OrbitIndex = orbitIndex;
             packet.Index = index;
+            packet.IsActiveUpTech = !entity.TechRawData.IsEmpty() && entity.IsMaxUpgrade();
             return packet;
+        }
+        private void OnUpTechEntityPacketEvent(int orbitIndex, int index)
+        {
+            var packet = new UpTechEntityPacket();
+            packet.PastEntity = _dic[orbitIndex][index]; //예전 Entity 데이터 필요
+            packet.NowEntity = _dic[orbitIndex][index];
+            _entityEvent?.Invoke(packet);
         }
 
 

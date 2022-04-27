@@ -15,7 +15,7 @@ namespace SDefence.Manager
         private TurretManager _turretMgr;
 
 
-        private AssetUsableEntity _asset;
+        private AssetUsableEntity _assetEntity;
         private StatisticsPackage _statistics;
 
         public static GameSystem Create() => new GameSystem();
@@ -28,14 +28,15 @@ namespace SDefence.Manager
             _hqMgr.AddOnEntityPacketListener(OnEntityPacketEvent);
             _turretMgr.AddOnEntityPacketListener(OnEntityPacketEvent);
 
-            _asset = AssetUsableEntity.Create();
+            _assetEntity = AssetUsableEntity.Create();
+            _assetEntity.SetOnAssetEntityListener(OnAssetEntityPacketEvent);
             _statistics = StatisticsPackage.Create();
         }
 
         public void Initialize()
         {
             _hqMgr.Initialize();
-            _turretMgr.Initialize();
+            _turretMgr.Initialize();           
         }
 
         public void CleanUp()
@@ -43,7 +44,7 @@ namespace SDefence.Manager
             _hqMgr.RemoveOnEntityPacketListener(OnEntityPacketEvent);
             _turretMgr.RemoveOnEntityPacketListener(OnEntityPacketEvent);
 
-            _asset.CleanUp();
+            _assetEntity.CleanUp();
             _statistics.CleanUp();
 
         }
@@ -51,6 +52,7 @@ namespace SDefence.Manager
         {
             _hqMgr.Refresh();
             _turretMgr.Refresh(0);
+            _assetEntity.Refresh();
         }
 
     
@@ -73,7 +75,7 @@ namespace SDefence.Manager
                             switch (pk.TypeBattleAction)
                             {
                                 case BattleManager.TYPE_BATTLE_ACTION.Lobby:
-                                    _asset.Add(eActor.RewardAssetUsableData);
+                                    _assetEntity.Add(eActor.RewardAssetUsableData);
                                     break;
                                 case BattleManager.TYPE_BATTLE_ACTION.Battle:
                                     AddStatisticsData(eActor.TypeEnemyStyle);
@@ -112,10 +114,21 @@ namespace SDefence.Manager
             }
         }
 
+
+        private ICommandPacket _lastCommandPacket;
+
         public void OnCommandPacketEvent(ICommandPacket packet)
         {
+            //리팩토링 필요
             switch (packet)
             {
+#if UNITY_EDITOR
+                case TestAssetCommandPacket pk:
+                    _assetEntity.Add(pk.AssetData);
+                    break;
+#endif
+
+
                 case UpgradeCommandPacket pk:
                     // HQ / Turret                                       
 
@@ -125,7 +138,7 @@ namespace SDefence.Manager
                         case TYPE_COMMAND_KEY.HQ:
                             {
                                 var assetData = _hqMgr.Upgrade(); //AssetUsableData
-                                _asset.Subject(assetData);
+                                _assetEntity.Subject(assetData);
 
                                 // AddStatisticsData
                                 _statistics.AddStatisticsData<UpgradeHQStatisticsData>();
@@ -135,7 +148,7 @@ namespace SDefence.Manager
                         case TYPE_COMMAND_KEY.Turret:
                             {
                                 var assetData = _turretMgr.Upgrade(pk.ParentIndex, pk.Index);
-                                _asset.Subject(assetData);
+                                _assetEntity.Subject(assetData);
 
                                 // AddStatisticsData
                                 _statistics.AddStatisticsData<UpgradeTurretStatisticsData>();
@@ -148,26 +161,53 @@ namespace SDefence.Manager
                 case OpenTechCommandPacket pk:
                     // HQ / Turret
                     //OpenTechEntityPacket
+                    //lastCommandPacket
+                    switch (pk.TypeCmdKey)
+                    {
+                        case TYPE_COMMAND_KEY.HQ:
+                            _hqMgr.OnOpenTechCommandPacketEvent();
+                            break;                            
+                        case TYPE_COMMAND_KEY.Turret:
+                            _turretMgr.OnOpenTechCommandPacketEvent(pk.ParentIndex, pk.Index);
+                            break;
+                    }
+                    _lastCommandPacket = pk;
                     break;
                 case UpTechCommandPacket pk:
                     // HQ / Turret
-
-
-
                     // AddStatisticsData
                     switch (pk.TypeCmdKey)
                     {
                         case TYPE_COMMAND_KEY.HQ:
+                            //Asset
+                            if (_hqMgr.UpTech(pk.Key))
                             {
-                                //Asset
+                                _assetEntity.Subject(pk.AssetUsableData);
                                 _statistics.AddStatisticsData<UpTechHQStatisticsData>();
                             }
-                            break;
-                        case TYPE_COMMAND_KEY.Turret:
+#if UNITY_EDITOR
+                            else
                             {
-                                //Asset
+                                UnityEngine.Debug.LogWarning($"{pk.Key} UpTech 실패");
+                            }
+#endif
+                            break;
+
+                            //Turret Orbit Expand
+                            //_turretMgr.ExpandOrbit();
+                        case TYPE_COMMAND_KEY.Turret:
+                            if (_turretMgr.UpTech(pk.ParentIndex, pk.Index, pk.Key))
+                            {
+                                _assetEntity.Subject(pk.AssetUsableData);
                                 _statistics.AddStatisticsData<UpTechTurretStatisticsData>();
                             }
+#if UNITY_EDITOR
+                            else
+                            {
+                                UnityEngine.Debug.LogWarning($"{pk.Key} UpTech 실패");
+                            }
+#endif
+                            _statistics.AddStatisticsData<UpTechTurretStatisticsData>();
                             break;
                     }
                     break;
@@ -191,36 +231,121 @@ namespace SDefence.Manager
                     break;
                 case RefreshCommandPacket pk:
                     // HQ / Turret
+                    switch (pk.TypeCmdKey)
+                    {
+                        case TYPE_COMMAND_KEY.HQ:
+                            _hqMgr.Refresh();
+                            break;
+                        case TYPE_COMMAND_KEY.Turret:
+                            _turretMgr.Refresh(pk.ParentIndex);
+                            break;
+                    }
+                    //기억
+                    _lastCommandPacket = pk;
                     break;
-
-
+                case ClosedUICommandPacket pk:
+                    _lastCommandPacket = null;
+                    break;
                 //Battle
                 case RetryCommandPacket pk:
-                    _asset.Add(pk.AssetEntity);
+                    _assetEntity.Add(pk.AssetEntity);
                     break;
                 case ToLobbyCommandPacket pk:
                     //pk.AssetEntity
-                    _asset.Add(pk.AssetEntity);
+                    _assetEntity.Add(pk.AssetEntity);
                     //Asset
                     break;
                 case AdbToLobbyCommandPacket pk:
-                    _asset.Add(pk.AssetEntity);
-                    _asset.Add(pk.AssetEntity);
+                    _assetEntity.Add(pk.AssetEntity);
+                    _assetEntity.Add(pk.AssetEntity);
                     //Asset * 2
                     break;
                 case NextLevelCommandPacket pk:
-                    _asset.Add(pk.AssetEntity);
+                    _assetEntity.Add(pk.AssetEntity);
                     //Asset
                     break;
             }
         }
 
+        private void OnAssetEntityPacketEvent(AssetUsableEntity assetEntity)
+        {
+            var packet = new AssetEntityPacket();
+            packet.Entity = assetEntity;
+            OnEntityPacketEvent(packet);
+        }
+
         #region ##### Listener #####
 
-        private System.Action<IEntityPacket> _packetEvent;
-        public void AddOnEntityPacketListener(System.Action<IEntityPacket> act) => _packetEvent += act;
-        public void RemoveOnRefreshEntityPacketListener(System.Action<IEntityPacket> act) => _packetEvent -= act;
-        private void OnEntityPacketEvent(IEntityPacket packet) => _packetEvent?.Invoke(packet);
+        private System.Action<IEntityPacket> _entityEvent;
+        public void AddOnEntityPacketListener(System.Action<IEntityPacket> act) => _entityEvent += act;
+        public void RemoveOnRefreshEntityPacketListener(System.Action<IEntityPacket> act) => _entityEvent -= act;
+        private void OnEntityPacketEvent(IEntityPacket packet)
+        {
+            switch (packet)
+            {
+                case AssetEntityPacket pk:
+                    if(_lastCommandPacket != null)
+                    {
+                        switch (_lastCommandPacket)
+                        {
+                            //AssetEntityPacket 진행시 RefreshCommandPacket의 기억한 값과 같이 출력
+                            case RefreshCommandPacket refPacket:
+                                switch (refPacket.TypeCmdKey)
+                                {
+                                    case TYPE_COMMAND_KEY.HQ:
+                                        _hqMgr.Refresh();
+                                        break;
+                                    case TYPE_COMMAND_KEY.Turret:
+                                        _turretMgr.Refresh(refPacket.ParentIndex);
+                                        break;
+                                }
+                                break;
+                            case OpenTechCommandPacket openTechPacket:
+                                switch (openTechPacket.TypeCmdKey)
+                                {
+                                    case TYPE_COMMAND_KEY.HQ:
+                                        _hqMgr.OnOpenTechCommandPacketEvent();
+                                        break;
+                                    case TYPE_COMMAND_KEY.Turret:
+                                        _turretMgr.OnOpenTechCommandPacketEvent(openTechPacket.ParentIndex, openTechPacket.Index);
+                                        break;
+                                }
+                                break;
+                        }
+                    }
+                    //없으면 Asset만 진행
+                    break;
+                case HQEntityPacket pk:
+                    if (!pk.IsActiveUpTech)
+                    {
+                        var assetData = pk.Entity.GetUpgradeData();
+                        pk.IsActiveUpgrade = (_assetEntity.Compare(assetData) <= 0);
+                    }
+                    break;
+                case TurretArrayEntityPacket pk:
+                    for(int i = 0; i < pk.packets.Length; i++)
+                    {
+                        OnEntityPacketEvent(pk.packets[i]);
+                    }
+                    break;
+                case TurretEntityPacket pk:
+                    if (!pk.IsActiveUpTech)
+                    {
+                        var assetData = pk.Entity.GetUpgradeData();
+                        pk.IsActiveUpgrade = (_assetEntity.Compare(assetData) <= 0);
+                    }
+                    break;
+                case OpenTechEntityPacket pk:
+                    for(int i = 0; i < pk.Elements.Length; i++)
+                    {
+                        var element = pk.Elements[i];
+                        element.IsActiveTech = (_assetEntity.Compare(element.Element.GetUsableData()) <= 0);
+                        pk.Elements[i] = element;
+                    }
+                    break;
+            }
+            _entityEvent?.Invoke(packet);
+        }
         #endregion
 
 

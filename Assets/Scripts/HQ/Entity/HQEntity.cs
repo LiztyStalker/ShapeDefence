@@ -26,6 +26,7 @@ namespace SDefence.HQ.Entity
 
         private PerkUsableEntity _perkEntity;
         private UpgradeData _upgradeData;
+        private int _techLevel;
 
         #endregion
 
@@ -52,7 +53,7 @@ namespace SDefence.HQ.Entity
 
         public string GraphicObjectKey => _data.GraphicObjectKey;
 
-        public int TechLevel => 0;
+        public int TechLevel => _techLevel;
 
         public int UpgradeValue => _upgradeData.GetValue();
 
@@ -73,6 +74,7 @@ namespace SDefence.HQ.Entity
         {
             SetData(data);
             _durableEntity.Set(_data.DurableRawDataArray, _upgradeData.GetValue());
+            _techLevel = 1;
         }
 
         public void CleanUp()
@@ -115,6 +117,8 @@ namespace SDefence.HQ.Entity
 #endif
         public bool IsMaxUpgrade() => _upgradeData.GetValue() == _data.MaxUpgradeCount;
 
+        public bool IsMaxUpgradeAndTech() => IsMaxUpgrade() && _data.TechRawData.IsEmpty();
+
         public void ClearUpgrade()
         {
             _upgradeData.CleanUp();
@@ -128,6 +132,7 @@ namespace SDefence.HQ.Entity
         {
             SetData(data);
             ClearUpgrade();
+            _techLevel++;
         }
 
         public DurableBattleEntity GetDurableBattleEntity() => _durableEntity.CreateDurableBattleEntity();
@@ -165,7 +170,6 @@ namespace SDefence.HQ.Entity
 
             return _recoveryData;
         }
-
 
 
         #region ##### Savable #####

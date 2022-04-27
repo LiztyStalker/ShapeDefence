@@ -10,7 +10,7 @@ namespace SDefence.Asset.Entity
         private Dictionary<string, IAssetUsableData> _dic;
         //Key
         //Neutral / AssetUsableData
-        //Start / AssetUsableData
+        //Star / AssetUsableData
 
         //Value
         //IAssetUsableData
@@ -35,7 +35,6 @@ namespace SDefence.Asset.Entity
 
         public bool HasKey(string key) => _dic.ContainsKey(key);
         private string GetKey(IAssetUsableData uData) => uData.GetType().Name.Replace("AssetUsableData", "");
-
         private string GetKey<T>() => typeof(T).Name.Replace("AssetUsableData", "");
 
         public string GetValue(string key)
@@ -66,6 +65,11 @@ namespace SDefence.Asset.Entity
         }
 
 
+        public void Refresh()
+        {
+            OnAssetEntityEvent();
+        }
+
         public void Add(AssetUsableEntity assetEntity)
         {
             foreach(var value in assetEntity._dic.Values)
@@ -85,6 +89,7 @@ namespace SDefence.Asset.Entity
             {
                 _dic[key].Add(uData);
             }
+            OnAssetEntityEvent();
         }
 
         public void Subject(IAssetUsableData uData)
@@ -96,6 +101,7 @@ namespace SDefence.Asset.Entity
                 _dic[key].Subject(uData);
             }
             _dic[key].Subject(uData);
+            OnAssetEntityEvent();
         }
 
         public void Set(IAssetUsableData uData)
@@ -109,6 +115,7 @@ namespace SDefence.Asset.Entity
             {
                 _dic[key] = uData;
             }
+            OnAssetEntityEvent();
         }
               
 
@@ -121,6 +128,24 @@ namespace SDefence.Asset.Entity
             }
             return false;
         }
+
+        public int Compare(IAssetUsableData data)
+        {
+            var key = GetKey(data);
+            if (_dic.ContainsKey(key))
+            {
+                return _dic[key].Compare(data);
+            }
+            return 1;
+        }
+
+        #region ##### Listener #####
+        private System.Action<AssetUsableEntity> _entityEvent;
+
+        public void SetOnAssetEntityListener(System.Action<AssetUsableEntity> act) => _entityEvent = act;
+
+        private void OnAssetEntityEvent() => _entityEvent?.Invoke(this);
+        #endregion
 
 
         #region ##### Savable #####

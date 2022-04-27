@@ -4,6 +4,8 @@ namespace SDefence.HQ
     using Packet;
     using Asset;
     using Utility.IO;
+    using Storage;
+    using UnityEngine;
 
     public class HQManager : ISavable
     {
@@ -13,10 +15,16 @@ namespace SDefence.HQ
         public void Initialize()
         {
             _entity = HQEntity.Create();
+            var data = DataStorage.Instance.GetDataOrNull<ScriptableObject>("HQ1", "HQData");
             //기본 HQData 가져오기
-            _entity.Initialize(HQData.Create());
+            if (data != null) _entity.Initialize(data as HQData);
+#if UNITY_EDITOR
+            else _entity.Initialize(HQData.Create());
+#else
+            else Debug.LogError("HQ를 찾을 수 없음");
+#endif
         }
-        
+
         public void CleanUp()
         {
             _entity.ClearUpgrade();
@@ -30,9 +38,22 @@ namespace SDefence.HQ
             return assetData;
         }
 
+        public bool UpTech(string key)
+        {
+            var data = (HQData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(key, "HQData");
+            Debug.Log(data);
+            if (data != null)
+            {
+                UpTech(data);
+                return true;
+            }
+            return false;
+        }
+
         public void UpTech(HQData data)
         {
             _entity.UpTech(data);
+            OnUpTechEntityPacketEvent();
             Refresh();
         }
 
@@ -41,10 +62,6 @@ namespace SDefence.HQ
             OnEntityPacketEvent();
         }
 
-        public void OnCommandPacketEvent(HQCommandPacket packet)
-        {
-            if (packet.IsUpgrade) Upgrade();
-        }
 
 
         #region ##### Listener #####
@@ -56,7 +73,31 @@ namespace SDefence.HQ
         {
             var packet = new HQEntityPacket();
             packet.Entity = _entity;
+            packet.IsActiveUpTech = !_entity.TechRawData.IsEmpty() && _entity.IsMaxUpgrade();
             _entityEvent?.Invoke(packet);
+        }
+
+        private void OnUpTechEntityPacketEvent()
+        {
+            var packet = new UpTechEntityPacket();            
+            packet.PastEntity = _entity; //예전 Entity 데이터 필요
+            packet.NowEntity = _entity;
+            _entityEvent?.Invoke(packet);
+        }
+
+        public void OnOpenTechCommandPacketEvent()
+        {
+            var techPacket = new OpenTechEntityPacket();
+            var elements = _entity.TechRawData.TechRawElements;
+
+            techPacket.Elements = new TechPacketElement[elements.Length];
+            for (int i = 0; i < techPacket.Elements.Length; i++)
+            {
+                var element = new TechPacketElement() { Element = elements[i], IsActiveTech = false };
+                techPacket.Elements[i] = element;
+            }
+
+            _entityEvent?.Invoke(techPacket);
         }
 
 

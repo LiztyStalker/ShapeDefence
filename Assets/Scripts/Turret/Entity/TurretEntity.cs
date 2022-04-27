@@ -30,6 +30,8 @@ namespace SDefence.Turret.Entity
 
         public int _orbitIndex;
 
+        public int _techLevel;
+
         #region ##### Nullable Data #####
 
         private IRecoveryUsableData _recoveryData;
@@ -60,6 +62,8 @@ namespace SDefence.Turret.Entity
 
         public int OrbitIndex => _orbitIndex;
 
+        public int TechLevel => _techLevel;
+
         public string BulletKey => _data.BulletDataKey;
 
         public TechRawData TechRawData => _data.TechRawData;
@@ -77,6 +81,7 @@ namespace SDefence.Turret.Entity
             _orbitIndex = orbitIndex;
             SetData(data);
             _durableEntity.Set(_data.DurableRawDataArray, _upgradeData.GetValue());
+            _techLevel = 1;
         }
 
         public void CleanUp()
@@ -103,6 +108,8 @@ namespace SDefence.Turret.Entity
             _durableEntity.Set(_data.DurableRawDataArray, _upgradeData.GetValue());
         }
         public bool IsMaxUpgrade() => _upgradeData.GetValue() == _data.MaxUpgradeCount;
+
+        public bool IsMaxUpgradeAndTech() => IsMaxUpgrade() && _data.TechRawData.IsEmpty();
 
         public void ClearUpgrade()
         {
@@ -132,6 +139,7 @@ namespace SDefence.Turret.Entity
         {
             SetData(data);
             ClearUpgrade();
+            _techLevel++;
         }
 
         public DurableBattleEntity GetDurableBattleEntity() => _durableEntity.CreateDurableBattleEntity();
