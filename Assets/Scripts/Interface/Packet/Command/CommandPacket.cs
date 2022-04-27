@@ -14,6 +14,12 @@ namespace SDefence.Packet
         Turret
     }
 
+#if UNITY_EDITOR
+    public class TestAssetCommandPacket : ICommandPacket
+    {
+        public IAssetUsableData AssetData;
+    }
+#endif
 
     public class NextLevelCommandPacket : ICommandPacket 
     {
@@ -81,6 +87,7 @@ namespace SDefence.Packet
         public int ParentIndex;
         public int Index;
     }
+    public class ClosedUICommandPacket : ICommandPacket { }
     public class OpenExpandCommandPacket : ICommandPacket { }
     public class ExpandCommandPacket : ICommandPacket { }
 
@@ -100,5 +107,6 @@ namespace SDefence.Packet
     {
         public string Category;
     }
+
 
 }
