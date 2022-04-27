@@ -186,6 +186,8 @@ namespace SDefence.Tech
 
         public void ClearData() => _techRawElements = null;
 
+        public bool IsEmpty() => _techRawElements == null || _techRawElements.Length == 0;
+
         public TechRawData Clone()
         {
             var data = new TechRawData();
