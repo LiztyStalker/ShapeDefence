@@ -60,6 +60,10 @@ namespace SDefence.UI
                         {
                             _dic[key].SetText(entity.GetValue(key));
                         }
+                        else
+                        {
+                            _dic[key].SetText("0");
+                        }
                     }
                 }
                 catch
