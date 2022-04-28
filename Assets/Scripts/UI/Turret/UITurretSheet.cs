@@ -53,6 +53,7 @@ namespace SDefence.UI
 
         private void SetTurretCountText(int turretCount, int capacity)
         {
+            //Translate
             _turretCountText.text = $"포탑 가용 수 : {turretCount} / {capacity}";
         }
 
@@ -60,24 +61,24 @@ namespace SDefence.UI
         {
             switch (packet)
             {
-                //TurretOrbitEntityPacket - 포탑 가용 수 출력
                 case TurretEntityPacket pk:
                     _list[pk.Index].OnEntityPacketEvent(pk);
                     break;
                 case TurretArrayEntityPacket pk:
                     Clear();
                     var packets = pk.packets;
-                    for(int i = 0; i < packets.Length; i++)
+                    for (int i = 0; i < packets.Length; i++)
                     {
                         if(i >= _list.Count)
                         {
-                            var block = Create();
-                            block.Hide();
+                            CreateBlock();
                         }
-                        _list[i].OnEntityPacketEvent(packets[i]);
-                        _list[i].Show();
+                        var block = _list[i];
+                        block.OnEntityPacketEvent(packets[i]);
+                        block.Show();
                     }
 
+                    _uiExpand.SetIndex(pk.OrbitIndex);
                     _uiExpand.SetActive(pk.IsExpand);
                     _uiExpand.transform.SetAsLastSibling();
 
@@ -96,7 +97,7 @@ namespace SDefence.UI
             }
         }
 
-        private UITurretBlock Create()
+        private UITurretBlock CreateBlock()
         {
             var block = Instantiate(_uiBlock);
             block.name = $"UI@TurretBlock{_list.Count}";
@@ -112,6 +113,7 @@ namespace SDefence.UI
         private System.Action<ICommandPacket> _cmdEvent;
         public void SetOnCommandPacketListener(System.Action<ICommandPacket> act) => _cmdEvent = act;
         private void OnCommandPacketEvent(ICommandPacket pk) => _cmdEvent?.Invoke(pk);
+
 
         #endregion
 

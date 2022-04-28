@@ -102,12 +102,12 @@ namespace SDefence.UI
                         _mainTurret.Show();
                         _mainTurret.OnEntityPacketEvent(packet);
                     }
-                    else
-                    {
-                        _mainTurret.Hide();
-                        _orbitTurret.Show();
-                        _orbitTurret.OnEntityPacketEvent(packet);
-                    }
+                    //else
+                    //{
+                    //    _mainTurret.Hide();
+                    //    _orbitTurret.Show();
+                    //    _orbitTurret.OnEntityPacketEvent(packet);
+                    //}
 
                     _OrbitIndex = pk.OrbitIndex;
 

@@ -8,6 +8,8 @@ namespace SDefence.UI
         [SerializeField]
         private UIAssetButton _uiExpandBtn;
 
+        private int _index;
+
         private void Awake()
         {
             _uiExpandBtn.onClick.AddListener(OnCommandPacketEvent);
@@ -18,10 +20,8 @@ namespace SDefence.UI
             _uiExpandBtn.onClick.RemoveListener(OnCommandPacketEvent);
         }
 
-        public void SetActive(bool isActive)
-        {
-            gameObject.SetActive(isActive);
-        }
+        public void SetActive(bool isActive) => gameObject.SetActive(isActive);
+        public void SetIndex(int index) => _index = index;
 
         #region ##### Listener #####
 
@@ -31,6 +31,7 @@ namespace SDefence.UI
         private void OnCommandPacketEvent()
         {
             var pk = new OpenExpandCommandPacket();
+            pk.OrbitIndex = _index;
             _cmdEvent?.Invoke(pk);
         }
         #endregion
