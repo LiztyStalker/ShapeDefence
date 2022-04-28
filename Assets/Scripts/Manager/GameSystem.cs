@@ -223,10 +223,11 @@ namespace SDefence.Manager
                 case OpenDisassembleCommandPacket pk:
                     // Turret
                     //OpenDiassembleEntityPacket
+                    _turretMgr.OnOpenDisassembleTurretEntityPacket(pk.ParentIndex, pk.Index);
                     break;
                 case DisassembleCommandPacket pk:
                     // Turret
-
+                    _turretMgr.OnDisassembleTurretEntityPacket(pk.ParentIndex, pk.Index);
                     //AddStatisticsData - Turret
                     //Asset
                     _statistics.AddStatisticsData<DisassembleTurretStatisticsData>();

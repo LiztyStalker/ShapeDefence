@@ -141,9 +141,8 @@ namespace SDefence.Turret
             while(_orbitEntity.Count < orbitCount)
             {
                 _orbitEntity.ExpandOrbit(_orbitEntity.Count * 2);
-                //ExpandTurret(_orbitEntity.Count - 1);
-                ExpandOrbit(_orbitEntity.Count - 1);
-                //포탑 제공 미제공?
+                ExpandTurret(_orbitEntity.Count - 1); //포탑 제공
+                //ExpandOrbit(_orbitEntity.Count - 1); //포탑 미제공
             }
             OnOrbitEntityPacketEvent();
         }
@@ -214,6 +213,27 @@ namespace SDefence.Turret
             packet.OrbitIndex = orbitIndex;
             packet.AssetData = AssetRawData.Create().GetUsableData();
             _entityEvent?.Invoke(packet);
+        }
+
+        public void OnOpenDisassembleTurretEntityPacket(int orbitIndex, int index)
+        {
+            var packet = new OpenDisassembleEntityPacket();
+            //Asset
+            packet.Entity = _dic[orbitIndex][index];
+            _entityEvent?.Invoke(packet);
+
+        }
+
+        public void OnDisassembleTurretEntityPacket(int orbitIndex, int index)
+        {
+            _dic[orbitIndex][index].Initialize(GetDefaultData(), orbitIndex);
+
+            var packet = new DisassembleEntityPacket();
+            packet.NowEntity = _dic[orbitIndex][index];
+            packet.PastEntity = _dic[orbitIndex][index];
+            _entityEvent?.Invoke(packet);
+
+            OnEntityPacketEvent(orbitIndex, index, _dic[orbitIndex][index]);
         }
 
 
