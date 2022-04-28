@@ -1,7 +1,9 @@
 namespace SDefence.UI
 {
-    using SDefence.Entity;
-    using SDefence.Packet;
+    using Asset;
+    using Entity;
+    using Packet;
+    using Asset.Entity;
     using UnityEngine;
 
     public class UIGamePopup : MonoBehaviour, IBattlePacketUser, IEntityPacketUser
@@ -78,16 +80,18 @@ namespace SDefence.UI
             OnClosedEvent();
         }
 
-        public void ShowClearPopup()
+        public void ShowClearPopup(AssetUsableEntity assetEntity)
         {
             Show();
             _uiClearPopup.Show();
+            _uiClearPopup.SetData(assetEntity);
         }
 
-        public void ShowDefeatPopup()
+        public void ShowDefeatPopup(AssetUsableEntity assetEntity)
         {
             Show();
             _uiDefeatPopup.Show();
+            _uiDefeatPopup.SetData(assetEntity);
         }
 
         private void ShowTechPopup(TechPacketElement[] elements)
@@ -108,10 +112,10 @@ namespace SDefence.UI
             _uiRewardOfflinePopup.Show();
         }
 
-        public void ShowAssetPopup(System.Action applyCallback)
+        private void ShowAssetPopup(IAssetUsableData assetData, System.Action applyCallback)
         {
             Show();
-            _uiAssetPopup.Show(applyCallback);
+            _uiAssetPopup.Show(assetData, applyCallback);
         }
 
 
@@ -136,10 +140,10 @@ namespace SDefence.UI
             switch (packet)
             {
                 case ClearBattlePacket pk:
-                    ShowClearPopup();
+                    ShowClearPopup(pk.AssetEntity);
                     break;
                 case DefeatBattlePacket pk:
-                    ShowDefeatPopup();
+                    ShowDefeatPopup(pk.AssetEntity);
                     break;
             }
         }
@@ -157,6 +161,14 @@ namespace SDefence.UI
                     break;
                 case OpenTechEntityPacket pk:
                     ShowTechPopup(pk.Elements);
+                    break;
+                case OpenExpandTurretEntityPacket pk:
+                    ShowAssetPopup(pk.AssetData, () =>
+                    {
+                        var expandPacket = new ExpandCommandPacket();
+                        expandPacket.OrbitIndex = pk.OrbitIndex;
+                        OnCommandPacketEvent(expandPacket);
+                    });
                     break;
             }
         }

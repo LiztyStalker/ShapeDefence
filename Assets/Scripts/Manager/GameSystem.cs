@@ -76,7 +76,7 @@ namespace SDefence.Manager
                             switch (pk.TypeBattleAction)
                             {
                                 case BattleManager.TYPE_BATTLE_ACTION.Lobby:
-                                    _assetEntity.Add(eActor.RewardAssetUsableData);
+                                    if(pk.IsReward) _assetEntity.Add(eActor.RewardAssetUsableData);
                                     break;
                                 case BattleManager.TYPE_BATTLE_ACTION.Battle:
                                     AddStatisticsData(eActor.TypeEnemyStyle);
@@ -262,8 +262,10 @@ namespace SDefence.Manager
                     //Asset
                     break;
                 case AdbToLobbyCommandPacket pk:
-                    _assetEntity.Add(pk.AssetEntity);
-                    _assetEntity.Add(pk.AssetEntity);
+
+                    //광고 모두 보고 실행되어야 함
+                    //_assetEntity.Add(pk.AssetEntity);
+                    //_assetEntity.Add(pk.AssetEntity);
                     //Asset * 2
                     break;
                 case NextLevelCommandPacket pk:

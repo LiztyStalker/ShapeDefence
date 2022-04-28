@@ -87,6 +87,7 @@ namespace SDefence.UI
             _battleList.Add(_uiBattle);
             _battleList.Add(_uiGamePopup);
             _battleList.Add(_uiLevel);
+            _battleList.Add(_uiAsset);
 
 
             //IEntityPacketUser

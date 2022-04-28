@@ -120,7 +120,7 @@ namespace SDefence.Manager
     {
 
 #if UNITY_EDITOR
-        public static bool IS_LOBBY_GEN = false;
+        public static bool IS_LOBBY_GEN = true;
 #endif
 
         private const float NEXT_WAVE_TIME = 5f;
@@ -218,6 +218,7 @@ namespace SDefence.Manager
             actor.transform.localScale = Vector3.one;
             actor.name = "Actor@Enemy";
             actor.AddOnRetrieveListener(OnRetrieveEnemyActorEvent);
+            actor.SetOnDestroyListener(OnEnemyDestroyBattlePacketEvent);
             actor.AddOnBattlePacketListener(OnBattlePacketEvent);
             actor.AddOnAttackListener(OnAttackEvent);
             actor.Inactivate();
@@ -229,7 +230,14 @@ namespace SDefence.Manager
             _enemyActorList.Remove(actor);
             _enemyPool.RetrieveElement(actor);
             actor.Inactivate();
-            //Debug.Log("Retrieve " + actor.GetInstanceID() + " " + _enemyActorList.Count);
+        }
+
+        private void OnEnemyDestroyBattlePacketEvent(EnemyActor actor, bool isReward)
+        {
+            var packet = new DestroyBattlePacket();
+            packet.Actor = actor;
+            packet.IsReward = isReward;
+            OnBattlePacketEvent(packet);
         }
 
         public void SetBattle()
@@ -269,6 +277,7 @@ namespace SDefence.Manager
             //PlayBattle Event 보내기
             OnPlayBattlePacketEvent(_battleGenEntity.GetBossIconKey(), _levelWaveData);
             OnAssetBattlePacketEvent(_battleAssetEntity);
+            OnLevelWaveBattlePacketEvent();
         }
 
 
@@ -322,6 +331,7 @@ namespace SDefence.Manager
             _battleGenEntity.SetLobby();
 
             //LobbyBattle Event 보내기
+            OnLevelWaveBattlePacketEvent();
         }
 
         public void RunProcess(float deltaTime)
@@ -384,7 +394,7 @@ namespace SDefence.Manager
             _battleGenEntity.SetBattle(_levelWaveData);
 
 
-            OnNextWaveBattlePacketEvent();
+            OnLevelWaveBattlePacketEvent();
             //Debug.Log($"NextWave {_levelWaveData.GetLevel()} / {_levelWaveData.GetWave()}");
         }
 
@@ -503,20 +513,25 @@ namespace SDefence.Manager
                                 {
                                     //HQ이면 게임 패배 이벤트
                                     var pk = new DefeatBattlePacket();
+                                    pk.AssetEntity = _battleAssetEntity;
                                     _battleEvent?.Invoke(pk);
                                 }
                                 break;
                             case EnemyActor actor:
                                 {
-                                    //전투 중 적 처치시 획득 재화
-                                    _battleAssetEntity.Add(actor.RewardAssetUsableData);
-                                    OnAssetBattlePacketEvent(_battleAssetEntity);
+                                    if (destroyBattlePacket.IsReward)
+                                    {
+                                        //전투 중 적 처치시 획득 재화
+                                        _battleAssetEntity.Add(actor.RewardAssetUsableData);
+                                        OnAssetBattlePacketEvent(_battleAssetEntity);
+                                    }
 
                                     //Enemy가 보스이면 게임 승리 이벤트
                                     //또는 적이 없으면 게임 승리 이벤트
                                     if (_enemyActorList.Count == 0 && _levelWaveData.IsLastWave())
                                     {
                                         var pk = new ClearBattlePacket();
+                                        pk.AssetEntity = _battleAssetEntity;
                                         _battleEvent?.Invoke(pk);
                                     }
                                 }
@@ -543,7 +558,7 @@ namespace SDefence.Manager
             _battleEvent?.Invoke(packet);
         }
 
-        private void OnNextWaveBattlePacketEvent()
+        private void OnLevelWaveBattlePacketEvent()
         {
             var packet = new LevelWaveBattlePacket();
             packet.data = _levelWaveData;
@@ -579,6 +594,7 @@ namespace SDefence.Manager
                     break;
                 case ToLobbyCommandPacket pk:
                     //로비 ToLobbyCommandPacket - Battle To Lobby
+                    if(pk.IsClear) _levelWaveData.IncreaseNumber();
                     SetLobby();
                     break;
                 case NextLevelCommandPacket pk:

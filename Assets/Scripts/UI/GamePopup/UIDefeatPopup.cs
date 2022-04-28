@@ -1,6 +1,7 @@
 namespace SDefence.UI
 {
     using Packet;
+    using Asset.Entity;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -15,6 +16,7 @@ namespace SDefence.UI
         [SerializeField]
         private Button _retryBtn;
 
+        private AssetUsableEntity _assetEntity;
         public void Initialize()
         {
             _toLobbyBtn.onClick.AddListener(OnToLobbyCommandPacketEvent);
@@ -38,8 +40,11 @@ namespace SDefence.UI
             OnClosedEvent();
         }
 
-        public void SetData()
+        public void SetData(AssetUsableEntity assetEntity)
         {
+            _uiAsset.Show();
+            _uiAsset.SetData(assetEntity);
+            _assetEntity = assetEntity;
             //IAssetUsableData
         }
 
@@ -48,15 +53,16 @@ namespace SDefence.UI
         public void SetOnCommandPacketListener(System.Action<ICommandPacket> act) => _cmdEvent = act;
         private void OnToLobbyCommandPacketEvent()
         {
-            //ToLobbyCommandPacket
             var pk = new ToLobbyCommandPacket();
+            pk.AssetEntity = _assetEntity;
+            pk.IsClear = false;
             _cmdEvent?.Invoke(pk);
             Hide();
         }
         private void OnRetryCommandPacketEvent()
         {
-            //AdbToLobbyCommandPacket
             var pk = new RetryCommandPacket();
+            pk.AssetEntity = _assetEntity;
             _cmdEvent?.Invoke(pk);
             Hide();
         }

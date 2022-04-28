@@ -32,6 +32,7 @@ namespace SDefence.Packet
     public class ToLobbyCommandPacket : ICommandPacket 
     {
         public AssetUsableEntity AssetEntity;
+        public bool IsClear;
     }
     public class AdbToLobbyCommandPacket : ICommandPacket 
     {

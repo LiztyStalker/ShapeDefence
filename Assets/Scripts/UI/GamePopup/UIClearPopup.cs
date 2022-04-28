@@ -1,6 +1,7 @@
 namespace SDefence.UI
 {
     using Packet;
+    using Asset.Entity;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -17,6 +18,8 @@ namespace SDefence.UI
 
         [SerializeField]
         private Button _nextLevelBtn;
+
+        private AssetUsableEntity _assetEntity;
 
         public void Initialize()
         {
@@ -43,9 +46,11 @@ namespace SDefence.UI
             OnClosedEvent();
         }
 
-        public void SetData()
+        public void SetData(AssetUsableEntity assetEntity)
         {
-            //IAssetUsableData
+            _uiAsset.Show();
+            _uiAsset.SetData(assetEntity);
+            _assetEntity = assetEntity;
         }
 
         #region ##### Listener #####
@@ -56,6 +61,8 @@ namespace SDefence.UI
         {
             //ToLobbyCommandPacket
             var pk = new ToLobbyCommandPacket();
+            pk.AssetEntity = _assetEntity;
+            pk.IsClear = true;
             _cmdEvent?.Invoke(pk);
             Hide();
         }
@@ -63,6 +70,7 @@ namespace SDefence.UI
         {
             //AdbToLobbyCommandPacket
             var pk = new AdbToLobbyCommandPacket();
+            pk.AssetEntity = _assetEntity;
             _cmdEvent?.Invoke(pk);
             Hide();
         }
@@ -71,6 +79,7 @@ namespace SDefence.UI
         {
             //NextLevelCommandPacket
             var pk = new NextLevelCommandPacket();
+            pk.AssetEntity = _assetEntity;
             _cmdEvent?.Invoke(pk);
             Hide();
         }

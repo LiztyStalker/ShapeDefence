@@ -3,7 +3,7 @@ namespace SDefence.UI
     using Packet;
     using UnityEngine;
 
-    public class UIAsset : MonoBehaviour, IEntityPacketUser
+    public class UIAsset : MonoBehaviour, IBattlePacketUser, IEntityPacketUser
     {
 
         private UIAssetContainer _uiAssetContainer;
@@ -30,9 +30,16 @@ namespace SDefence.UI
             gameObject.SetActive(false);
         }
 
+        //AssetEntityPacket
         public void OnEntityPacketEvent(IEntityPacket packet)
         {
             _uiAssetContainer.OnEntityPacketEvent(packet);
+        }
+
+        //AssetBattlePacket
+        public void OnBattlePacketEvent(IBattlePacket packet)
+        {
+            _uiAssetContainer.OnBattlePacketEvent(packet);
         }
     }
 }

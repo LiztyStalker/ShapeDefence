@@ -20,13 +20,20 @@ namespace SDefence.Packet
         public IActor Actor;
     }
 
-    public class ClearBattlePacket : IBattlePacket { }
-    public class DefeatBattlePacket : IBattlePacket { }
+    public class ClearBattlePacket : IBattlePacket 
+    {
+        public AssetUsableEntity AssetEntity;
+    }
+    public class DefeatBattlePacket : IBattlePacket 
+    {
+        public AssetUsableEntity AssetEntity;
+    }
 
     public class DestroyBattlePacket : IBattlePacket
     {
         public IActor Actor;
         public BattleManager.TYPE_BATTLE_ACTION TypeBattleAction;
+        public bool IsReward;
     }
 
     public class HitBattlePacket : IBattlePacket
