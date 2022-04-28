@@ -17,6 +17,8 @@ namespace SDefence.Data
 
         public void IncreaseNumber(int value = 1) => _value += value;
 
+        public void Retry() => _value -= GetWave();
+
         public bool IsLastWave() => GetWave() == WAVE - 1;
         public int MaxWave() => WAVE;
         public void CleanUp()

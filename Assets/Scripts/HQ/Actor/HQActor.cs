@@ -100,6 +100,12 @@ namespace SDefence.Actor
 
             _durableEntity.Subject(data);
             OnActorBattlePacketEvent();
+
+            if (_durableEntity.IsZero<HealthDurableUsableData>())
+            {
+                //ÆÄ±«µÊ »óÅÂ
+                OnDestroyBattlePacketEvent();
+            }
         }
 
 
@@ -135,6 +141,13 @@ namespace SDefence.Actor
             var packet = new HitBattlePacket();
             packet.NowPosition = transform.position;
             packet.IsShieldHit = isShieldHit;
+            _battleEvent?.Invoke(packet);
+        }
+
+        private void OnDestroyBattlePacketEvent()
+        {
+            var packet = new DestroyBattlePacket();
+            packet.Actor = this;
             _battleEvent?.Invoke(packet);
         }
 

@@ -589,12 +589,14 @@ namespace SDefence.Manager
                     break;
                 case RetryCommandPacket pk:
                     //재도전 RetryCommandPacket
+                    _levelWaveData.Retry();
                     SetBattleGen();
                     SetBattle();
                     break;
                 case ToLobbyCommandPacket pk:
                     //로비 ToLobbyCommandPacket - Battle To Lobby
                     if(pk.IsClear) _levelWaveData.IncreaseNumber();
+                    else _levelWaveData.Retry();
                     SetLobby();
                     break;
                 case NextLevelCommandPacket pk:
@@ -612,7 +614,7 @@ namespace SDefence.Manager
             {
                 if (range < 0.1f)
                 {
-                    Debug.Log(damagable);
+                    //Debug.Log(damagable);
                     if (damagable != null) damagable.SetDamage(attackable.AttackUsableData);
                 }
                 else
