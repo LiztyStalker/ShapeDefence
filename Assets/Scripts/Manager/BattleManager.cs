@@ -23,6 +23,8 @@ namespace SDefence.Manager
     #region ##### Orbit #####
     public class OrbitCase
     {
+        private const float RADIUS_OFFSET = 0.5f;
+
         private List<TurretActor> _list;
 
         private float _radius;
@@ -35,7 +37,7 @@ namespace SDefence.Manager
         private OrbitCase(float radius, bool isRev)
         {
             _list = new List<TurretActor>();
-            _radius = radius;
+            _radius = radius * RADIUS_OFFSET;
             _isRev = isRev;
         }
 
@@ -55,16 +57,16 @@ namespace SDefence.Manager
 
             for (int i = 0; i < _list.Count; i++)
             {
-                SetPosition(_list[i], center, i);
+                SetPosition(_list[i], center, i, deltaTime);
             }
         }
 
-        private void SetPosition(TurretActor actor, Vector2 center, int offset)
+        private void SetPosition(TurretActor actor, Vector2 center, int offset, float deltaTime)
         {
-            var dirX = Mathf.Cos(_nowTime + (_angle * offset) * Mathf.Deg2Rad) * _radius * 0.5f + center.x;
-            var dirY = Mathf.Sin(_nowTime + (_angle * offset) * Mathf.Deg2Rad) * _radius * 0.5f + center.y;
+            var dirX = Mathf.Cos(_nowTime + (_angle * offset) * Mathf.Deg2Rad) * _radius + center.x;
+            var dirY = Mathf.Sin(_nowTime + (_angle * offset) * Mathf.Deg2Rad) * _radius + center.y;
 
-            actor.transform.position = Vector2.Lerp(actor.transform.position, new Vector3(dirX, dirY, 0f), 0.01f);
+            actor.transform.position = Vector2.Lerp(actor.transform.position, new Vector3(dirX, dirY, 0f), deltaTime);
         }
 
         public void Add(TurretActor actor)
@@ -101,14 +103,14 @@ namespace SDefence.Manager
             }           
         }        
 
-        public void AddTurret(int index, TurretActor actor)
+        public void AddTurret(int orbitIndex, TurretActor actor)
         {
-            if (!_dic.ContainsKey(index))
+            if (!_dic.ContainsKey(orbitIndex))
             {
-                _dic.Add(index, OrbitCase.Create((float)index, (index % 2 == 0)));
+                _dic.Add(orbitIndex, OrbitCase.Create((float)orbitIndex, (orbitIndex % 2 == 0)));
             }
 
-            _dic[index].Add(actor);
+            _dic[orbitIndex].Add(actor);
         }
     }
 
@@ -137,7 +139,8 @@ namespace SDefence.Manager
 
         private HQActor _hqActor;
         private OrbitAction _orbitAction;
-        private Dictionary<int, TurretActor> _turretDic;
+        private Dictionary<int, List<TurretActor>> _turretDic;
+        private List<TurretActor> _turretList;
         private List<EnemyActor> _enemyActorList;
 
         private List<AttackActionUsableData> _attackActionList;
@@ -166,7 +169,8 @@ namespace SDefence.Manager
             _gameObject.transform.position = Vector3.zero;
             _gameObject.transform.localScale = Vector3.one;
 
-            _turretDic = new Dictionary<int, TurretActor>();
+            _turretDic = new Dictionary<int, List<TurretActor>>();
+            _turretList = new List<TurretActor>();
 
             _orbitAction = OrbitAction.Create();
 
@@ -240,10 +244,10 @@ namespace SDefence.Manager
             _hqActor.SetDurableBattleEntity();
 
             //Turret 초기화
-            foreach (var value in _turretDic.Values)
+            for(int i = 0; i < _turretList.Count; i++)
             {
-                value.SetInvincible(false);
-                value.Reset();
+                _turretList[i].SetInvincible(false);
+                _turretList[i].Reset();
             }
 
 
@@ -298,10 +302,10 @@ namespace SDefence.Manager
             _hqActor.SetInvincible(true);
 
             //Turret 무적 / 초기화
-            foreach (var value in _turretDic.Values)
+            for (int i = 0; i < _turretList.Count; i++)
             {
-                value.SetInvincible(true);
-                value.Reset();
+                _turretList[i].SetInvincible(true);
+                _turretList[i].Reset();
             }
 
             //Enemy 파괴
@@ -348,9 +352,10 @@ namespace SDefence.Manager
                     break;
             }
 
-            foreach (var value in _turretDic.Values)
+
+            for (int i = 0; i < _turretList.Count; i++)
             {
-                value.RunProcess(deltaTime);
+                _turretList[i].RunProcess(deltaTime);
             }
 
             _orbitAction.RunProcess(deltaTime, _hqActor.transform.position);
@@ -417,25 +422,38 @@ namespace SDefence.Manager
 
                         break;
                     }
-                case TurretEntityPacket trPacket:
+                case TurretArrayEntityPacket pk:
+                    for(int i = 0; i < pk.packets.Length; i++)
                     {
-                        if (!_turretDic.ContainsKey(trPacket.Index))
+                        OnEntityPacketEvent(pk.packets[i]);
+                    }
+                    break;
+                case TurretEntityPacket pk:
+                    {
+                        var orbitIndex = pk.OrbitIndex;
+                        var index = pk.Index;
+                        if (!_turretDic.ContainsKey(orbitIndex))
+                        {
+                            _turretDic.Add(orbitIndex, new List<TurretActor>());
+                        }
+
+                        if (index >= _turretDic[orbitIndex].Count)
                         {
                             var actor = TurretActor.Create();
-                            actor.Activate();
                             actor.AddOnBattlePacketListener(OnBattlePacketEvent);
                             actor.AddOnAttackListener(OnAttackEvent);
                             actor.transform.SetParent(_gameObject.transform);
-                            _turretDic.Add(trPacket.Index, actor);
-
+                            actor.Activate();
+                            _turretDic[orbitIndex].Add(actor);
+                            _turretList.Add(actor);
                         }
 
-                        var trActor = _turretDic[trPacket.Index];
-                        var entity = trPacket.Entity;
+                        var trActor = _turretDic[orbitIndex][index];
+                        var entity = pk.Entity;
                         trActor.SetEntity(entity);
                         trActor.SetDurableBattleEntity();
 
-                        var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey);
+                        var obj = DataStorage.Instance.GetDataOrNull<GameObject>(entity.GraphicObjectKey, "Turret");
                         if (obj != null) trActor.SetGraphicObject(obj);
 
                         _orbitAction.AddTurret(entity.OrbitIndex, trActor);
@@ -600,13 +618,14 @@ namespace SDefence.Manager
                     }
                     else if (attackable is EnemyActor)
                     {
-                        foreach (var value in _turretDic.Values)
+                        for(int i = 0; i < _turretList.Count; i++) 
                         {
-                            if ((TurretActor)damagable != value)
+                            var turret = _turretList[i];
+                            if ((TurretActor)damagable != turret)
                             {
-                                if (Vector2.Distance(value.NowPosition, actor.NowPosition) < range)
+                                if (Vector2.Distance(turret.NowPosition, actor.NowPosition) < range)
                                 {
-                                    value.SetDamage(attackable.AttackUsableData);
+                                    turret.SetDamage(attackable.AttackUsableData);
                                 }
                             }
                         }
