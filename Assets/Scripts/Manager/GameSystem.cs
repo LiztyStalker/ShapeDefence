@@ -8,6 +8,7 @@ namespace SDefence.Manager
     using Utility.IO;
     using Actor;
     using Enemy;
+    using UnityEngine;
 
     public class GameSystem : ISavable
     {
@@ -213,10 +214,11 @@ namespace SDefence.Manager
                     break;
                 case OpenExpandCommandPacket pk:
                     // Turret OpenExpand
-                    //OpenExpandEntityPacket
+                    _turretMgr.OnExpandTurretEntityPacket(pk.OrbitIndex);
                     break;
                 case ExpandCommandPacket pk:
                     // Turret Expand
+                    _turretMgr.ExpandTurret(pk.OrbitIndex);
                     break;
                 case OpenDisassembleCommandPacket pk:
                     // Turret
@@ -229,9 +231,9 @@ namespace SDefence.Manager
                     //Asset
                     _statistics.AddStatisticsData<DisassembleTurretStatisticsData>();
                     break;
-                case TabCommandPacket pk:
-                    _turretMgr.Refresh(pk.OrbitIndex);
-                    break;
+                //case TabCommandPacket pk:
+                //    _turretMgr.Refresh(pk.OrbitIndex);
+                //    break;
                 case RefreshCommandPacket pk:
                     // HQ / Turret
                     switch (pk.TypeCmdKey)
@@ -331,10 +333,16 @@ namespace SDefence.Manager
                 case TurretArrayEntityPacket pk:
                     for(int i = 0; i < pk.packets.Length; i++)
                     {
-                        OnEntityPacketEvent(pk.packets[i]);
+                        //아래와 중첩
+                        if (!pk.packets[i].IsActiveUpTech)
+                        {
+                            var assetData = pk.packets[i].Entity.GetUpgradeData();
+                            pk.packets[i].IsActiveUpgrade = (_assetEntity.Compare(assetData) <= 0);
+                        }
                     }
                     break;
                 case TurretEntityPacket pk:
+                    //위와 중첩
                     if (!pk.IsActiveUpTech)
                     {
                         var assetData = pk.Entity.GetUpgradeData();
@@ -348,6 +356,10 @@ namespace SDefence.Manager
                         element.IsActiveTech = (_assetEntity.Compare(element.Element.GetUsableData()) <= 0);
                         pk.Elements[i] = element;
                     }
+                    break;
+                case ExpandTurretEntityPacket pk:
+                    //Asset 소비
+                    _assetEntity.Subject(pk.AssetData);
                     break;
                     
             }

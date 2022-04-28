@@ -88,15 +88,21 @@ namespace SDefence.Packet
         public int Index;
     }
     public class ClosedUICommandPacket : ICommandPacket { }
-    public class OpenExpandCommandPacket : ICommandPacket { }
-    public class ExpandCommandPacket : ICommandPacket { }
-
-    public class SettingsCommandPacket : ICommandPacket { }
-
-    public class TabCommandPacket : ICommandPacket
+    public class OpenExpandCommandPacket : ICommandPacket 
     {
         public int OrbitIndex;
     }
+    public class ExpandCommandPacket : ICommandPacket 
+    {
+        public int OrbitIndex;
+    }
+
+    public class SettingsCommandPacket : ICommandPacket { }
+
+    //public class TabCommandPacket : ICommandPacket - RefreshCommandPacket으로 대체
+    //{
+    //    public int OrbitIndex;
+    //}
 
     public class HelpCommandPacket : ICommandPacket 
     {

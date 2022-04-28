@@ -30,8 +30,9 @@ namespace SDefence.UI
         public void SetOnCommandPacketListener(System.Action<ICommandPacket> act) => _cmdEvent = act;
         private void OnCommandPacketEvent()
         {
-            var pk = new TabCommandPacket();
-            pk.OrbitIndex = _index;
+            var pk = new RefreshCommandPacket();
+            pk.TypeCmdKey = TYPE_COMMAND_KEY.Turret;
+            pk.ParentIndex = _index;
             _cmdEvent?.Invoke(pk);
         }
         #endregion

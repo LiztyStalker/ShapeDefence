@@ -5,6 +5,8 @@ namespace SDefence.Packet
     using Turret.Entity;
     using Entity;
     using Tech;
+    using Asset;
+
     public struct TechPacketElement
     {
         public TechRawElement Element;
@@ -66,6 +68,18 @@ namespace SDefence.Packet
     {
         public IEntity PastEntity;
         public IEntity NowEntity;
+    }
+
+    public class OpenExpandTurretEntityPacket : IEntityPacket
+    {
+        public int OrbitIndex;
+        public IAssetUsableData AssetData;
+    }
+
+    public class ExpandTurretEntityPacket : IEntityPacket
+    {
+        public int OrbitIndex;
+        public IAssetUsableData AssetData;
     }
 
     public class RewardOfflineEntityPacket : IEntityPacket

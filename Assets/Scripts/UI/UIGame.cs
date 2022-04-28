@@ -254,13 +254,6 @@ namespace SDefence.UI
                     _uiLobby.Hide();
                     _uiBattle.Show();
                     break;
-                case OpenExpandCommandPacket pk:
-                    _uiGamePopup.ShowAssetPopup(() =>
-                    {
-                        var epk = new ExpandCommandPacket();
-                        _cmdEvent?.Invoke(epk);
-                    });
-                    break;
                 case CategoryCommandPacket pk:
                     //Menu Category
                     if (_dic.ContainsKey(pk.Category))
