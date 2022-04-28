@@ -1,6 +1,6 @@
 namespace SDefence.UI
 {
-    using SDefence.Packet;
+    using Packet;
     using UnityEngine;
 
     public class UIBattle : MonoBehaviour, IBattlePacketUser
@@ -24,6 +24,7 @@ namespace SDefence.UI
             _uiLevelWave.Initialize();
             _uiAlarmBoss.Initialize();
             _uiDurableContainer.Initialize();
+            _uiDurableContainer.HideBoss();
         }
 
         public void CleanUp()
@@ -35,7 +36,7 @@ namespace SDefence.UI
 
         public void Show()
         {
-            gameObject.SetActive(true);
+            gameObject.SetActive(true);            
         }
         
         public void Hide()
@@ -51,10 +52,15 @@ namespace SDefence.UI
                     break;
                 case AppearEnemyBattlePacket pk:
                     _uiAlarmBoss.Show(pk.TypeEnemyStyle);
+                    _uiDurableContainer.Show(pk.TypeEnemyStyle);
                     break;
                 case PlayBattlePacket pk:
                     _uiLevelWave.SetData(pk.data.GetWave(), pk.data.MaxWave());
                     _uiLevelWave.SetIcon(pk.BossIcon);
+                    _uiDurableContainer.HideBoss();
+                    break;
+                case ActorBattlePacket pk:
+                    _uiDurableContainer.SetData(pk.Actor);
                     break;
             }
         }

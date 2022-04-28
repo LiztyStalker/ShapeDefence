@@ -85,7 +85,6 @@ namespace SDefence.Actor
         public void SetDurableBattleEntity()
         {
             _durableEntity = _entity.GetDurableBattleEntity();
-            OnBattlePacketEvent();
         }
 
         public string GetDurableValue<T>() where T : IDurableUsableData => _durableEntity.GetValue<T>();
@@ -123,9 +122,8 @@ namespace SDefence.Actor
             if (!_isBroken)
             {
                 _durableEntity.Subject(data);
-                OnBattlePacketEvent();
-
-                Debug.Log(_durableEntity.GetValue<HealthDurableUsableData>() + " " + data.CreateUniversalUsableData().Value);
+                OnActorBattlePacketEvent();
+                //Debug.Log(_durableEntity.GetValue<HealthDurableUsableData>() + " " + data.CreateUniversalUsableData().Value);
 
                 if (_durableEntity.IsZero<HealthDurableUsableData>())
                 {
@@ -181,11 +179,11 @@ namespace SDefence.Actor
         private System.Action<IBattlePacket> _battleEvent;
         public void AddOnBattlePacketListener(System.Action<IBattlePacket> act) => _battleEvent += act;
         public void RemoveOnBattlePacketListener(System.Action<IBattlePacket> act) => _battleEvent -= act;
-        private void OnBattlePacketEvent()
+        private void OnActorBattlePacketEvent()
         {
-            //var packet = new EnemyBattlePacket();
-            //packet.SetData(this);
-            //_battleEvent?.Invoke(packet);
+            var packet = new ActorBattlePacket();
+            packet.Actor = this;
+            _battleEvent?.Invoke(packet);
         }             
 
         private System.Action<string, IAttackable> _attackEvent;

@@ -66,7 +66,7 @@ namespace SDefence.Actor
         public void SetDurableBattleEntity()
         {
             _durableEntity = _entity.GetDurableBattleEntity();
-            OnBattlePacketEvent();
+            OnActorBattlePacketEvent();
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace SDefence.Actor
         {
             //현재 실드만
             _durableEntity.Add(_entity.GetRecoveryUsableData<ShieldRecoveryUsableData>());
-            OnBattlePacketEvent();
+            OnActorBattlePacketEvent();
         }
 
         /// <summary>
@@ -96,8 +96,10 @@ namespace SDefence.Actor
         /// <param name="data"></param>
         public void SetDamage(IAttackUsableData data)
         {
+            OnHitBattlePacketEvent(_durableEntity.GetRate<ShieldDurableUsableData>() > 0);
+
             _durableEntity.Subject(data);
-            OnBattlePacketEvent();
+            OnActorBattlePacketEvent();
         }
 
 
@@ -120,12 +122,22 @@ namespace SDefence.Actor
         private System.Action<IBattlePacket> _battleEvent;
         public void AddOnBattlePacketListener(System.Action<IBattlePacket> act) => _battleEvent += act;
         public void RemoveOnBattlePacketListener(System.Action<IBattlePacket> act) => _battleEvent -= act;
-        private void OnBattlePacketEvent()
+
+        private void OnActorBattlePacketEvent()
         {
-            var packet = new HQBattlePacket();
-            packet.SetData(this);
+            var packet = new ActorBattlePacket();
+            packet.Actor = this;
             _battleEvent?.Invoke(packet);
         }
+
+        private void OnHitBattlePacketEvent(bool isShieldHit)
+        {
+            var packet = new HitBattlePacket();
+            packet.NowPosition = transform.position;
+            packet.IsShieldHit = isShieldHit;
+            _battleEvent?.Invoke(packet);
+        }
+
         #endregion
     }
 }

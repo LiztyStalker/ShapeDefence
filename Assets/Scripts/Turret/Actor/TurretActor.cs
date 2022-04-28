@@ -99,7 +99,7 @@ namespace SDefence.Actor
         {
             //현재 실드만
             _durableEntity.Add(_entity.GetRecoveryUsableData<ShieldRecoveryUsableData>());
-            OnDestroyBattlePacketEvent();
+            OnActorBattlePacketEvent();
             //battleEvent
         }
 
@@ -146,6 +146,8 @@ namespace SDefence.Actor
                     OnHitBattlePacketEvent(_durableEntity.GetRate<ShieldDurableUsableData>() > 0);
 
                     _durableEntity.Subject(data);
+                    OnActorBattlePacketEvent();
+
 
                     if (_durableEntity.IsZero<HealthDurableUsableData>())
                     {
