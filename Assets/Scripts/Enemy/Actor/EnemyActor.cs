@@ -48,7 +48,6 @@ namespace SDefence.Actor
         public void Inactivate() 
         {
             gameObject.SetActive(false);
-            OnDestroyedBattlePacketEvent();
         }
 
         public void ForceRetrieve()
@@ -66,7 +65,6 @@ namespace SDefence.Actor
         public void SetEntity(EnemyEntity entity)
         {
             _entity = entity;
-
             _movementAction = _entity.GetMovementActionUsableData();
         }
 
@@ -135,6 +133,7 @@ namespace SDefence.Actor
                     _isBroken = true;
                     //battleBrokenEvent
                     OnRetrieveEvent();
+                    OnDestroyEvent(true);
                 }
             }
             //battleEvent
@@ -157,6 +156,7 @@ namespace SDefence.Actor
                     }
                     _isBroken = true;
                     OnRetrieveEvent();
+                    OnDestroyEvent(false);
                 }
             }
         }
@@ -186,31 +186,23 @@ namespace SDefence.Actor
             //var packet = new EnemyBattlePacket();
             //packet.SetData(this);
             //_battleEvent?.Invoke(packet);
-        }
-
-        private void OnDestroyedBattlePacketEvent()
-        {
-            var packet = new DestroyBattlePacket();
-            packet.Actor = this;
-            _battleEvent?.Invoke(packet);
-        }
+        }             
 
         private System.Action<string, IAttackable> _attackEvent;
         public void AddOnAttackListener(System.Action<string, IAttackable> act) => _attackEvent += act;
         public void RemoveOnAttackListener(System.Action<string, IAttackable> act) => _attackEvent -= act;
-        private void OnAttackEvent(string bulletKey, IAttackable attackable)
-        {
-            _attackEvent?.Invoke(bulletKey, attackable);
-        }
+        private void OnAttackEvent(string bulletKey, IAttackable attackable) => _attackEvent?.Invoke(bulletKey, attackable);
 
         private System.Action<EnemyActor> _retrieveEvent;
         public void AddOnRetrieveListener(System.Action<EnemyActor> act) => _retrieveEvent += act;
         public void RemoveOnRetrieveListener(System.Action<EnemyActor> act) => _retrieveEvent -= act;
+        private void OnRetrieveEvent() => _retrieveEvent?.Invoke(this);
 
-        private void OnRetrieveEvent()
-        {
-            _retrieveEvent?.Invoke(this);
-        }
+
+        private System.Action<EnemyActor, bool> _destroyEvent;
+        public void SetOnDestroyListener(System.Action<EnemyActor, bool> act) => _destroyEvent = act;
+        private void OnDestroyEvent(bool isReward) => _destroyEvent?.Invoke(this, isReward);
+
 
         #endregion
     }
