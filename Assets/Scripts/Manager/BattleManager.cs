@@ -160,6 +160,8 @@ namespace SDefence.Manager
 
         private TYPE_BATTLE_ACTION _typeBattleAction = TYPE_BATTLE_ACTION.Lobby;
 
+        private bool _isDefeat = false;
+
         public static BattleManager Create() => new BattleManager();
 
         private BattleManager()
@@ -244,6 +246,7 @@ namespace SDefence.Manager
         {
             Debug.Log("Start Battle");
 
+            _isDefeat = false;
             _waveTime = 0f;
             _typeBattleAction = TYPE_BATTLE_ACTION.Battle;
 
@@ -339,17 +342,20 @@ namespace SDefence.Manager
             switch (_typeBattleAction) 
             {
                 case TYPE_BATTLE_ACTION.Battle:
-                    _waveTime += deltaTime;
-                    
-                    _battleGenEntity.RunProcessBattle(deltaTime);
+                    if (!_isDefeat)
+                    {
+                        _waveTime += deltaTime;
 
-                    if (!_levelWaveData.IsLastWave()) {
-                        if (_waveTime > NEXT_WAVE_TIME)
+                        _battleGenEntity.RunProcessBattle(deltaTime);
+
+                        if (!_levelWaveData.IsLastWave())
                         {
-                            NextWave();
+                            if (_waveTime > NEXT_WAVE_TIME)
+                            {
+                                NextWave();
+                            }
                         }
                     }
-
                     break;
                 case TYPE_BATTLE_ACTION.Lobby:
 
@@ -419,7 +425,7 @@ namespace SDefence.Manager
                             _hqActor.Activate();
                             _hqActor.AddOnBattlePacketListener(OnBattlePacketEvent);
                             _hqActor.transform.SetParent(_gameObject.transform);
-                            Debug.Log("HQReady");
+                            //Debug.Log("HQReady");
                         }
 
 
@@ -515,6 +521,8 @@ namespace SDefence.Manager
                                     var pk = new DefeatBattlePacket();
                                     pk.AssetEntity = _battleAssetEntity;
                                     _battleEvent?.Invoke(pk);
+
+                                    _isDefeat = true;
                                 }
                                 break;
                             case EnemyActor actor:
@@ -757,6 +765,7 @@ namespace SDefence.Manager
 #endif
         }
 
+#if UNITY_EDITOR
         private void AppearEnemy()
         {
             var data = EnemyData.Create();
@@ -775,6 +784,7 @@ namespace SDefence.Manager
             actor.Activate();
             actor.SetPosition(AppearPosition());
         }
+#endif
 
         private Vector2 AppearPosition()
         {
