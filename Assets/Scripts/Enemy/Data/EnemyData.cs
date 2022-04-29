@@ -4,11 +4,11 @@ namespace SDefence.Enemy
     using Durable.Raw;
     using Asset.Raw;
     using Utility.ScriptableObjectData;
-#if UNITY_EDITOR
-    using Generator;
     using Durable.Usable;
     using Attack.Raw;
     using Movement.Raw;
+#if UNITY_EDITOR
+    using Generator;
 #endif
 
     public enum TYPE_ENEMY_STYLE

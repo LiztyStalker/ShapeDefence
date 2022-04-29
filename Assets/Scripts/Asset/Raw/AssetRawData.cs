@@ -1,6 +1,7 @@
 namespace SDefence.Asset.Raw {
 
     using UnityEngine;
+    using Usable;
 
     [System.Serializable]
     public class AssetRawData
@@ -63,6 +64,8 @@ namespace SDefence.Asset.Raw {
             {
                 throw new System.Exception($"{_typeData} is not found Type");
             }
+#else
+            return null;
 #endif
         }
 

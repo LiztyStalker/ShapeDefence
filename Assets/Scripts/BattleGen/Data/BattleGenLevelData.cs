@@ -2,7 +2,9 @@ namespace SDefence.BattleGen.Data
 {
     using UnityEngine;
     using Utility.ScriptableObjectData;
+#if UNITY_EDITOR
     using Generator;
+#endif
 
     [System.Serializable]
     public class BattleGenLevelData : ScriptableObjectData

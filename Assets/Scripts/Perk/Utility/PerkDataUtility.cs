@@ -24,6 +24,8 @@ namespace SDefence.Perk
             {
                 throw new System.Exception($"{type} is not found");
             }
+#else
+            return null;
 #endif
         }
     }

@@ -211,7 +211,11 @@ namespace SDefence.Turret
             var packet = new OpenExpandTurretEntityPacket();
             //Turret Orbit And Index
             packet.OrbitIndex = orbitIndex;
+#if UNITY_EDITOR
             packet.AssetData = AssetRawData.Create().GetUsableData();
+#else
+            packet.AssetData = null;
+#endif
             _entityEvent?.Invoke(packet);
         }
 
@@ -305,17 +309,22 @@ namespace SDefence.Turret
             var packet = new ExpandTurretEntityPacket();
             packet.OrbitIndex = orbitIndex;
             //임시 - Turret 확장 값 필요
+
+#if UNITY_EDITOR
             packet.AssetData = AssetRawData.Create().GetUsableData();
+#else
+            packet.AssetData = null;
+#endif
             _entityEvent?.Invoke(packet);
         }
 
 
-        #endregion
+#endregion
 
 
 
 
-        #region ##### Savable #####
+#region ##### Savable #####
         public string SavableKey() => typeof(TurretManager).Name;
 
         public SavableData GetSavableData()
@@ -365,7 +374,7 @@ namespace SDefence.Turret
 
         }
 
-        #endregion
+#endregion
 
     }
 }

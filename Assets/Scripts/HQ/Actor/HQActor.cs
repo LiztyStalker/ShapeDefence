@@ -109,8 +109,6 @@ namespace SDefence.Actor
         }
 
 
-
-#if UNITY_EDITOR
         public static HQActor Create()
         {
             var actor = new GameObject();
@@ -121,7 +119,8 @@ namespace SDefence.Actor
             rigid.gravityScale = 0f;
             return actor.AddComponent<HQActor>();
         }
-#endif
+
+
 
         #region ##### Listener #####
 

@@ -1,4 +1,5 @@
-namespace SDefence.Attack.Raw {
+namespace SDefence.Attack.Raw 
+{
 
     using UnityEngine;
     using Usable;

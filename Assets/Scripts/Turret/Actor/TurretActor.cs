@@ -161,7 +161,6 @@ namespace SDefence.Actor
 
 
 
-#if UNITY_EDITOR
         public static TurretActor Create()
         {
             var actor = new GameObject();
@@ -170,7 +169,6 @@ namespace SDefence.Actor
             col.isTrigger = true;
             return actor.AddComponent<TurretActor>();
         }
-#endif
 
         #region ##### Listener #####
 

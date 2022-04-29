@@ -1,9 +1,8 @@
-namespace SDefence.Movement.Raw {
+namespace SDefence.Movement.Raw 
+{
 
     using UnityEngine;
     using Usable;
-
-
 
     [System.Serializable]
     public class MovementRawData
@@ -155,6 +154,8 @@ namespace SDefence.Movement.Raw {
             {
                 throw new System.Exception($"{_typeMovementAction} is not found Type");
             }
+#else
+            return null;
 #endif
         }
 

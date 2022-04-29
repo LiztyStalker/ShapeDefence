@@ -41,6 +41,8 @@ namespace Utility.IO
             }
 #if UNITY_EDITOR
             throw new System.Exception($"{typeof(T).Name}을 찾을 수 없음");
+#else
+            return default(T);
 #endif
         }
 
@@ -55,6 +57,8 @@ namespace Utility.IO
             }
 #if UNITY_EDITOR
             throw new System.Exception($"{typeof(SavableData).Name}을 찾을 수 없음");
+#else
+            return null;
 #endif
         }
 

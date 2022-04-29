@@ -1,9 +1,11 @@
 namespace SDefence.BattleGen.Data
 {
-    using SDefence.BattleGen.Generator;
     using System.Collections.Generic;
     using UnityEngine;
     using Utility;
+#if UNITY_EDITOR
+    using Generator;
+#endif
 
     [System.Serializable]
     public class BattleGenWaveData : ISheetData

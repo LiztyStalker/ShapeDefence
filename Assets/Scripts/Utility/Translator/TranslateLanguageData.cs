@@ -53,6 +53,8 @@ namespace UtilityManager
             return null;
         }
 
+#if UNITY_EDITOR
+
         public override void AddData(string[] arr)
         {
 
@@ -82,5 +84,6 @@ namespace UtilityManager
             };
             _usableLanguages[0] = data;
         }
+#endif
     }
 }

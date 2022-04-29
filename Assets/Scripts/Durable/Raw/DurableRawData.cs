@@ -55,6 +55,8 @@ namespace SDefence.Durable.Raw {
             {
                 throw new System.Exception($"{_typeData} is not found Type");
             }
+#else
+            return null;
 #endif
         }
 

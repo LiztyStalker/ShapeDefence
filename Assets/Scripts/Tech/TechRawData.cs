@@ -1,52 +1,14 @@
 namespace SDefence.Tech
 {
-    using Tech.Generator;
     using System.Collections.Generic;
     using UnityEngine;
     using Utility;
     using Asset.Raw;
     using SDefence.Asset;
+#if UNITY_EDITOR
+    using Generator;
+#endif
 
-    //public class TechData : ScriptableObjectData
-    //{
-    //    [SerializeField]
-    //    private TechRawData[] _techRawDataArray;
-
-    //    public override void AddData(string[] arr)
-    //    {
-    //        var list = new List<TechRawData>(_techRawDataArray);
-    //        var data = TechRawData.Create();
-    //        data.SetData(
-    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey],
-    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeTechData],
-    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeAssetData],
-    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechAssetValue]
-    //        );
-    //        list.Add(data);
-    //        _techRawDataArray = list.ToArray();
-    //    }
-
-    //    public override bool HasDataArray()
-    //    {
-    //        return true;
-    //    }
-
-    //    public override void SetData(string[] arr)
-    //    {
-    //        Key = arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.Key];
-
-    //        _techRawDataArray = new TechRawData[1];
-    //        var data = TechRawData.Create();
-    //        data.SetData(
-    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey],
-    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeTechData],
-    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TypeAssetData],
-    //            arr[(int)TechDataGenerator.TYPE_SHEET_COLUMNS.TechAssetValue]
-    //        );
-    //        _techRawDataArray[0] = data;
-
-    //    }
-    //}
 
     public interface ITechable
     {
@@ -84,7 +46,9 @@ namespace SDefence.Tech
             _techDataKey = "Test";
             //_typeConditionTech = typeConditionTech;
             //_conditionTechValue = conditionTechValue;
+#if UNITY_EDITOR
             _assetData = AssetRawData.Create();
+#endif
         }
 
         public void SetTypeTechData(string typeTechData)
@@ -99,8 +63,10 @@ namespace SDefence.Tech
             //_typeConditionTech = typeConditionTech;
             //_conditionTechValue = conditionTechValue;
 
+#if UNITY_EDITOR
             _assetData = AssetRawData.Create();
             _assetData.SetData(typeAssetData, techAssetValue, "0", "0");
+#endif
         }
 
         private void SetData(string typeTechData, string techDataKey, AssetRawData assetData)
@@ -109,7 +75,9 @@ namespace SDefence.Tech
             _techDataKey = techDataKey;
             //_typeConditionTech = typeConditionTech;
             //_conditionTechValue = conditionTechValue;
+#if UNITY_EDITOR
             _assetData = assetData.Clone();
+#endif
         }
 
         public IAssetUsableData GetUsableData() => _assetData.GetUsableData();
@@ -131,6 +99,9 @@ namespace SDefence.Tech
         private TechRawElement[] _techRawElements;
 
         public TechRawElement[] TechRawElements => _techRawElements;
+
+        public bool IsEmpty() => _techRawElements == null || _techRawElements.Length == 0;
+
 #if UNITY_EDITOR
 
         public static TechRawData Create(string type) => new TechRawData(type);
@@ -186,7 +157,6 @@ namespace SDefence.Tech
 
         public void ClearData() => _techRawElements = null;
 
-        public bool IsEmpty() => _techRawElements == null || _techRawElements.Length == 0;
 
         public TechRawData Clone()
         {

@@ -27,44 +27,28 @@ namespace Storage
         private Dictionary<string, Dictionary<string, Object>> _dataDic = new Dictionary<string, Dictionary<string, Object>>();
         private DataStorage()
         {
+#if UNITY_EDITOR
             InitializeDatasFromAssetDatabaseDirectory<Sprite>("Images");
             InitializeDatasFromAssetDatabaseDirectory<GameObject>("Prefabs");
             InitializeDatasFromAssetDatabaseDirectory<ScriptableObject>("Data");
             InitializeDatasFromAssetDatabaseDirectory<AudioClip>("Sounds");
             InitializeDatasFromAssetDatabaseDirectory<AudioMixer>("AudioMixer");
-            //#if UNITY_EDITOR
-            //            InitializeDatasFromAssetDatabase<Sprite>("Images/Icons/Assets");
-            //            InitializeDatasFromAssetDatabase<SkeletonDataAsset>("Data/Spine");
-            //            InitializeDatasFromAssetDatabase<BulletData>("Data/Bullets");
-            //            InitializeDatasFromAssetDatabase<EnemyData>("Data/Enemies");
-            //            InitializeDatasFromAssetDatabase<UnitData>("Data/Units");
-            //            InitializeDatasFromAssetDatabase<MineData>("Data/Mines");
-            //            InitializeDatasFromAssetDatabase<SmithyData>("Data/Smithy");
-            //            InitializeDatasFromAssetDatabase<VillageData>("Data/Villages");
-            //            InitializeDatasFromAssetDatabase<QuestData>("Data/Quests/Daily");
-            //            InitializeDatasFromAssetDatabase<QuestData>("Data/Quests/Weekly");
-            //            InitializeDatasFromAssetDatabase<QuestData>("Data/Quests/Goal");
-            //            InitializeDatasFromAssetDatabase<QuestData>("Data/Quests/Challenge");
-            //            InitializeDatasFromAssetDatabase<GameObject>("Prefabs/UI");
-            //            InitializeDatasFromAssetDatabase<TextAsset>("TextAssets");
-            //            InitializeDatasFromAssetDatabase<GameLanguageData>("Data/GameLanguage");
-            //#else
-            //            InitializeDataFromAssetBundle<Sprite>("sprites", null);
-            //            InitializeDataFromAssetBundle<SkeletonDataAsset>("spines", null);
-            //            InitializeDataFromAssetBundle<BulletData>("bullets", "data");
-            //            InitializeDataFromAssetBundle<EnemyData>("enemies", "data");
-            //            InitializeDataFromAssetBundle<UnitData>("units", "data");
-            //            InitializeDataFromAssetBundle<MineData>("mines", "data");
-            //            InitializeDataFromAssetBundle<SmithyData>("smithies", "data");
-            //            InitializeDataFromAssetBundle<VillageData>("villages", "data");
-            //            InitializeDataFromAssetBundle<QuestData>("daily", "data/quests");
-            //            InitializeDataFromAssetBundle<QuestData>("weekly", "data/quests");
-            //            InitializeDataFromAssetBundle<QuestData>("goal", "data/quests");
-            //            InitializeDataFromAssetBundle<QuestData>("challenge", "data/quests");
-            //            InitializeDataFromAssetBundle<GameObject>("ui", null);
-            //            InitializeDataFromAssetBundle<TextAsset>("textassets", null);
-            //            InitializeDataFromAssetBundle<GameLanguageData>("language", "data");
-            //#endif
+
+#else
+
+            InitializeDataFromAssetBundle<Sprite>("sprite", null);
+            InitializeDataFromAssetBundle<GameObject>("prefab", null);
+            InitializeDataFromAssetBundle<ScriptableObject>("battlegen", "data");
+            InitializeDataFromAssetBundle<ScriptableObject>("bullet", "data");
+            InitializeDataFromAssetBundle<ScriptableObject>("enemy", "data");
+            InitializeDataFromAssetBundle<ScriptableObject>("hq", "data");
+            InitializeDataFromAssetBundle<ScriptableObject>("turret", "data");
+            InitializeDataFromAssetBundle<ScriptableObject>("language", null);
+            InitializeDataFromAssetBundle<AudioClip>("bgm", "sound");
+            InitializeDataFromAssetBundle<AudioClip>("sfx", "sound");
+            InitializeDataFromAssetBundle<AudioMixer>("audiomixer", null);
+
+#endif            
         }
 
 
@@ -176,7 +160,7 @@ namespace Storage
         private void InitializeDataFromAssetBundle<T>(string path, string directory = null) where T : Object
         {
             string bundlePath = path;
-            if (directory != null)
+            if (!string.IsNullOrEmpty(directory))
             {
                 bundlePath = Path.Combine(directory, path);
             }
