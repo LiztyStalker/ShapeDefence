@@ -4,9 +4,15 @@ namespace UnityEngine.Advertisements
     public class UnityAdvertisement : IUnityAdsLoadListener, IUnityAdsShowListener, IUnityAdsInitializationListener
     {
 #if UNITY_ANDROID
-        private string _adsID = "4731229";
+        private string _gameID = "4731229";
 #elif UNITY_IOS
-        private string _adsID = "4731228";
+        private string _gameID = "4731228";
+#endif
+
+#if UNITY_ANDROID
+        private string _adsID = "Rewarded_Android";
+#elif UNITY_IOS
+        private string _adsID = "Rewarded_iOS";
 #endif
 
         private static UnityAdvertisement _instance;
@@ -25,8 +31,16 @@ namespace UnityEngine.Advertisements
         private UnityAdvertisement()
         {
 #if UNITY_EDITOR
-            Advertisement.Initialize(_adsID, true, false, this);
+            if(!Advertisement.isInitialized)
+                Advertisement.Initialize(_gameID, true, true, this);
+           
 #endif
+            LoadAds();
+        }
+
+        public static void Dispose() 
+        {
+            _instance = null;
         }
 
         public void OnInitializationComplete()
@@ -43,17 +57,30 @@ namespace UnityEngine.Advertisements
 #endif
         }
 
+        public bool IsInitialized => Advertisement.isInitialized;
+        public void LoadAds()
+        {
+            Advertisement.Load(_adsID, this);
+        }
+
         public void ShowAds()
         {
-            OnAdsActivateEvent(false);
-            Advertisement.Show(_adsID, this);
+            if (Advertisement.IsReady())
+            {
+                OnAdsActivateEvent(false);
+                Advertisement.Show(_adsID, this);
+            }
+            else
+            {
+                //광고 준비 되지 않음
+                OnAdsRewardedEvent(false);
+            }
         }
 
         public void OnUnityAdsAdLoaded(string placementId)
         {
             if(placementId == _adsID)
             {
-                //showAd
                 OnAdsActivateEvent(true);
             }
             else
@@ -64,26 +91,36 @@ namespace UnityEngine.Advertisements
 
         public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
         {
+#if UNITY_EDITOR
             Debug.Log($"Error loading Ad Unit {placementId}: {error.ToString()} - {message}");
+#endif
         }
 
         public void OnUnityAdsShowClick(string placementId){}
+
+#if UNITY_EDITOR
+        public void OnUnityAdsShowComplete_Test() => OnUnityAdsShowComplete(_adsID, UnityAdsShowCompletionState.COMPLETED);
+        public void OnUnityAdsShowSkipped_Test() => OnUnityAdsShowComplete(_adsID, UnityAdsShowCompletionState.SKIPPED);
+#endif
 
         public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
         {
             if(placementId.Equals(_adsID) && showCompletionState == UnityAdsShowCompletionState.COMPLETED)
             {
-                Debug.Log("Ads Show Complete");
                 OnAdsRewardedEvent(true);
-
-                //load another ads
-                Advertisement.Load(_adsID, this);
             }
+            else
+            {
+                OnAdsRewardedEvent(false);
+            }
+            LoadAds();
         }
 
         public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
         {
+#if UNITY_EDITOR
             Debug.Log($"Error showing Ad Unit {placementId}: {error} - {message}");
+#endif
         }
 
         public void OnUnityAdsShowStart(string placementId){}

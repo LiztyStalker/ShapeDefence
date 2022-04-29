@@ -5,6 +5,7 @@ namespace SDefence.UI
     using Packet;
     using System.Collections.Generic;
     using Utility.UI;
+    using UnityEngine.Advertisements;
 
 
     #region ##### Category #####
@@ -52,8 +53,13 @@ namespace SDefence.UI
         private List<IEntityPacketUser> _entityList;
 
 
+        private UnityAdvertisement _ads;
+
         public void Initialize()
         {
+
+            _ads = UnityAdvertisement.Instance;
+
             var arr = FindObjectsOfType<Canvas>();
             for(int i = 0; i < arr.Length; i++)
             {
@@ -242,6 +248,28 @@ namespace SDefence.UI
                     _uiBattle.Hide();
                     _uiLobby.Show();
                     break;
+                case AdsToLobbyCommandPacket pk:
+                    _ads.SetOnAdsRewardedListener(rewarded =>
+                    {
+                        if (!rewarded)
+                        {
+                            _uiCommon.ShowPopup("광고를 스킵해서 추가 보상을 받을 수 없습니다. 다시 시도하시겠습니까?", "예", "아니오", _ads.ShowAds);
+                        }
+                        else
+                        {
+                            _uiGamePopup.HideClearPopup();
+
+                            _uiBattle.Hide();
+                            _uiLobby.Show();
+
+                            var packet = new AdsResultCommandPacket();
+                            packet.AssetEntity = pk.AssetEntity;
+                            packet.Rewarded = rewarded;
+                            _cmdEvent?.Invoke(packet);                            
+                        }
+                    });
+                    _ads.ShowAds();
+                    break;
                 case SettingsCommandPacket pk:
                     //UICommon Settings
                     _uiCommon.ShowSettings();
@@ -264,6 +292,11 @@ namespace SDefence.UI
                     break;
             }
             _cmdEvent?.Invoke(packet);
+        }
+
+        private void OnAdsCommandPacketEvent(bool rewarded)
+        {
+            
         }
 
         private void OnClosedEvent()

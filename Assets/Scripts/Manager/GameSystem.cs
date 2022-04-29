@@ -261,12 +261,12 @@ namespace SDefence.Manager
                     _assetEntity.Add(pk.AssetEntity);
                     //Asset
                     break;
-                case AdbToLobbyCommandPacket pk:
-
-                    //광고 모두 보고 실행되어야 함
-                    //_assetEntity.Add(pk.AssetEntity);
-                    //_assetEntity.Add(pk.AssetEntity);
-                    //Asset * 2
+                case AdsResultCommandPacket pk:
+                    if (pk.Rewarded)
+                    {
+                        _assetEntity.Add(pk.AssetEntity);
+                        _assetEntity.Add(pk.AssetEntity);
+                    }
                     break;
                 case NextLevelCommandPacket pk:
                     _assetEntity.Add(pk.AssetEntity);

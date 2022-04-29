@@ -24,14 +24,14 @@ namespace SDefence.UI
         public void Initialize()
         {
             _toLobbyBtn.onClick.AddListener(OnToLobbyCommandPacketEvent);
-            _adbToLobbyBtn.onClick.AddListener(OnAdbToLobbyCommandPacketEvent);
+            _adbToLobbyBtn.onClick.AddListener(OnAdsToLobbyCommandPacketEvent);
             _nextLevelBtn.onClick.AddListener(OnNextLevelCommandPacketEvent);
         }
 
         public void CleanUp()
         {
             _toLobbyBtn.onClick.RemoveListener(OnToLobbyCommandPacketEvent);
-            _adbToLobbyBtn.onClick.RemoveListener(OnAdbToLobbyCommandPacketEvent);
+            _adbToLobbyBtn.onClick.RemoveListener(OnAdsToLobbyCommandPacketEvent);
             _nextLevelBtn.onClick.RemoveListener(OnNextLevelCommandPacketEvent);
         }
 
@@ -66,13 +66,12 @@ namespace SDefence.UI
             _cmdEvent?.Invoke(pk);
             Hide();
         }
-        private void OnAdbToLobbyCommandPacketEvent()
+        private void OnAdsToLobbyCommandPacketEvent()
         {
             //AdbToLobbyCommandPacket
-            var pk = new AdbToLobbyCommandPacket();
+            var pk = new AdsToLobbyCommandPacket();
             pk.AssetEntity = _assetEntity;
             _cmdEvent?.Invoke(pk);
-            Hide();
         }
 
         private void OnNextLevelCommandPacketEvent()

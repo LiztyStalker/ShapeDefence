@@ -87,6 +87,11 @@ namespace SDefence.UI
             _uiClearPopup.SetData(assetEntity);
         }
 
+        public void HideClearPopup()
+        {
+            _uiClearPopup.Hide();
+        }
+
         public void ShowDefeatPopup(AssetUsableEntity assetEntity)
         {
             Show();

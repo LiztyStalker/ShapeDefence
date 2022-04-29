@@ -34,9 +34,15 @@ namespace SDefence.Packet
         public AssetUsableEntity AssetEntity;
         public bool IsClear;
     }
-    public class AdbToLobbyCommandPacket : ICommandPacket 
+    public class AdsToLobbyCommandPacket : ICommandPacket 
     {
         public AssetUsableEntity AssetEntity;
+    }
+
+    public class AdsResultCommandPacket : ICommandPacket
+    {
+        public AssetUsableEntity AssetEntity;
+        public bool Rewarded;
     }
     public class PlayBattleCommandPacket : ICommandPacket { }
     public class RewardOfflineCommandPacket : ICommandPacket 
