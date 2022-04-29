@@ -74,7 +74,7 @@ MonoBehaviour:
     _startAttackValue: 5
     _increaseAttackValue: 1
     _increaseAttackRate: 0.1
-    _startAttackDelayValue: 1
+    _startAttackDelayValue: 0.5
     _decreaseAttackDelayValue: 0
     _decreaseAttackDelayRate: 0.01
     _startAttackRangeValue: 4
