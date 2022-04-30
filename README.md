@@ -15,6 +15,7 @@
 + MVP Pattern
 + ScriptableObject
 + LitJson
++ GPGS, Ads
 ## 5. 현재버전
 * Prototype - [2022.03]
 * Alpha [2022.03 - 진행중]
