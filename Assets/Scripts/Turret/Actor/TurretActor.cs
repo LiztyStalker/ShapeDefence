@@ -139,7 +139,8 @@ namespace SDefence.Actor
         /// <param name="data"></param>
         public void SetDamage(IAttackUsableData data)
         {
-            if (!_isInvincible)
+            //무적이 아니고 충돌체가 있으면
+            if (!_isInvincible && GetComponent<Collider2D>() != null)
             {
                 if (!_isBroken)
                 {
@@ -161,12 +162,15 @@ namespace SDefence.Actor
 
 
 
-        public static TurretActor Create()
+        public static TurretActor Create(int orbitIndex = 0)
         {
             var actor = new GameObject();
             actor.name = "Actor@Turret";
-            var col = actor.AddComponent<CircleCollider2D>();
-            col.isTrigger = true;
+            if (orbitIndex != 0)
+            {
+                var col = actor.AddComponent<CircleCollider2D>();
+                col.isTrigger = true;
+            }
             return actor.AddComponent<TurretActor>();
         }
 

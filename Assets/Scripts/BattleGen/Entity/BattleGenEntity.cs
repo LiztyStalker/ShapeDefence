@@ -26,6 +26,8 @@ namespace SDefence.BattleGen.Entity
         public bool HasBattleGenLevelData() => _battleGenLevelData != null;
         public bool HasBattleGenWaveData() => _battleGenWaveData != null;
 
+        public bool IsEnd() => !_battleGenWaveData.HasWaveData(_nowIndex, _nowTime);
+
         public void SetData(BattleGenLevelData battleGenLevelData)
         {
             _battleGenLevelData = battleGenLevelData;

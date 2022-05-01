@@ -255,7 +255,8 @@ namespace SDefence.Manager
             _hqActor.SetDurableBattleEntity();
 
             //Turret 초기화
-            for(int i = 0; i < _turretList.Count; i++)
+            //MainTurret == invincible
+            for (int i = 0; i < _turretList.Count; i++)
             {
                 _turretList[i].SetInvincible(false);
                 _turretList[i].Reset();
@@ -455,7 +456,7 @@ namespace SDefence.Manager
 
                         if (index >= _turretDic[orbitIndex].Count)
                         {
-                            var actor = TurretActor.Create();
+                            var actor = TurretActor.Create(orbitIndex);
                             actor.AddOnBattlePacketListener(OnBattlePacketEvent);
                             actor.AddOnAttackListener(OnAttackEvent);
                             actor.transform.SetParent(_gameObject.transform);
@@ -536,7 +537,7 @@ namespace SDefence.Manager
 
                                     //Enemy가 보스이면 게임 승리 이벤트
                                     //또는 적이 없으면 게임 승리 이벤트
-                                    if (_enemyActorList.Count == 0 && _levelWaveData.IsLastWave())
+                                    if (_battleGenEntity.IsEnd() && _enemyActorList.Count == 0 && _levelWaveData.IsLastWave())
                                     {
                                         var pk = new ClearBattlePacket();
                                         pk.AssetEntity = _battleAssetEntity;
@@ -620,49 +621,56 @@ namespace SDefence.Manager
         {
             actionData.SetOnAttackActionListener((range, isOverlap) =>
             {
-                if (range < 0.1f)
+                //단일
+                if (range < 0.01f)
                 {
-                    //Debug.Log(damagable);
-                    if (damagable != null) damagable.SetDamage(attackable.AttackUsableData);
+                    if (damagable != null)
+                    {
+                        damagable.SetDamage(attackable.AttackUsableData);
+                    }
                 }
+                //멀티
                 else
                 {
-                    if (damagable != null) damagable.SetDamage(attackable.AttackUsableData);
+                    if (damagable != null) 
+                        damagable.SetDamage(attackable.AttackUsableData);
 
-                    if (attackable is TurretActor)
+
+                    switch (attackable)
                     {
-                        for (int i = 0; i < _enemyActorList.Count; i++)
-                        {
-                            if ((EnemyActor)damagable != _enemyActorList[i])
+                        case TurretActor turret:
+                            for (int i = 0; i < _enemyActorList.Count; i++)
                             {
-                                if (Vector2.Distance(_enemyActorList[i].AttackPos, actor.NowPosition) < range)
+                                if ((EnemyActor)damagable != _enemyActorList[i])
                                 {
-                                    _enemyActorList[i].SetDamage(attackable.AttackUsableData);
+                                    if (Vector2.Distance(_enemyActorList[i].AttackPos, actor.NowPosition) < range)
+                                    {
+                                        _enemyActorList[i].SetDamage(attackable.AttackUsableData);
+                                    }
                                 }
                             }
-                        }
-                    }
-                    else if (attackable is EnemyActor)
-                    {
-                        for(int i = 0; i < _turretList.Count; i++) 
-                        {
-                            var turret = _turretList[i];
-                            if ((TurretActor)damagable != turret)
+                            break;
+                        case EnemyActor enemy:
+                            for (int i = 0; i < _turretList.Count; i++)
                             {
-                                if (Vector2.Distance(turret.NowPosition, actor.NowPosition) < range)
+                                var turret = _turretList[i];
+                                if ((TurretActor)damagable != turret)
                                 {
-                                    turret.SetDamage(attackable.AttackUsableData);
+                                    if (Vector2.Distance(turret.NowPosition, actor.NowPosition) < range)
+                                    {
+                                        turret.SetDamage(attackable.AttackUsableData);
+                                    }
                                 }
                             }
-                        }
 
-                        if ((HQActor)damagable != _hqActor)
-                        {
-                            if (Vector2.Distance(_hqActor.NowPosition, actor.NowPosition) < range)
+                            if ((HQActor)damagable != _hqActor)
                             {
-                                _hqActor.SetDamage(attackable.AttackUsableData);
+                                if (Vector2.Distance(_hqActor.NowPosition, actor.NowPosition) < range)
+                                {
+                                    _hqActor.SetDamage(attackable.AttackUsableData);
+                                }
                             }
-                        }
+                            break;
                     }
                 }
 
