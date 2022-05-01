@@ -27,10 +27,12 @@ namespace Utility.Effect
 
         public void SetData(GameObject effectObject)
         {
-            _prefab = Instantiate(effectObject);
-            _prefab.transform.SetParent(transform);
-            _prefab.transform.localPosition = Vector3.zero;
-            _prefab.transform.localScale = Vector3.one;
+            if (_prefab == null) {
+                _prefab = Instantiate(effectObject);
+                _prefab.transform.SetParent(transform);
+                _prefab.transform.localPosition = Vector3.zero;
+                _prefab.transform.localScale = Vector3.one;
+            }
             _prefab.gameObject.SetActive(true);
             SetName();
         }
