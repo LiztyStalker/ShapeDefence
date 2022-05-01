@@ -13,6 +13,9 @@ namespace SDefence.UI
         private string _type;
         private string _key;
 
+        private int _orbitIndex;
+        private int _index;
+
         private UIAssetContainer _uiAssetContainer;
 
         private IAssetUsableData _assetData;
@@ -38,6 +41,12 @@ namespace SDefence.UI
             gameObject.SetActive(false);
         }
 
+        public void SetIndex(int orbitIndex, int index)
+        {
+            _orbitIndex = orbitIndex;
+            _index = index;
+        }
+
         public void SetData(string type, string key, IAssetUsableData assetData, bool interactable)
         {
             _text.text = key; //Translate
@@ -58,6 +67,8 @@ namespace SDefence.UI
         {
             var pk = new UpTechCommandPacket();
             pk.TypeCmdKey = (TYPE_COMMAND_KEY)System.Enum.Parse(typeof(TYPE_COMMAND_KEY), _type);
+            pk.ParentIndex = _orbitIndex;
+            pk.Index = _index;
             pk.Key = _key;
             pk.AssetUsableData = _assetData;
             _cmdEvent?.Invoke(pk);

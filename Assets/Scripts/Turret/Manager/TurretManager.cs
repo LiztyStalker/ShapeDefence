@@ -213,17 +213,20 @@ namespace SDefence.Turret
 
         public void OnOpenTechCommandPacketEvent(int orbitindex, int index)
         {
-            var techPacket = new OpenTechEntityPacket();
+            var packet = new OpenTechEntityPacket();
             var elements = _dic[orbitindex][index].TechRawData.TechRawElements;
 
-            techPacket.Elements = new TechPacketElement[elements.Length];
-            for (int i = 0; i < techPacket.Elements.Length; i++)
+            packet.Elements = new TechPacketElement[elements.Length];
+            packet.OrbitIndex = orbitindex;
+            packet.Index = index;
+
+            for (int i = 0; i < packet.Elements.Length; i++)
             {
                 var element = new TechPacketElement() { Element = elements[i], IsActiveTech = false };
-                techPacket.Elements[i] = element;
+                packet.Elements[i] = element;
             }
 
-            _entityEvent?.Invoke(techPacket);
+            _entityEvent?.Invoke(packet);
         }
 
         public void OnOpenExpandTurretEntityPacketEvent(int orbitIndex)
@@ -313,6 +316,7 @@ namespace SDefence.Turret
                 
         private void OnUpTechEntityPacketEvent(int orbitIndex, int index)
         {
+            Debug.Log(orbitIndex + " " + index);
             var packet = new UpTechEntityPacket();
             packet.PastEntity = _dic[orbitIndex][index]; //예전 Entity 데이터 필요
             packet.NowEntity = _dic[orbitIndex][index];

@@ -57,6 +57,8 @@ namespace SDefence.Packet
     public class OpenTechEntityPacket : IEntityPacket
     {       
         public TechPacketElement[] Elements;
+        public int OrbitIndex;
+        public int Index;
     }
 
     public class UpTechEntityPacket : IEntityPacket

@@ -99,10 +99,10 @@ namespace SDefence.UI
             _uiDefeatPopup.SetData(assetEntity);
         }
 
-        private void ShowTechPopup(TechPacketElement[] elements)
+        private void ShowTechPopup(TechPacketElement[] elements, int orbitIndex, int index)
         {
             Show();
-            _uiTechPopup.Show(elements);
+            _uiTechPopup.Show(elements, orbitIndex, index);
         }
 
         private void ShowDisassemblePopup(IEntity entity)
@@ -165,7 +165,7 @@ namespace SDefence.UI
                     ShowDisassemblePopup(pk.Entity);
                     break;
                 case OpenTechEntityPacket pk:
-                    ShowTechPopup(pk.Elements);
+                    ShowTechPopup(pk.Elements, pk.OrbitIndex, pk.Index);
                     break;
                 case OpenExpandTurretEntityPacket pk:
                     ShowAssetPopup(pk.AssetData, () =>

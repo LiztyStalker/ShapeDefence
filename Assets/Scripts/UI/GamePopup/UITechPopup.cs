@@ -47,7 +47,7 @@ namespace SDefence.UI
             _list.Clear();
         }
 
-        public void Show(TechPacketElement[] elements)
+        public void Show(TechPacketElement[] elements, int orbitIndex = 0, int index = 0)
         {
             Clear();
 
@@ -60,9 +60,7 @@ namespace SDefence.UI
                 {
                     _list.Add(Create());
                 }
-
-                Debug.Log(element.Element.TypeTechData);
-
+                _list[i].SetIndex(orbitIndex, index);
                 _list[i].SetData(element.Element.TypeTechData, element.Element.TechDataKey, element.Element.GetUsableData(), element.IsActiveTech);
                 _list[i].Show();            
             }
