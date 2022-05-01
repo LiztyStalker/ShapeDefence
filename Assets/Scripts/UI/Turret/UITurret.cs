@@ -45,8 +45,6 @@ namespace SDefence.UI
             _mainTurret.SetOnCommandPacketListener(OnCommandPacketEvent);
             _orbitTurret.SetOnCommandPacketListener(OnCommandPacketEvent);
 
-            _uiAsset.Initialize();
-
             _orbitTurret.Initialize();
             _orbitTurret.Hide();
 
@@ -59,7 +57,6 @@ namespace SDefence.UI
             _helpBtn.onClick.RemoveListener(OnHelpCommandPacketEvent);
             _exitBtn.onClick.RemoveListener(Hide);
 
-            _uiAsset.CleanUp();
             _orbitTurret.CleanUp();
         }
 

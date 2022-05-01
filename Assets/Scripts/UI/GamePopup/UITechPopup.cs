@@ -15,9 +15,6 @@ namespace SDefence.UI
         private Text _text;
 
         [SerializeField]
-        private UIAssetContainer _uiAsset;
-
-        [SerializeField]
         private RectTransform _techFrame;
 
         [SerializeField]
@@ -66,30 +63,9 @@ namespace SDefence.UI
 
                 Debug.Log(element.Element.TypeTechData);
 
-                _list[i].SetData(element.Element.TypeTechData, element.Element.TechDataKey, element.Element.GetUsableData());
+                _list[i].SetData(element.Element.TypeTechData, element.Element.TechDataKey, element.Element.GetUsableData(), element.IsActiveTech);
                 _list[i].Show();            
             }
-
-            //if (entity is ITechable)
-            //{
-            //    gameObject.SetActive(true);
-
-            //    var techable = (ITechable)entity;
-            //    var elements = techable.TechRawData.TechRawElements;
-            //    for(int i = 0; i < elements.Length; i++)
-            //    {
-            //        var element = elements[i];
-            //        if(i >= _list.Count)
-            //        {
-            //            _list.Add(Create());
-            //        }
-
-            //        _list[i].SetData(element.TypeTechData, element.TechDataKey, element.GetUsableData());
-            //        _list[i].Show();
-            //    }
-            //}
-            
-
         }
 
         public void Hide()

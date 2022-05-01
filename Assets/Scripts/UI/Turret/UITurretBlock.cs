@@ -26,7 +26,7 @@ namespace SDefence.UI
         private UIAssetButton _upgradeBtn;
 
         [SerializeField]
-        private UIAssetButton _techBtn;
+        private Button _techBtn;
 
         private int _orbitIndex;
         private int _index;
@@ -113,18 +113,21 @@ namespace SDefence.UI
                 if (!entity.IsMaxUpgradeAndTech())
                 {
                     _upgradeBtn.SetActive(!entity.IsMaxUpgrade());
-                    _techBtn.SetActive(entity.IsMaxUpgrade());
+                    _techBtn.gameObject.SetActive(entity.IsMaxUpgrade());
                 }
                 else
                 {
                     //최대 업그레이드
                     _upgradeBtn.SetActive(false);
-                    _techBtn.SetActive(false);
+                    _techBtn.gameObject.SetActive(false);
                 }
+
+                _upgradeBtn.SetAsset(entity.GetUpgradeData());
 
                 //_disassembleBtn.interactable = //Tech 0 = false
                 _upgradeBtn.interactable = pk.IsActiveUpgrade;
                 _techBtn.interactable = pk.IsActiveUpTech;
+
 
 
             }

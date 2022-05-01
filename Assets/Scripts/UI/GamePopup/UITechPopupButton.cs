@@ -10,14 +10,17 @@ namespace SDefence.UI
         [SerializeField]
         private Text _text;
 
-
         private string _type;
         private string _key;
-        private IAssetUsableData _usableData;
+
+        private UIAssetContainer _uiAssetContainer;
+
+        private IAssetUsableData _assetData;
 
         protected override void Awake()
         {
             onClick.AddListener(OnUpTechEvent);
+            _uiAssetContainer = GetComponentInChildren<UIAssetContainer>(true);
         }
 
         protected override void OnDestroy()
@@ -35,12 +38,16 @@ namespace SDefence.UI
             gameObject.SetActive(false);
         }
 
-        public void SetData(string type, string key, IAssetUsableData usableData)
+        public void SetData(string type, string key, IAssetUsableData assetData, bool interactable)
         {
             _text.text = key; //Translate
             _type = type;
             _key = key;
-            _usableData = usableData; //Icon Asset
+
+            _assetData = assetData;
+            _uiAssetContainer.SetData(assetData);
+
+            this.interactable = interactable;
         }
 
         #region ##### Listener #####
@@ -52,14 +59,10 @@ namespace SDefence.UI
             var pk = new UpTechCommandPacket();
             pk.TypeCmdKey = (TYPE_COMMAND_KEY)System.Enum.Parse(typeof(TYPE_COMMAND_KEY), _type);
             pk.Key = _key;
-            pk.AssetUsableData = _usableData;
+            pk.AssetUsableData = _assetData;
             _cmdEvent?.Invoke(pk);
         }
 
-        public void OnEntityPacketEvent(IEntityPacket packet)
-        {
-            //IAssetUsableData
-        }
         #endregion
     }
 }
