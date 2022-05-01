@@ -1,6 +1,6 @@
 namespace SDefence.UI
 {
-    using SDefence.Packet;
+    using Asset;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -25,13 +25,16 @@ namespace SDefence.UI
             _cancelBtn.onClick.AddListener(Hide);
         }
 
-        public void Show(System.Action applyCallback)
+        public void Show(IAssetUsableData assetData, System.Action applyCallback)
         {
             _applyBtn.onClick.AddListener(() => 
             {
                 applyCallback?.Invoke();
                 Hide();
             });
+
+            _uiAsset.SetData(assetData);
+
             gameObject.SetActive(true);
         }
 

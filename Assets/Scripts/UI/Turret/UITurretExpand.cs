@@ -1,6 +1,7 @@
 namespace SDefence.UI
 {
     using Packet;
+    using Asset;
     using UnityEngine;
 
     public class UITurretExpand : MonoBehaviour
@@ -22,6 +23,9 @@ namespace SDefence.UI
 
         public void SetActive(bool isActive) => gameObject.SetActive(isActive);
         public void SetIndex(int index) => _index = index;
+        public void SetInteractable(bool interactable) => _uiExpandBtn.interactable = interactable;
+        public void SetAsset(IAssetUsableData assetData) => _uiExpandBtn.SetAsset(assetData);
+
 
         #region ##### Listener #####
 

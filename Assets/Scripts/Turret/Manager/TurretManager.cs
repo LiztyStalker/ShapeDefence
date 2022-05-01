@@ -11,6 +11,9 @@ namespace SDefence.Turret
 
     public class OrbitEntity : ISavable
     {
+        private const int ORBIT_ASSET = 1000;
+        private const int EXPAND_ASSET = 1000;
+
         private int[] _capacity;
 
         public static OrbitEntity Create() => new OrbitEntity();
@@ -30,6 +33,13 @@ namespace SDefence.Turret
             var list = new List<int>(_capacity);
             list.Add(turretCount);
             _capacity = list.ToArray();
+        }
+
+        public IAssetUsableData GetAssetUsableData(int orbitIndex, int expandCount)
+        {
+            var asset = AssetRawData.Create();
+            asset.SetData("Neutral", (orbitIndex * ORBIT_ASSET).ToString(), EXPAND_ASSET.ToString(), "0");
+            return asset.GetUsableData(expandCount - 1);
         }
 
         #region ##### Savable #####
@@ -54,7 +64,7 @@ namespace SDefence.Turret
                 var index = int.Parse(key);
                 _capacity[index] = (int)data.Children[key];
             }
-        }
+        }        
         #endregion
     }
 
@@ -73,7 +83,7 @@ namespace SDefence.Turret
             _orbitEntity = OrbitEntity.Create();
             _dic = new Dictionary<int, List<TurretEntity>>();
 
-            var turret = AdditiveEntity(0);
+            var turret = AddTurret(0);
 
             //기본 터렛 필요
             turret.Initialize(GetDefaultData(), 0);
@@ -127,13 +137,22 @@ namespace SDefence.Turret
             Refresh(orbitIndex, index);
         }
 
-        public void ExpandTurret(int orbitIndex)
+        public IAssetUsableData ExpandTurret(int orbitIndex)
         {
-            //기본 터렛 필요
-            var turret = AdditiveEntity(orbitIndex);
+
+            //Turret Create
+            var turret = AddTurret(orbitIndex);
             turret.Initialize(GetDefaultData(), orbitIndex);
+
+            //Create Subject AssetData
+            //Count = turret + 1 - 1
+            var assetData = _orbitEntity.GetAssetUsableData(orbitIndex, _dic[orbitIndex].Count - 1);
+
+            //EntityPacket
             Refresh(orbitIndex);
-            OnExpandTurretEntityPacketEvent(orbitIndex);
+            OnExpandEntityPacketEvent(orbitIndex);
+
+            return assetData;
         }
 
         public void SetOrbitCount(int orbitCount)
@@ -164,7 +183,7 @@ namespace SDefence.Turret
             return _defaultTurretData;
         }
 
-        private TurretEntity AdditiveEntity(int orbitIndex)
+        private TurretEntity AddTurret(int orbitIndex)
         {
             ExpandOrbit(orbitIndex);
 
@@ -179,6 +198,7 @@ namespace SDefence.Turret
             if (_dic.ContainsKey(orbitIndex))
             {
                 OnEntityPacketEvent(orbitIndex);
+                OnExpandEntityPacketEvent(orbitIndex);
             }
         }
 
@@ -206,16 +226,12 @@ namespace SDefence.Turret
             _entityEvent?.Invoke(techPacket);
         }
 
-        public void OnExpandTurretEntityPacket(int orbitIndex)
+        public void OnOpenExpandTurretEntityPacketEvent(int orbitIndex)
         {
             var packet = new OpenExpandTurretEntityPacket();
             //Turret Orbit And Index
             packet.OrbitIndex = orbitIndex;
-#if UNITY_EDITOR
-            packet.AssetData = AssetRawData.Create().GetUsableData();
-#else
-            packet.AssetData = null;
-#endif
+            packet.AssetData = _orbitEntity.GetAssetUsableData(orbitIndex, _dic[orbitIndex].Count);
             _entityEvent?.Invoke(packet);
         }
 
@@ -272,7 +288,6 @@ namespace SDefence.Turret
                     packet.packets = arr;
                 }
                 packet.OrbitIndex = orbitIndex;
-                packet.IsExpand = _dic[orbitIndex].Count < _orbitEntity.GetCapacity(orbitIndex);
                 packet.TurretCapacity = _orbitEntity.GetCapacity(orbitIndex);
                 packet.TurretCount = _dic[orbitIndex].Count;
 
@@ -304,20 +319,13 @@ namespace SDefence.Turret
             _entityEvent?.Invoke(packet);
         }
 
-        private void OnExpandTurretEntityPacketEvent(int orbitIndex)
+        private void OnExpandEntityPacketEvent(int orbitIndex)
         {
-            var packet = new ExpandTurretEntityPacket();
-            packet.OrbitIndex = orbitIndex;
-            //임시 - Turret 확장 값 필요
-
-#if UNITY_EDITOR
-            packet.AssetData = AssetRawData.Create().GetUsableData();
-#else
-            packet.AssetData = null;
-#endif
+            var packet = new TurretExpandEntityPacket();
+            packet.IsMaxExpand = _dic[orbitIndex].Count >= _orbitEntity.GetCapacity(orbitIndex);
+            packet.ExpandAssetData = _orbitEntity.GetAssetUsableData(orbitIndex, _dic[orbitIndex].Count);
             _entityEvent?.Invoke(packet);
         }
-
 
 #endregion
 

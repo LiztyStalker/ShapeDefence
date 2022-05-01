@@ -79,11 +79,15 @@ namespace SDefence.UI
                     }
 
                     _uiExpand.SetIndex(pk.OrbitIndex);
-                    _uiExpand.SetActive(pk.IsExpand);
                     _uiExpand.transform.SetAsLastSibling();
-
                     SetTurretCountText(pk.TurretCount, pk.TurretCapacity);
 
+                    break;
+                case TurretExpandEntityPacket pk:
+                    _uiExpand.SetActive(!pk.IsMaxExpand);
+                    _uiExpand.SetInteractable(pk.IsActivateExpand);
+                    _uiExpand.SetAsset(pk.ExpandAssetData);
+                    _uiExpand.transform.SetAsLastSibling();
                     break;
             }
         }

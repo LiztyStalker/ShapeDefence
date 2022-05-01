@@ -37,9 +37,15 @@ namespace SDefence.Packet
     {
         public TurretEntityPacket[] packets;
         public int OrbitIndex;
-        public bool IsExpand;
         public int TurretCapacity;
         public int TurretCount;
+    }
+
+    public class TurretExpandEntityPacket : IEntityPacket
+    {
+        public bool IsMaxExpand;
+        public bool IsActivateExpand;
+        public IAssetUsableData ExpandAssetData;
     }
 
     public class AssetEntityPacket : IEntityPacket
@@ -71,12 +77,6 @@ namespace SDefence.Packet
     }
 
     public class OpenExpandTurretEntityPacket : IEntityPacket
-    {
-        public int OrbitIndex;
-        public IAssetUsableData AssetData;
-    }
-
-    public class ExpandTurretEntityPacket : IEntityPacket
     {
         public int OrbitIndex;
         public IAssetUsableData AssetData;

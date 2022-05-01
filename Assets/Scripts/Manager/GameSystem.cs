@@ -214,11 +214,14 @@ namespace SDefence.Manager
                     break;
                 case OpenExpandCommandPacket pk:
                     // Turret OpenExpand
-                    _turretMgr.OnExpandTurretEntityPacket(pk.OrbitIndex);
+                    _turretMgr.OnOpenExpandTurretEntityPacketEvent(pk.OrbitIndex);
                     break;
                 case ExpandCommandPacket pk:
-                    // Turret Expand
-                    _turretMgr.ExpandTurret(pk.OrbitIndex);
+                    {
+                        // Turret Expand
+                        var assetData = _turretMgr.ExpandTurret(pk.OrbitIndex);
+                        _assetEntity.Subject(assetData);
+                    }
                     break;
                 case OpenDisassembleCommandPacket pk:
                     // Turret
@@ -334,6 +337,8 @@ namespace SDefence.Manager
 
                     break;
                 case TurretArrayEntityPacket pk:
+
+                    //Upgrade
                     for(int i = 0; i < pk.packets.Length; i++)
                     {
                         //아래와 중첩
@@ -342,6 +347,13 @@ namespace SDefence.Manager
                             var assetData = pk.packets[i].Entity.GetUpgradeData();
                             pk.packets[i].IsActiveUpgrade = (_assetEntity.Compare(assetData) <= 0);
                         }
+                    }
+                    break;
+                case TurretExpandEntityPacket pk:
+                    ///Expand
+                    if (!pk.IsMaxExpand)
+                    {
+                        pk.IsActivateExpand = (_assetEntity.Compare(pk.ExpandAssetData) <= 0);
                     }
                     break;
                 case TurretEntityPacket pk:
@@ -359,10 +371,6 @@ namespace SDefence.Manager
                         element.IsActiveTech = (_assetEntity.Compare(element.Element.GetUsableData()) <= 0);
                         pk.Elements[i] = element;
                     }
-                    break;
-                case ExpandTurretEntityPacket pk:
-                    //Asset 소비
-                    _assetEntity.Subject(pk.AssetData);
                     break;
                     
             }
