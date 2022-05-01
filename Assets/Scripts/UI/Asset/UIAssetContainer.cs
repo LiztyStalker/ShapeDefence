@@ -10,30 +10,43 @@ namespace SDefence.UI
 
     public class UIAssetContainer : MonoBehaviour, IBattlePacketUser, IEntityPacketUser
     {
-        private Dictionary<string, UIAssetBlock> _dic;
+        private static UIAssetBlock AssetBlock;
 
-        public void Initialize()
+        private Dictionary<string, UIAssetBlock> _baseDic; //setting
+
+        private Dictionary<string, UIAssetBlock> _dic; //instance
+
+        private Transform frameTr;
+
+        private void Awake()
         {
+            _baseDic = new Dictionary<string, UIAssetBlock>();
             _dic = new Dictionary<string, UIAssetBlock>();
 
             var frame = transform.GetComponentInChildren<LayoutGroup>(true);
-            var tr = frame.transform;
+            frameTr = frame.transform;
 
-            for (int i = 0; i < tr.childCount; i++)
+            for (int i = 0; i < frameTr.childCount; i++)
             {
-                var block = tr.GetChild(i).GetComponent<UIAssetBlock>();
-                if(block != null) _dic.Add(block.AssetKey, block);
+                var block = frameTr.GetChild(i).GetComponent<UIAssetBlock>();
+                if(block != null) _baseDic.Add(block.AssetKey, block);
             }
 
-            foreach (var key in _dic.Keys)
+            foreach (var key in _baseDic.Keys)
             {
-                var icon = DataStorage.Instance.GetDataOrNull<Sprite>(key, "Icon_Asset");
-                _dic[key].SetIcon(icon);
+                _baseDic[key].SetIcon(GetIcon(key));
+            }
+
+            if(AssetBlock == null)
+            {
+                var block = DataStorage.Instance.GetDataOrNull<GameObject>("UI@AssetBlock");
+                AssetBlock = block.GetComponent<UIAssetBlock>();                
             }
         }
 
-        public void CleanUp()
+        private void OnDestroy()
         {
+            _baseDic.Clear();
             _dic.Clear();
         }
 
@@ -48,13 +61,66 @@ namespace SDefence.UI
 
         public void SetData(AssetUsableEntity assetEntity)
         {
+            if (_baseDic.Count > 0)
+            {
+                try
+                {
+                    foreach (var key in _baseDic.Keys)
+                    {
+                        if (assetEntity.HasKey(key))
+                        {
+                            _baseDic[key].SetText(assetEntity.GetValue(key));
+                        }
+                        else
+                        {
+                            _baseDic[key].SetText("0");
+                        }
+                    }
+                }
+                catch
+                {
 
+                }
+            }
+            else
+            {
+                for(int i = 0; i < assetEntity.Keys.Length; i++) 
+                {
+                    var key = assetEntity.Keys[i];
+                    InstanceAssetBlock(key, assetEntity.GetValue(key));
+                }
+            }
         }
         
         public void SetData(IAssetUsableData assetData)
         {
-
+            var key = assetData.Key;
+            if (_baseDic.Count > 0)
+            {
+                if (_baseDic.ContainsKey(key))
+                    _baseDic[key].SetText(assetData.ToString());
+            }
+            else
+            {
+                InstanceAssetBlock(key, assetData.ToString());
+            }
         }
+
+        private void InstanceAssetBlock(string key, string value)
+        {
+            if (!_dic.ContainsKey(key))
+            {
+                var block = Instantiate(AssetBlock);
+                block.transform.SetParent(frameTr);
+                block.transform.localScale = Vector3.one;
+                block.name = $"UI@AssetBlock_{key}";
+                block.SetIcon(GetIcon(key));
+                _dic.Add(key, block);
+            }
+            _dic[key].SetText(value);
+        }
+
+        private Sprite GetIcon(string key) => DataStorage.Instance.GetDataOrNull<Sprite>(key, "Icon_Asset");
 
         //AssetEntityPacket
         public void OnEntityPacketEvent(IEntityPacket packet)
@@ -64,25 +130,7 @@ namespace SDefence.UI
                 var pk = (AssetEntityPacket)packet;
                 var entity = pk.Entity;
 
-                //NullException ¹ö±× ³ª¿È
-                try
-                {
-                    foreach (var key in _dic.Keys)
-                    {
-                        if (entity.HasKey(key))
-                        {
-                            _dic[key].SetText(entity.GetValue(key));
-                        }
-                        else
-                        {
-                            _dic[key].SetText("0");
-                        }
-                    }
-                }
-                catch
-                {
-
-                }
+                SetData(entity);               
             }
         }
 
@@ -93,17 +141,8 @@ namespace SDefence.UI
             {
                 var pk = (AssetBattlePacket)packet;
                 var entity = pk.AssetEntity;
-                foreach (var key in _dic.Keys)
-                {
-                    if (entity.HasKey(key))
-                    {
-                        _dic[key].SetText(entity.GetValue(key));
-                    }
-                    else
-                    {
-                        _dic[key].SetText("0");
-                    }
-                }
+
+                SetData(entity);
             }
         }
     }

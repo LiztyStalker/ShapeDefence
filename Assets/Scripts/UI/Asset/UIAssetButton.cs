@@ -1,6 +1,7 @@
 namespace SDefence.UI
 {
-    using SDefence.Packet;
+    using Asset;
+    using Packet;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -15,7 +16,7 @@ namespace SDefence.UI
         protected override void OnEnable()
         {
             base.OnEnable();
-            _uiAsset = GetComponentInChildren<UIAssetContainer>();
+            _uiAsset = GetComponentInChildren<UIAssetContainer>(true);
         }
 
         public void SetText(string text)
@@ -23,9 +24,9 @@ namespace SDefence.UI
             _text.text = text;
         }
 
-        public void SetAsset()
+        public void SetAsset(IAssetUsableData assetData)
         {
-            //IAssetUsableData
+            _uiAsset.SetData(assetData);
         }
 
         public void SetActive(bool isActive)
