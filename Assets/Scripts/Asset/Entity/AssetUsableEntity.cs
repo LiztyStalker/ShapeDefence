@@ -85,7 +85,7 @@ namespace SDefence.Asset.Entity
             string key = GetKey(uData);
             if (!_dic.ContainsKey(key))
             {
-                _dic.Add(key, uData);
+                _dic.Add(key, uData.Clone());
             }
             else
             {
@@ -99,7 +99,7 @@ namespace SDefence.Asset.Entity
             string key = GetKey(uData);
             if (!_dic.ContainsKey(key))
             {
-                _dic.Add(key, uData);
+                _dic.Add(key, uData.Clone());
                 _dic[key].Subject(uData);
             }
             _dic[key].Subject(uData);
@@ -111,7 +111,7 @@ namespace SDefence.Asset.Entity
             string key = GetKey(uData);
             if (!_dic.ContainsKey(key))
             {
-                _dic.Add(key, uData);
+                _dic.Add(key, uData.Clone());
             }
             else
             {
