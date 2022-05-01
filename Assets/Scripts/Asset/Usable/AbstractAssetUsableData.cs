@@ -6,6 +6,8 @@ namespace SDefence.Asset.Usable
 
     public abstract class AbstractAssetUsableData : IAssetUsableData
     {
+        public string Key => GetType().Name.Replace("AssetUsableData", "");
+
         private BigDecimal _value;
         public BigDecimal Value { get => _value; protected set => _value = value; }
 

@@ -4,6 +4,7 @@ namespace SDefence.Asset
 
     public interface IAssetUsableData : ISavable
     {
+        public string Key { get; }
         public bool IsZero { get; }
         public void Add(int value);
         public void Add(IAssetUsableData value);

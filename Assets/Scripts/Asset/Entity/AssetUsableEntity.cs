@@ -3,7 +3,7 @@ namespace SDefence.Asset.Entity
     using System.Collections.Generic;
     using Utility.IO;
     using Usable;
-
+    using System.Linq;
 
     public class AssetUsableEntity : ISavable
     {
@@ -14,6 +14,8 @@ namespace SDefence.Asset.Entity
 
         //Value
         //IAssetUsableData
+
+        public string[] Keys => _dic.Keys.ToArray();
 
         public static AssetUsableEntity Create() => new AssetUsableEntity();
         private AssetUsableEntity()
