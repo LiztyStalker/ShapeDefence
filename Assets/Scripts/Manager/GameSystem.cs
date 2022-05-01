@@ -9,6 +9,7 @@ namespace SDefence.Manager
     using Actor;
     using Enemy;
     using UnityEngine;
+    using System.Collections.Generic;
 
     public class GameSystem : ISavable
     {
@@ -19,10 +20,14 @@ namespace SDefence.Manager
         private AssetUsableEntity _assetEntity;
         private StatisticsPackage _statistics;
 
+        private Stack<ICommandPacket> _lastCmdPacketStack;
+
         public static GameSystem Create() => new GameSystem();
 
         private GameSystem()
         {
+            _lastCmdPacketStack = new Stack<ICommandPacket>();
+
             _hqMgr = HQManager.Create();
             _turretMgr = TurretManager.Create();
 
@@ -42,6 +47,8 @@ namespace SDefence.Manager
 
         public void CleanUp()
         {
+            _lastCmdPacketStack.Clear();
+
             _hqMgr.RemoveOnEntityPacketListener(OnEntityPacketEvent);
             _turretMgr.RemoveOnEntityPacketListener(OnEntityPacketEvent);
 
@@ -116,7 +123,6 @@ namespace SDefence.Manager
         }
 
 
-        private ICommandPacket _lastCommandPacket;
 
         public void OnCommandPacketEvent(ICommandPacket packet)
         {
@@ -172,7 +178,9 @@ namespace SDefence.Manager
                             _turretMgr.OnOpenTechCommandPacketEvent(pk.ParentIndex, pk.Index);
                             break;
                     }
-                    _lastCommandPacket = pk;
+
+                    CommandPush(pk);
+
                     break;
                 case UpTechCommandPacket pk:
                     // HQ / Turret
@@ -250,10 +258,11 @@ namespace SDefence.Manager
                             break;
                     }
                     //기억
-                    _lastCommandPacket = pk;
+                    CommandPush(pk);
+
                     break;
                 case ClosedUICommandPacket pk:
-                    _lastCommandPacket = null;
+                    CommandPop();
                     break;
                 //Battle
                 case RetryCommandPacket pk:
@@ -278,6 +287,24 @@ namespace SDefence.Manager
             }
         }
 
+        private void CommandPush(ICommandPacket cmdPacket)
+        {
+            if (_lastCmdPacketStack.Count > 0)
+            {
+                if (_lastCmdPacketStack.Peek().GetType() != cmdPacket.GetType())
+                    _lastCmdPacketStack.Push(cmdPacket);
+            }
+            else
+            {
+                _lastCmdPacketStack.Push(cmdPacket);
+            }
+        }
+        private void CommandPop()
+        {
+            if (_lastCmdPacketStack.Count > 0)
+                _lastCmdPacketStack.Pop();
+        }
+
         private void OnAssetEntityPacketEvent(AssetUsableEntity assetEntity)
         {
             var packet = new AssetEntityPacket();
@@ -295,9 +322,10 @@ namespace SDefence.Manager
             switch (packet)
             {
                 case AssetEntityPacket pk:
-                    if(_lastCommandPacket != null)
+                    if(_lastCmdPacketStack.Count > 0)
                     {
-                        switch (_lastCommandPacket)
+                        var cmdPacket = _lastCmdPacketStack.Peek();
+                        switch (cmdPacket)
                         {
                             //AssetEntityPacket 진행시 RefreshCommandPacket의 기억한 값과 같이 출력
                             case RefreshCommandPacket refPacket:
