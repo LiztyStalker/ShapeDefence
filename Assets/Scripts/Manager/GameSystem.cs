@@ -291,13 +291,13 @@ namespace SDefence.Manager
         {
             if (_lastCmdPacketStack.Count > 0)
             {
-                if (_lastCmdPacketStack.Peek().GetType() != cmdPacket.GetType())
-                    _lastCmdPacketStack.Push(cmdPacket);
+                //Refresh Command
+                if(_lastCmdPacketStack.Peek().GetType() == cmdPacket.GetType())
+                {
+                    CommandPop();
+                }
             }
-            else
-            {
-                _lastCmdPacketStack.Push(cmdPacket);
-            }
+            _lastCmdPacketStack.Push(cmdPacket);
         }
         private void CommandPop()
         {
