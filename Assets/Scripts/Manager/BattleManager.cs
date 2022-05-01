@@ -305,6 +305,7 @@ namespace SDefence.Manager
         public void SetLobby()
         {
             Debug.Log("Start Lobby");
+            _isDefeat = false;
 
             _typeBattleAction = TYPE_BATTLE_ACTION.Lobby;
             _waveTime = 0f;
@@ -370,23 +371,26 @@ namespace SDefence.Manager
             }
 
 
-            for (int i = 0; i < _turretList.Count; i++)
+            if (!_isDefeat)
             {
-                _turretList[i].RunProcess(deltaTime);
-            }
+                for (int i = 0; i < _turretList.Count; i++)
+                {
+                    _turretList[i].RunProcess(deltaTime);
+                }
 
-            _orbitAction.RunProcess(deltaTime, _hqActor.transform.position);
+                _orbitAction.RunProcess(deltaTime, _hqActor.transform.position);
 
-            for (int i = 0; i < _enemyActorList.Count; i++)
-            {
-                _enemyActorList[i].RunProcess(deltaTime, _hqActor.transform.position);
-            }
+                for (int i = 0; i < _enemyActorList.Count; i++)
+                {
+                    _enemyActorList[i].RunProcess(deltaTime, _hqActor.transform.position);
+                }
 
-            _bulletMgr.RunProcess(deltaTime);
+                _bulletMgr.RunProcess(deltaTime);
 
-            for (int i = 0; i < _attackActionList.Count; i++)
-            {
-                _attackActionList[i].RunProcess(deltaTime);
+                for (int i = 0; i < _attackActionList.Count; i++)
+                {
+                    _attackActionList[i].RunProcess(deltaTime);
+                }
             }
         }
 
