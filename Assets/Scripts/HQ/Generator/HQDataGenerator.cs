@@ -32,7 +32,7 @@ namespace SDefence.HQ.Generator
             IncreaseUpgradeValue,
             IncreaseUpgradeRate,
             MaxUpgradeCount,
-            OrbitCount,
+            TurretCount,
             TechDataKey
         }
 

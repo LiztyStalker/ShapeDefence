@@ -29,7 +29,7 @@ namespace SDefence.HQ
         [SerializeField]
         private TechRawData _techRawData;
         [SerializeField]
-        private int _orbitCount;
+        private int _turretCount;
 
         public string GraphicObjectKey => _graphicObjectKey;
         public string TechDataKey => _techDataKey;
@@ -38,7 +38,7 @@ namespace SDefence.HQ
         public int MaxUpgradeCount => _maxUpgradeCount;
         public DurableRawData[] DurableRawDataArray => _durableRawDataArray;
         public RecoveryRawData RecoveryRawData => _recoveryRawData;
-        public int OrbitCount => _orbitCount;
+        public int TurretCount => _turretCount;
 
 
 
@@ -69,7 +69,7 @@ namespace SDefence.HQ
 
             _maxUpgradeCount = 10;
 
-            _orbitCount = 1;
+            _turretCount = 1;
 
             _techRawData = TechRawData.Create("HQ");
         }
@@ -114,7 +114,7 @@ namespace SDefence.HQ
 
             _maxUpgradeCount = int.Parse(arr[(int)HQDataGenerator.TYPE_SHEET_COLUMNS.MaxUpgradeCount]);
 
-            _orbitCount = int.Parse(arr[(int)HQDataGenerator.TYPE_SHEET_COLUMNS.OrbitCount]);
+            _turretCount = int.Parse(arr[(int)HQDataGenerator.TYPE_SHEET_COLUMNS.TurretCount]);
 
             if (arr.Length > (int)HQDataGenerator.TYPE_SHEET_COLUMNS.TechDataKey)
             {

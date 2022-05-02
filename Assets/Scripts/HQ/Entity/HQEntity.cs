@@ -57,7 +57,7 @@ namespace SDefence.HQ.Entity
 
         public int UpgradeValue => _upgradeData.GetValue();
 
-        public int OrbitCount => _data.OrbitCount;
+        public int TurretCount => _data.TurretCount;
 
         public TechRawData TechRawData => _data.TechRawData;
 
