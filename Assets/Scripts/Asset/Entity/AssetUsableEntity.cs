@@ -154,13 +154,12 @@ namespace SDefence.Asset.Entity
 
         public void SetSavableData(SavableData data)
         {
-            var unpackData = data;
-            foreach(var key in unpackData.Children.Keys)
+            foreach (var key in data.Children.Keys)
             {
                 var uData = AbstractAssetUsableData.Create(key);
                 if (uData != null)
                 {
-                    var savableData = unpackData.Children[key];
+                    var savableData = data.Children[key];
                     uData.SetSavableData((SavableData)savableData);
                     Set(uData);
                 }

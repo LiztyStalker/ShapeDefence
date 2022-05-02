@@ -19,7 +19,6 @@ namespace SDefence.Asset.Raw {
         private string _increaseRate;
 
 
-#if UNITY_EDITOR
 
         public static AssetRawData Create()
         {
@@ -48,7 +47,6 @@ namespace SDefence.Asset.Raw {
             data.SetData(_typeData, _startValue, _increaseValue, _increaseRate);
             return data;
         }
-#endif
 
         public IAssetUsableData GetUsableData(int upgrade = 0)
         {
