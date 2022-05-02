@@ -103,6 +103,7 @@ namespace SDefence.Turret.Entity
         {
             _upgradeData.IncreaseNumber();
             _upgradeAssetData = null;
+            _attackData = null;
             _recoveryData = null;
 
             _durableEntity.Set(_data.DurableRawDataArray, _upgradeData.GetValue());
@@ -186,7 +187,6 @@ namespace SDefence.Turret.Entity
         public SavableData GetSavableData()
         {
             var data = SavableData.Create();
-            data.AddData("Key", _data.Key);
             data.AddData("Upgrade", _upgradeData.GetValue());
             return data;
         }
