@@ -6,6 +6,7 @@ namespace SDefence.UI
     using System.Collections.Generic;
     using Utility.UI;
     using UnityEngine.Advertisements;
+    using System.Collections;
 
 
     #region ##### Category #####
@@ -59,6 +60,8 @@ namespace SDefence.UI
         {
 
             _ads = UnityAdvertisement.Instance;
+            _ads.SetOnAdsRewardedListener(OnAdsResultEvent);
+
 
             var arr = FindObjectsOfType<Canvas>();
             for(int i = 0; i < arr.Length; i++)
@@ -249,6 +252,8 @@ namespace SDefence.UI
                     _uiLobby.Show();
                     break;
                 case AdsToLobbyCommandPacket pk:
+
+
 #if UNITY_EDITOR
                     _uiGamePopup.HideClearPopup();
                     _uiBattle.Hide();
@@ -260,27 +265,8 @@ namespace SDefence.UI
                     _cmdEvent?.Invoke(cmdPK);
 
 #else
-                    _ads.SetOnAdsRewardedListener(rewarded =>
-                    {
-                        Debug.Log("Ads " + rewarded);
-                        if (rewarded)
-                        {
-                            _uiGamePopup.HideClearPopup();
-
-                            _uiBattle.Hide();
-                            _uiLobby.Show();
-
-                            var packet = new AdsResultCommandPacket();
-                            packet.AssetEntity = pk.AssetEntity;
-                            packet.Rewarded = rewarded;
-                            _cmdEvent?.Invoke(packet);
-                        }
-                        else
-                        {
-                            //Sys_Ads_Skipped Sys_Yes Sys_No
-                            _uiCommon.ShowPopup("광고를 스킵해서 추가 보상을 받을 수 없습니다. 다시 시도하시겠습니까?", "예", "아니오", _ads.ShowAds);
-                        }
-                    });
+                    _isAdsRun = true;
+                    StartCoroutine(AdsResultCoroutine(pk));
                     _ads.ShowAds();
 #endif
                     break;
@@ -308,6 +294,41 @@ namespace SDefence.UI
             _cmdEvent?.Invoke(packet);
         }
 
+
+        private bool _isAdsRun = false;
+        private bool _isRewarded = false;
+
+        private IEnumerator AdsResultCoroutine(AdsToLobbyCommandPacket pk)
+        {
+            while (_isAdsRun)
+            {
+                yield return null;
+            }
+
+            if (_isRewarded)
+            {
+                _uiGamePopup.HideClearPopup();
+                _uiBattle.Hide();
+                _uiLobby.Show();
+
+                var packet = new AdsResultCommandPacket();
+                packet.AssetEntity = pk.AssetEntity;
+                packet.Rewarded = _isRewarded;
+                _cmdEvent?.Invoke(packet);
+            }
+            else
+            {
+                //Sys_Ads_Skipped Sys_Yes Sys_No
+                _uiCommon.ShowPopup("광고를 스킵해서 추가 보상을 받을 수 없습니다. 다시 시도하시겠습니까?", "예", "아니오", _ads.ShowAds);
+            }
+            yield return null;
+        }
+
+        private void OnAdsResultEvent(bool rewarded)
+        {
+            _isRewarded = rewarded;
+            _isAdsRun = false;
+        }
 
         private void OnClosedEvent()
         {
