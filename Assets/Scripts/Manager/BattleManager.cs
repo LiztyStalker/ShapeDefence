@@ -606,6 +606,10 @@ namespace SDefence.Manager
                     SetBattleGen();
                     SetBattle();
                     break;
+                case AdsResultCommandPacket pk:
+                    _levelWaveData.IncreaseNumber();
+                    SetLobby();
+                    break;
                 case ToLobbyCommandPacket pk:
                     //·Îºñ ToLobbyCommandPacket - Battle To Lobby
                     if(pk.IsClear) _levelWaveData.IncreaseNumber();
@@ -836,7 +840,7 @@ namespace SDefence.Manager
         public SavableData GetSavableData()
         {
             var data = SavableData.Create();
-            data.AddData(typeof(LevelWaveData).Name, _levelWaveData.GetValue());
+            data.AddData(typeof(LevelWaveData).Name, _levelWaveData.GetLevel());
             return data;
         }
 
@@ -844,7 +848,7 @@ namespace SDefence.Manager
         {
             if (data != null)
             {
-                _levelWaveData.SetValue(data.GetValue<int>(typeof(LevelWaveData).Name));
+                _levelWaveData.SetLevel(data.GetValue<int>(typeof(LevelWaveData).Name));
             }
         }
 

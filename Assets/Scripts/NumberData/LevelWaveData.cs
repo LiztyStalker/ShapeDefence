@@ -11,7 +11,7 @@ namespace SDefence.Data
         public int GetLevel() => _value / WAVE;
         public int GetWave() => _value % WAVE;
 
-        public void SetValue(int value) => _value = value;
+        public void SetLevel(int value) => _value = value * WAVE;
 
         public int GetValue() => _value;
 
@@ -29,7 +29,7 @@ namespace SDefence.Data
         public INumberData Clone()
         {
             var data = new LevelWaveData();
-            data.SetValue(_value);
+            data.SetLevel(_value);
             return data;
         }
     }

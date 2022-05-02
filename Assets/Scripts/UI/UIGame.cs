@@ -249,13 +249,21 @@ namespace SDefence.UI
                     _uiLobby.Show();
                     break;
                 case AdsToLobbyCommandPacket pk:
+#if UNITY_EDITOR
+                    _uiGamePopup.HideClearPopup();
+                    _uiBattle.Hide();
+                    _uiLobby.Show();
+
+                    var cmdPK = new AdsResultCommandPacket();
+                    cmdPK.AssetEntity = pk.AssetEntity;
+                    cmdPK.Rewarded = true;
+                    _cmdEvent?.Invoke(cmdPK);
+
+#else
                     _ads.SetOnAdsRewardedListener(rewarded =>
                     {
-                        if (!rewarded)
-                        {
-                            _uiCommon.ShowPopup("광고를 스킵해서 추가 보상을 받을 수 없습니다. 다시 시도하시겠습니까?", "예", "아니오", _ads.ShowAds);
-                        }
-                        else
+                        Debug.Log("Ads " + rewarded);
+                        if (rewarded)
                         {
                             _uiGamePopup.HideClearPopup();
 
@@ -265,10 +273,16 @@ namespace SDefence.UI
                             var packet = new AdsResultCommandPacket();
                             packet.AssetEntity = pk.AssetEntity;
                             packet.Rewarded = rewarded;
-                            _cmdEvent?.Invoke(packet);                            
+                            _cmdEvent?.Invoke(packet);
+                        }
+                        else
+                        {
+                            //Sys_Ads_Skipped Sys_Yes Sys_No
+                            _uiCommon.ShowPopup("광고를 스킵해서 추가 보상을 받을 수 없습니다. 다시 시도하시겠습니까?", "예", "아니오", _ads.ShowAds);
                         }
                     });
                     _ads.ShowAds();
+#endif
                     break;
                 case SettingsCommandPacket pk:
                     //UICommon Settings
@@ -294,16 +308,12 @@ namespace SDefence.UI
             _cmdEvent?.Invoke(packet);
         }
 
-        private void OnAdsCommandPacketEvent(bool rewarded)
-        {
-            
-        }
 
         private void OnClosedEvent()
         {
             var pk = new ClosedUICommandPacket();
             _cmdEvent?.Invoke(pk);
         }
-        #endregion
+#endregion
     }
 }
