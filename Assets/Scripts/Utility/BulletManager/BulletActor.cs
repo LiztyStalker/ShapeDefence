@@ -171,7 +171,7 @@ namespace Utility.Bullet
             {
                 if (damagable.IsDamagable) 
                 {
-                    if (_attackable is EnemyActor && damagable is TurretActor || _attackable is TurretActor && damagable is EnemyActor)
+                    if ((_attackable is EnemyActor && (damagable is TurretActor || damagable is HQActor)) || _attackable is TurretActor && damagable is EnemyActor)
                     {
                         //충돌 행동
                         _movementActionData.SetCollision();
