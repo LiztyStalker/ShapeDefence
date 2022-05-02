@@ -90,11 +90,12 @@ namespace Utility.Effect
             gameObject.SetActive(false);
             _inactiveEvent?.Invoke(this);
             _inactiveEvent = null;
+            DestroyImmediate(_prefab);
+            _prefab = null;
         }
 
         public void CleanUp()
         {
-            DestroyImmediate(_prefab);
             _data = null;
             _particles = null;
             _inactiveEvent = null;

@@ -12,8 +12,6 @@ namespace Utility.Effect
 
         private List<EffectActor> _list;
 
-//        private Dictionary<EffectData, List<EffectActor>> _effectDic = new Dictionary<EffectData, List<EffectActor>>();
-
         private static GameObject _gameObject;
 
         private static GameObject gameObject
@@ -97,7 +95,6 @@ namespace Utility.Effect
         {
             if (effectObject != null)
             {
-                //Debug.Log("Activate");
                 var actor = _pool.GiveElement();
                 actor.SetData(effectObject);
                 actor.SetOnInactiveListener(actor => {
