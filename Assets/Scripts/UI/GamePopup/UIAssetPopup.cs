@@ -17,11 +17,13 @@ namespace SDefence.UI
 
         public void Initialize()
         {
+            _uiAsset.Initialize();
             _cancelBtn.onClick.AddListener(Hide);
         }
 
         public void CleanUp()
         {
+            _uiAsset.CleanUp();
             _cancelBtn.onClick.AddListener(Hide);
         }
 

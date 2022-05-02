@@ -19,12 +19,14 @@ namespace SDefence.UI
         private AssetUsableEntity _assetEntity;
         public void Initialize()
         {
+            _uiAsset.Initialize();
             _toLobbyBtn.onClick.AddListener(OnToLobbyCommandPacketEvent);
             _retryBtn.onClick.AddListener(OnRetryCommandPacketEvent);
         }
 
         public void CleanUp()
         {
+            _uiAsset.CleanUp();
             _toLobbyBtn.onClick.RemoveListener(OnToLobbyCommandPacketEvent);
             _retryBtn.onClick.AddListener(OnRetryCommandPacketEvent);
         }

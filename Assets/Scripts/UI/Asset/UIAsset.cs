@@ -11,10 +11,12 @@ namespace SDefence.UI
         public void Initialize()
         {
             _uiAssetContainer = GetComponentInChildren<UIAssetContainer>(true);
+            _uiAssetContainer.Initialize();
         }
 
         public void CleanUp() 
         {
+            _uiAssetContainer.CleanUp();
         }
 
         public void Show()

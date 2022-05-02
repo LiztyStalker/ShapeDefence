@@ -24,11 +24,13 @@ namespace SDefence.UI
         {
             onClick.AddListener(OnUpTechEvent);
             _uiAssetContainer = GetComponentInChildren<UIAssetContainer>(true);
+            _uiAssetContainer.Initialize();
         }
 
         protected override void OnDestroy()
         {
             onClick.RemoveListener(OnUpTechEvent);
+            _uiAssetContainer.CleanUp();
         }
 
 

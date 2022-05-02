@@ -1,7 +1,6 @@
 namespace SDefence.UI
 {
     using Asset;
-    using Packet;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -11,12 +10,17 @@ namespace SDefence.UI
         [SerializeField]
         private Text _text;
 
+        [SerializeField]
         private UIAssetContainer _uiAsset;
 
-        protected override void OnEnable()
+        public void Initialize()
         {
-            base.OnEnable();
-            _uiAsset = GetComponentInChildren<UIAssetContainer>(true);
+            _uiAsset.Initialize();
+        }
+
+        public void CleanUp()
+        {
+            _uiAsset.CleanUp();
         }
 
         public void SetText(string text)

@@ -42,15 +42,19 @@ namespace SDefence.UI
             _helpBtn.onClick.AddListener(OnHelpCommandPacketEvent);
             _exitBtn.onClick.AddListener(Hide);
 
+            _mainTurret.Initialize();
             _mainTurret.SetOnCommandPacketListener(OnCommandPacketEvent);
             _orbitTurret.SetOnCommandPacketListener(OnCommandPacketEvent);
 
             _orbitTurret.Initialize();
             _orbitTurret.Hide();
 
+            _uiAsset.Initialize();
+
         }
         public void CleanUp()
         {
+            _mainTurret.CleanUp();
             _mainTurret.SetOnCommandPacketListener(null);
             _orbitTurret.SetOnCommandPacketListener(null);
 
@@ -58,6 +62,8 @@ namespace SDefence.UI
             _exitBtn.onClick.RemoveListener(Hide);
 
             _orbitTurret.CleanUp();
+
+            _uiAsset.CleanUp();
         }
 
         public void Show()
@@ -74,54 +80,56 @@ namespace SDefence.UI
 
         public void OnEntityPacketEvent(IEntityPacket packet)
         {
-
-            switch (packet)
+            if (gameObject.activeSelf)
             {
-                case TurretOrbitEntityPacket pk:
-                    while (_list.Count < pk.OrbitCount)
-                    {
-                        var btn = Instantiate(_tabBtn);
-                        btn.transform.SetParent(_tabFrame);
-                        btn.transform.localScale = Vector2.one;
-                        if(_list.Count == 0)
-                            btn.SetText($"ÁÖÆ÷Å¾");
+                switch (packet)
+                {
+                    case TurretOrbitEntityPacket pk:
+                        while (_list.Count < pk.OrbitCount)
+                        {
+                            var btn = Instantiate(_tabBtn);
+                            btn.transform.SetParent(_tabFrame);
+                            btn.transform.localScale = Vector2.one;
+                            if (_list.Count == 0)
+                                btn.SetText($"ÁÖÆ÷Å¾");
+                            else
+                                btn.SetText($"±Ëµµ{_list.Count}");
+                            btn.SetIndex(_list.Count);
+                            btn.SetOnCommandPacketListener(OnCommandPacketEvent);
+                            _list.Add(btn);
+                        }
+                        break;
+                    case TurretEntityPacket pk:
+                        if (pk.OrbitIndex == 0)
+                        {
+                            _orbitTurret.Hide();
+                            _mainTurret.Show();
+                            _mainTurret.OnEntityPacketEvent(packet);
+                        }
                         else
-                            btn.SetText($"±Ëµµ{_list.Count}");
-                        btn.SetIndex(_list.Count);
-                        btn.SetOnCommandPacketListener(OnCommandPacketEvent);
-                        _list.Add(btn);
-                    }
-                    break;
-                case TurretEntityPacket pk:
-                    if(pk.OrbitIndex == 0)
-                    {
-                        _orbitTurret.Hide();
-                        _mainTurret.Show();
-                        _mainTurret.OnEntityPacketEvent(packet);
-                    }
-                    else
-                    {
+                        {
+                            _mainTurret.Hide();
+                            _orbitTurret.Show();
+                            _orbitTurret.OnEntityPacketEvent(packet);
+                        }
+                        _OrbitIndex = pk.OrbitIndex;
+
+                        break;
+                    case TurretArrayEntityPacket pk:
                         _mainTurret.Hide();
                         _orbitTurret.Show();
                         _orbitTurret.OnEntityPacketEvent(packet);
-                    }
-                    _OrbitIndex = pk.OrbitIndex;
 
-                    break;
-                case TurretArrayEntityPacket pk:
-                    _mainTurret.Hide();
-                    _orbitTurret.Show();
-                    _orbitTurret.OnEntityPacketEvent(packet);
+                        _OrbitIndex = pk.OrbitIndex;
 
-                    _OrbitIndex = pk.OrbitIndex;
+                        break;
+                    case TurretExpandEntityPacket pk:
+                        _orbitTurret.OnEntityPacketEvent(packet);
+                        break;
+                }
 
-                    break;
-                case TurretExpandEntityPacket pk:
-                    _orbitTurret.OnEntityPacketEvent(packet);
-                    break;
+                _uiAsset.OnEntityPacketEvent(packet);
             }
-
-            _uiAsset.OnEntityPacketEvent(packet);
         }
 
         #region ##### Listener #####

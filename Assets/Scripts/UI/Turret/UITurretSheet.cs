@@ -108,6 +108,7 @@ namespace SDefence.UI
             block.transform.SetParent(_scrollRect.content);
             block.transform.localScale = Vector3.one;
             block.SetOnCommandPacketListener(OnCommandPacketEvent);
+            block.Initialize();
             _list.Add(block);
             return block;
         }

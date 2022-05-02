@@ -13,11 +13,13 @@ namespace SDefence.UI
 
         private void Awake()
         {
+            _uiExpandBtn.Initialize();
             _uiExpandBtn.onClick.AddListener(OnCommandPacketEvent);
         }
 
         private void OnDestroy()
         {
+            _uiExpandBtn.CleanUp();
             _uiExpandBtn.onClick.RemoveListener(OnCommandPacketEvent);
         }
 

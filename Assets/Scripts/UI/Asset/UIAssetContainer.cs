@@ -18,12 +18,12 @@ namespace SDefence.UI
 
         private Transform frameTr;
 
-        private void Awake()
+        public void Initialize()
         {
             _baseDic = new Dictionary<string, UIAssetBlock>();
             _dic = new Dictionary<string, UIAssetBlock>();
 
-            var frame = transform.GetComponentInChildren<LayoutGroup>(true);
+            var frame = transform.GetChild(0);
             frameTr = frame.transform;
 
             for (int i = 0; i < frameTr.childCount; i++)
@@ -44,7 +44,7 @@ namespace SDefence.UI
             }
         }
 
-        private void OnDestroy()
+        public void CleanUp()
         {
             _baseDic.Clear();
             _dic.Clear();

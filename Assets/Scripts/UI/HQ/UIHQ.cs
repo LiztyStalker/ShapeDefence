@@ -42,6 +42,10 @@ namespace SDefence.UI
 
             _helpBtn.onClick.AddListener(OnHelpCommandPacketEvent);
             _exitBtn.onClick.AddListener(Hide);
+
+            _upgradeBtn.Initialize();
+
+            _uiAsset.Initialize();
         }
         public void CleanUp()
         {
@@ -50,6 +54,10 @@ namespace SDefence.UI
 
             _helpBtn.onClick.RemoveListener(OnHelpCommandPacketEvent);
             _exitBtn.onClick.RemoveListener(Hide);
+
+            _upgradeBtn.CleanUp();
+
+            _uiAsset.CleanUp();
         }
 
         public void Show()
@@ -66,13 +74,16 @@ namespace SDefence.UI
 
         public void OnEntityPacketEvent(IEntityPacket packet)
         {
-            switch (packet)
+            if (gameObject.activeSelf)
             {
-                case HQEntityPacket pk:
-                    RefreshUI(pk);
-                    break;
+                switch (packet)
+                {
+                    case HQEntityPacket pk:
+                        RefreshUI(pk);
+                        break;
+                }
+                _uiAsset.OnEntityPacketEvent(packet);
             }
-            _uiAsset.OnEntityPacketEvent(packet);
         }
 
         private void RefreshUI(HQEntityPacket packet)
@@ -91,7 +102,7 @@ namespace SDefence.UI
             str += "실드 " + entity.GetDurableUsableData<ShieldDurableUsableData>() + "\n";
             str += "실드회복량 " + entity.GetRecoveryUsableData<ShieldRecoveryUsableData>() + "\n";
             str += "실드최대피격량 " + entity.GetDurableUsableData<LimitDamageShieldDurableUsableData>() + "\n";
-            str += "궤도수 " + entity.OrbitCount + "\n";
+            str += "궤도수 " + entity.TurretCount + "\n";
 
             _text.text = str;
 

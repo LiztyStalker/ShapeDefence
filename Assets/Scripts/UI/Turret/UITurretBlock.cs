@@ -31,15 +31,19 @@ namespace SDefence.UI
         private int _orbitIndex;
         private int _index;
 
-        private void Awake()
+        public void Initialize()
         {
+            _upgradeBtn.Initialize();
+
             _disassembleBtn.onClick.AddListener(OnDisassembleCommandPacketEvent);
             _upgradeBtn.onClick.AddListener(OnUpgradeCommandPacketEvent);
             _techBtn.onClick.AddListener(OnTechCommandPacketEvent);
         }
 
-        private void OnDestroy()
+        public void CleanUp()
         {
+            _upgradeBtn.CleanUp();
+
             _disassembleBtn.onClick.RemoveListener(OnDisassembleCommandPacketEvent);
             _upgradeBtn.onClick.RemoveListener(OnUpgradeCommandPacketEvent);
             _techBtn.onClick.RemoveListener(OnTechCommandPacketEvent);

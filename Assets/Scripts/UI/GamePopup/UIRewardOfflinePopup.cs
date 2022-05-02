@@ -20,12 +20,14 @@ namespace SDefence.UI
 
         public void Initialize()
         {
+            _uiAsset.Initialize();
             _rewardBtn.onClick.AddListener(OnRewardCommandPacketEvent);
             _adbRewardBtn.onClick.AddListener(OnAdbRewardCommandPacketEvent);
         }
 
         public void CleanUp()
         {
+            _uiAsset.CleanUp();
             _rewardBtn.onClick.RemoveListener(OnRewardCommandPacketEvent);
             _adbRewardBtn.onClick.AddListener(OnAdbRewardCommandPacketEvent);
         }

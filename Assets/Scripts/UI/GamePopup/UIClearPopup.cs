@@ -23,6 +23,8 @@ namespace SDefence.UI
 
         public void Initialize()
         {
+            _uiAsset.Initialize();
+
             _toLobbyBtn.onClick.AddListener(OnToLobbyCommandPacketEvent);
             _adbToLobbyBtn.onClick.AddListener(OnAdsToLobbyCommandPacketEvent);
             _nextLevelBtn.onClick.AddListener(OnNextLevelCommandPacketEvent);
@@ -30,6 +32,8 @@ namespace SDefence.UI
 
         public void CleanUp()
         {
+            _uiAsset.CleanUp();
+
             _toLobbyBtn.onClick.RemoveListener(OnToLobbyCommandPacketEvent);
             _adbToLobbyBtn.onClick.RemoveListener(OnAdsToLobbyCommandPacketEvent);
             _nextLevelBtn.onClick.RemoveListener(OnNextLevelCommandPacketEvent);

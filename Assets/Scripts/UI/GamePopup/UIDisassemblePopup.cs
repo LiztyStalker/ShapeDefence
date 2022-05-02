@@ -25,6 +25,7 @@ namespace SDefence.UI
 
         public void Initialize()
         {
+            _uiAsset.Initialize();
             _closeBtn.onClick.AddListener(OnCloseEvent);
             _exitBtn.onClick.AddListener(OnCloseEvent);
             _applyBtn.onClick.AddListener(OnDisassembleEvent);
@@ -32,6 +33,7 @@ namespace SDefence.UI
 
         public void CleanUp()
         {
+            _uiAsset.CleanUp();
             _closeBtn.onClick.AddListener(OnCloseEvent);
             _exitBtn.onClick.AddListener(OnCloseEvent);
             _applyBtn.onClick.AddListener(OnDisassembleEvent);
