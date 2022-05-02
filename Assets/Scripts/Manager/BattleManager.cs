@@ -156,6 +156,7 @@ namespace SDefence.Manager
 
 
         private BattleGenEntity _battleGenEntity;
+        private BattleGenLevelData[] _battleGenLevelDataArray;
 
 
         private TYPE_BATTLE_ACTION _typeBattleAction = TYPE_BATTLE_ACTION.Lobby;
@@ -195,6 +196,8 @@ namespace SDefence.Manager
 
             _battleGenEntity = BattleGenEntity.Create();
             _battleGenEntity.SetOnAppearEnemyListener(OnAppearEnemyEvent);
+
+            _battleGenLevelDataArray = DataStorage.Instance.GetAllDataArrayOrZero<ScriptableObject, BattleGenLevelData>();
         }
 
         public void CleanUp()
@@ -287,17 +290,17 @@ namespace SDefence.Manager
 
         private void SetBattleGen()
         {
-            var enemyLevelDataKey = string.Format("Level{0:d4}", _levelWaveData.GetLevel());
-            var enemyLevelData = (BattleGenLevelData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(enemyLevelDataKey, "BattleGenLevelData");
-
-            if (enemyLevelData != null)
+            if (_battleGenLevelDataArray != null)
             {
+                //var enemyLevelDataKey = string.Format("Level{0:d4}", _levelWaveData.GetLevel());
+                //var enemyLevelData = (BattleGenLevelData)DataStorage.Instance.GetData<ScriptableObject>(enemyLevelDataKey, "BattleGenLevelData");
+                var enemyLevelData = _battleGenLevelDataArray[UnityEngine.Random.Range(0, _battleGenLevelDataArray.Length)];
                 _battleGenEntity.SetData(enemyLevelData);
             }
 #if UNITY_EDITOR
             else
             {
-                Debug.LogWarning($"{enemyLevelDataKey} is not Found");
+                throw new System.NullReferenceException("_battleGenLevelDataArray is Null");
             }
 #endif
         }
@@ -624,6 +627,7 @@ namespace SDefence.Manager
                     break;
             }
         }
+
 
         private void OnBulletAttackEvent(BulletActor actor, IAttackable attackable, IDamagable damagable, AttackActionUsableData actionData, System.Action endCallback)
         {
