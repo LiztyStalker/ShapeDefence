@@ -259,6 +259,20 @@ namespace Storage
             return list.ToArray();
         }
 
+        public U[] GetAllDataArrayOrZero<T, U>() where T : Object where U : Object
+        {
+            List<U> list = new List<U>();
+            if (IsHasDataType<T>())
+            {
+                foreach (var data in _dataDic[ToTypeString<T>()].Values)
+                {
+                    if(data is U)
+                    list.Add(data as U);
+                }
+            }
+            return list.ToArray();
+        }
+
         public static string ToTypeString<T>() => typeof(T).Name.ToString();
 
         /// <summary>
