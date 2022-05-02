@@ -277,6 +277,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _text: {fileID: 1129884362534345830}
+  _uiAsset: {fileID: 5846862099114711137}
 --- !u!1 &4811396677068399930
 GameObject:
   m_ObjectHideFlags: 0
