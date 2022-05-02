@@ -9,20 +9,15 @@ namespace SDefence.HQ
 
     public class HQManager : ISavable
     {
+        private readonly string DEFAULT_HQ_KEY = "HQ1";
+
         private HQEntity _entity;
 
         public static HQManager Create() => new HQManager();
         public void Initialize()
         {
             _entity = HQEntity.Create();
-            var data = DataStorage.Instance.GetDataOrNull<ScriptableObject>("HQ1", "HQData");
-            //기본 HQData 가져오기
-            if (data != null) _entity.Initialize(data as HQData);
-#if UNITY_EDITOR
-            else _entity.Initialize(HQData.Create());
-#else
-            else Debug.LogError("HQ를 찾을 수 없음");
-#endif
+            _entity.Initialize(GetStorageData(DEFAULT_HQ_KEY));
         }
 
         public void CleanUp()
@@ -40,7 +35,7 @@ namespace SDefence.HQ
 
         public bool UpTech(string key)
         {
-            var data = (HQData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(key, "HQData");
+            var data = GetStorageData(key);
             Debug.Log(data);
             if (data != null)
             {
@@ -49,6 +44,8 @@ namespace SDefence.HQ
             }
             return false;
         }
+
+        private HQData GetStorageData(string key) => (HQData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(key, "HQData");
 
         public void UpTech(HQData data)
         {
@@ -120,8 +117,7 @@ namespace SDefence.HQ
         public void SetSavableData(SavableData data)
         {
             var key = data.GetValue<string>("Key");
-            //StorageManager에서 HQData 가져오기
-
+            _entity.Initialize(GetStorageData(key));
             _entity.SetSavableData(data.GetValue(_entity.SavableKey()));
         }
 
