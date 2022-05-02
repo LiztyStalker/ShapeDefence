@@ -59,7 +59,7 @@ namespace SDefence.Manager
         public void RefreshAll()
         {
             _hqMgr.Refresh();
-            _turretMgr.Refresh(0);
+            _turretMgr.RefreshAll();
             _assetEntity.Refresh();
         }
 
@@ -361,7 +361,7 @@ namespace SDefence.Manager
                         pk.IsActiveUpgrade = (_assetEntity.Compare(assetData) <= 0);
                     }
 
-                    _turretMgr.SetOrbitCount(pk.Entity.OrbitCount);
+                    _turretMgr.SetOrbitCount(pk.Entity.TechLevel - 1, pk.Entity.TurretCount);
 
                     break;
                 case TurretArrayEntityPacket pk:
@@ -422,6 +422,8 @@ namespace SDefence.Manager
             data.AddData(SAVABLE_SAVETIME_KEY, System.DateTime.UtcNow);
             data.AddData(_hqMgr.SavableKey(), _hqMgr.GetSavableData());
             data.AddData(_turretMgr.SavableKey(), _turretMgr.GetSavableData());
+            data.AddData(_assetEntity.SavableKey(), _assetEntity.GetSavableData());
+            data.AddData(_statistics.SavableKey(), _statistics.GetSavableData());
             //Date
             return data;
         }
@@ -433,10 +435,14 @@ namespace SDefence.Manager
                 var hqSavable = data.GetValue<SavableData>(_hqMgr.SavableKey());
                 _hqMgr.SetSavableData(hqSavable);
 
-
                 var turretSavable = data.GetValue<SavableData>(_turretMgr.SavableKey());
                 _turretMgr.SetSavableData(turretSavable);
 
+                var assetSavable = data.GetValue<SavableData>(_assetEntity.SavableKey());
+                _assetEntity.SetSavableData(assetSavable);
+
+                var statisticsSavable = data.GetValue<SavableData>(_statistics.SavableKey());
+                _statistics.SetSavableData(statisticsSavable);
 
                 var time = data.GetValue<System.DateTime>(SAVABLE_SAVETIME_KEY);
                 var year = System.DateTime.UtcNow.Year - time.Year;
