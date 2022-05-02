@@ -13,7 +13,7 @@ namespace Utility.IO
 
         public static SavableData Create() => new SavableData();
 
-        private SavableData()
+        public SavableData()
         {
             _children = new Dictionary<string, object>();
         }
@@ -39,11 +39,7 @@ namespace Utility.IO
                     return (T)_children[key];
                 }
             }
-#if UNITY_EDITOR
-            throw new System.Exception($"{typeof(T).Name}을 찾을 수 없음");
-#else
-            return default(T);
-#endif
+            return System.Activator.CreateInstance<T>();
         }
 
         public SavableData GetValue(string key)
@@ -55,11 +51,7 @@ namespace Utility.IO
                     return (SavableData)_children[key];
                 }
             }
-#if UNITY_EDITOR
-            throw new System.Exception($"{typeof(SavableData).Name}을 찾을 수 없음");
-#else
             return null;
-#endif
         }
 
         public override string ToString()
