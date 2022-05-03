@@ -316,7 +316,7 @@ namespace SDefence.Manager
 
         private System.Action<IEntityPacket> _entityEvent;
         public void AddOnEntityPacketListener(System.Action<IEntityPacket> act) => _entityEvent += act;
-        public void RemoveOnRefreshEntityPacketListener(System.Action<IEntityPacket> act) => _entityEvent -= act;
+        public void RemoveOnEntityPacketListener(System.Action<IEntityPacket> act) => _entityEvent -= act;
         private void OnEntityPacketEvent(IEntityPacket packet)
         {
             switch (packet)

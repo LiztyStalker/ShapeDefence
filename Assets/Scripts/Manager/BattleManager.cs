@@ -292,8 +292,6 @@ namespace SDefence.Manager
         {
             if (_battleGenLevelDataArray != null)
             {
-                //var enemyLevelDataKey = string.Format("Level{0:d4}", _levelWaveData.GetLevel());
-                //var enemyLevelData = (BattleGenLevelData)DataStorage.Instance.GetData<ScriptableObject>(enemyLevelDataKey, "BattleGenLevelData");
                 var enemyLevelData = _battleGenLevelDataArray[UnityEngine.Random.Range(0, _battleGenLevelDataArray.Length)];
                 _battleGenEntity.SetData(enemyLevelData);
             }
@@ -307,7 +305,6 @@ namespace SDefence.Manager
 
         public void SetLobby()
         {
-            Debug.Log("Start Lobby");
             _isDefeat = false;
 
             _typeBattleAction = TYPE_BATTLE_ACTION.Lobby;
@@ -433,7 +430,6 @@ namespace SDefence.Manager
                             _hqActor.Activate();
                             _hqActor.AddOnBattlePacketListener(OnBattlePacketEvent);
                             _hqActor.transform.SetParent(_gameObject.transform);
-                            //Debug.Log("HQReady");
                         }
 
 
@@ -629,7 +625,12 @@ namespace SDefence.Manager
         }
 
 
-        private void OnBulletAttackEvent(BulletActor actor, IAttackable attackable, IDamagable damagable, AttackActionUsableData actionData, System.Action endCallback)
+        private void OnBulletAttackEvent(
+            BulletActor actor, 
+            IAttackable attackable, 
+            IDamagable damagable, 
+            AttackActionUsableData actionData, 
+            System.Action endCallback)
         {
             actionData.SetOnAttackActionListener((range, isOverlap) =>
             {
@@ -727,7 +728,15 @@ namespace SDefence.Manager
                 switch (attackable)
                 {
                     case EnemyActor eActor:
-                        actor = _bulletMgr.Activate(attackable, bulletData, 0.1f, attackable.AttackPos, _hqActor.transform.position, OnBulletAttackEvent, null);
+                        actor = _bulletMgr.Activate(
+                            attackable, 
+                            bulletData,
+                            0.1f, 
+                            attackable.AttackPos, 
+                            _hqActor.transform.position, 
+                            OnBulletAttackEvent, 
+                            null
+                            );
                         break;
                     case TurretActor tActor:
                         if (_enemyActorList.Count > 0)
@@ -735,7 +744,15 @@ namespace SDefence.Manager
                             //타겟팅 정하면 되도록 변경하지 않기
                             //적이 사망하면 타겟팅 초기화
                             var enemyActor = _enemyActorList[UnityEngine.Random.Range(0, _enemyActorList.Count)];
-                            actor = _bulletMgr.Activate(attackable, bulletData, 0.1f, attackable.AttackPos, enemyActor.NowPosition, OnBulletAttackEvent, null);
+                            actor = _bulletMgr.Activate(
+                                attackable, 
+                                bulletData, 
+                                0.1f, 
+                                attackable.AttackPos, 
+                                enemyActor.NowPosition, 
+                                OnBulletAttackEvent, 
+                                null
+                                );
                         }
                         break;
                 }
@@ -772,7 +789,6 @@ namespace SDefence.Manager
                 _enemyActorList.Add(actor);
                 actor.Activate();
                 actor.SetPosition(AppearPosition());
-                //Debug.Log("Appear " + actor.GetInstanceID() + " " + _enemyActorList.Count);
 
                 //보스? 특수? 
                 OnAppearEnemyBattlePacketEvent(enemyData.TypeEnemyStyle);

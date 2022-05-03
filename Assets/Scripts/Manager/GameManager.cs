@@ -57,12 +57,15 @@ namespace SDefence.Manager
 
         private void OnDestroy()
         {
-            _system.RemoveOnRefreshEntityPacketListener(_battle.OnEntityPacketEvent);
-           
-            _battle.RemoveOnBattlePacketListener(packet => {
-                Debug.Log($"Packet {packet.GetType().Name}");
-            });
+            _system.RemoveOnEntityPacketListener(_battle.OnEntityPacketEvent);
+            _system.RemoveOnEntityPacketListener(_uiGame.OnEntityPacketEvent);
 
+            _battle.RemoveOnBattlePacketListener(_system.OnBattlePacketEvent);
+            _battle.RemoveOnBattlePacketListener(_uiGame.OnBattlePacketEvent);
+
+            _uiGame.RemoveOnCommandPacketListener(_system.OnCommandPacketEvent);
+            _uiGame.RemoveOnCommandPacketListener(_battle.OnCommandPacketEvent);
+           
             _battle = null;
             _system = null;
         }
