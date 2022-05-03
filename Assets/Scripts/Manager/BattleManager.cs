@@ -19,6 +19,7 @@ namespace SDefence.Manager
     using Enemy;
     using Utility.IO;
     using Asset.Entity;
+    using System.Linq;
 
     #region ##### Orbit #####
     public class OrbitCase
@@ -718,6 +719,8 @@ namespace SDefence.Manager
 
         private void OnAttackEvent(string bulletKey, IAttackable attackable)
         {
+            //고정된 적 필요
+
             //탄환 발사
             var bulletData = (BulletData)DataStorage.Instance.GetDataOrNull<ScriptableObject>(bulletKey, "BulletData");
 
@@ -728,35 +731,45 @@ namespace SDefence.Manager
                 switch (attackable)
                 {
                     case EnemyActor eActor:
-                        actor = _bulletMgr.Activate(
-                            attackable, 
-                            bulletData,
-                            0.1f, 
-                            attackable.AttackPos, 
-                            _hqActor.transform.position, 
-                            OnBulletAttackEvent, 
-                            null
-                            );
+                        //Range
+                        if (attackable.AttackUsableData.Range > Vector2.Distance(attackable.AttackPos, _hqActor.NowPosition))
+                        {
+                            actor = _bulletMgr.Activate(
+                                attackable,
+                                bulletData,
+                                0.1f,
+                                attackable.AttackPos,
+                                _hqActor.transform.position,
+                                OnBulletAttackEvent,
+                                null
+                                );
+                        }
                         break;
                     case TurretActor tActor:
                         if (_enemyActorList.Count > 0)
                         {
                             //타겟팅 정하면 되도록 변경하지 않기
                             //적이 사망하면 타겟팅 초기화
+
+                            //Range - Targeting Type
                             var enemyActor = _enemyActorList[UnityEngine.Random.Range(0, _enemyActorList.Count)];
-                            actor = _bulletMgr.Activate(
-                                attackable, 
-                                bulletData, 
-                                0.1f, 
-                                attackable.AttackPos, 
-                                enemyActor.NowPosition, 
-                                OnBulletAttackEvent, 
-                                null
-                                );
+                            if (attackable.AttackUsableData.Range > Vector2.Distance(attackable.AttackPos, enemyActor.NowPosition))
+                            {
+                                actor = _bulletMgr.Activate(
+                                    attackable,
+                                    bulletData,
+                                    0.1f,
+                                    attackable.AttackPos,
+                                    enemyActor.NowPosition,
+                                    OnBulletAttackEvent,
+                                    null
+                                    );
+                            }
                         }
                         break;
                 }
 
+                //Created BulletActor
                 if (actor != null)
                 {
                     var effect = DataStorage.Instance.GetDataOrNull<GameObject>(bulletData.ActiveEffectDataKey);
@@ -768,6 +781,12 @@ namespace SDefence.Manager
 
             }
         }
+
+
+//        private IActor SearchTarget(IAttackable attackable)
+//        {
+////            _enemyActorList.Min(actor => { attackable.AttackUsableData.Range - Vector2.Distance(attackable.AttackPos, enemyActor.NowPosition); })
+//        }
 
         private void AppearEnemy(string key)
         {

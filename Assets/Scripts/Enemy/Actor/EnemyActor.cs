@@ -199,5 +199,17 @@ namespace SDefence.Actor
 
 
         #endregion
+
+#if UNITY_EDITOR
+        public void OnDrawGizmos()
+        {
+            if (_entity.IsAttack)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(transform.position, AttackUsableData.Range);
+            }
+        }
+#endif
+
     }
 }

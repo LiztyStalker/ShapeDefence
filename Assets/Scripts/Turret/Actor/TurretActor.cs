@@ -219,5 +219,15 @@ namespace SDefence.Actor
             _retrieveEvent?.Invoke(this);
         }
         #endregion
+
+
+#if UNITY_EDITOR
+        public void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, AttackUsableData.Range);
+        }
+
+#endif
     }
 }

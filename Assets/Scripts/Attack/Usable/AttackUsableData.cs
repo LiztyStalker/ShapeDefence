@@ -57,7 +57,7 @@ namespace SDefence.Attack.Usable
             var incRate = float.Parse(increaseRate);
 
             Range = startVal;
-            Range = NumberDataUtility.GetIsolationInterest(Delay, incVal, incRate, upgrade);
+            Range = NumberDataUtility.GetIsolationInterest(Range, incVal, incRate, upgrade);
 
         }
 
