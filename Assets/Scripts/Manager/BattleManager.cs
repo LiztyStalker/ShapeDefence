@@ -143,6 +143,7 @@ namespace SDefence.Manager
         private Dictionary<int, List<TurretActor>> _turretDic;
         private List<TurretActor> _turretList;
         private List<EnemyActor> _enemyActorList;
+        private TargetSystem _targetSystem;
 
         private List<AttackActionUsableData> _attackActionList;
 
@@ -175,6 +176,8 @@ namespace SDefence.Manager
 
             _turretDic = new Dictionary<int, List<TurretActor>>();
             _turretList = new List<TurretActor>();
+            _targetSystem = new TargetSystem();
+            _targetSystem.Initialize();
 
             _orbitAction = OrbitAction.Create();
 
@@ -215,6 +218,8 @@ namespace SDefence.Manager
             _battleAssetEntity.CleanUp();
 
             _battleGenEntity = null;
+
+            _targetSystem.CleanUp();
         }
 
         private EnemyActor CreateEnemyActor()
@@ -233,8 +238,12 @@ namespace SDefence.Manager
 
         private void OnRetrieveEnemyActorEvent(EnemyActor actor)
         {
+            _targetSystem.RemoveTarget(actor);
+            _targetSystem.RemoveAttackable(actor);
+
             _enemyActorList.Remove(actor);
             _enemyPool.RetrieveElement(actor);
+
             actor.Inactivate();
         }
 
@@ -253,6 +262,8 @@ namespace SDefence.Manager
             _isDefeat = false;
             _waveTime = 0f;
             _typeBattleAction = TYPE_BATTLE_ACTION.Battle;
+
+            _targetSystem.Clear();
 
             //HQActor 비무적
             _hqActor.SetInvincible(false);
@@ -312,6 +323,8 @@ namespace SDefence.Manager
             _waveTime = 0f;
 
             SetBattleGen();
+
+            _targetSystem.Clear();
 
             //HQActor 무적
             _hqActor.SetInvincible(true);
@@ -549,6 +562,10 @@ namespace SDefence.Manager
                                     }
                                 }
                                 break;
+                            case TurretActor actor:
+                                _targetSystem.RemoveAttackable(actor);
+                                _targetSystem.RemoveTarget(actor);
+                                break;
                         }                        
                     }
                     break;
@@ -731,9 +748,16 @@ namespace SDefence.Manager
                 switch (attackable)
                 {
                     case EnemyActor eActor:
-                        //Range
-                        if (attackable.AttackUsableData.Range > Vector2.Distance(attackable.AttackPos, _hqActor.NowPosition))
-                        {
+
+
+                        var actors = new List<IActor>();
+                        actors.Add(_hqActor);
+                        actors.AddRange(_turretList);
+
+                        var targetActor = _targetSystem.SearchTarget(attackable, actors.ToArray());
+
+                        if (targetActor != null)
+                        {                           
                             actor = _bulletMgr.Activate(
                                 attackable,
                                 bulletData,
@@ -742,7 +766,7 @@ namespace SDefence.Manager
                                 _hqActor.transform.position,
                                 OnBulletAttackEvent,
                                 null
-                                );
+                                );                            
                         }
                         break;
                     case TurretActor tActor:
@@ -750,10 +774,9 @@ namespace SDefence.Manager
                         {
                             //타겟팅 정하면 되도록 변경하지 않기
                             //적이 사망하면 타겟팅 초기화
-
                             //Range - Targeting Type
-                            var enemyActor = _enemyActorList[UnityEngine.Random.Range(0, _enemyActorList.Count)];
-                            if (attackable.AttackUsableData.Range > Vector2.Distance(attackable.AttackPos, enemyActor.NowPosition))
+                            var enemyActor = _targetSystem.SearchTarget(attackable, _enemyActorList.ToArray());                           
+                            if (enemyActor != null)
                             {
                                 actor = _bulletMgr.Activate(
                                     attackable,
@@ -778,15 +801,8 @@ namespace SDefence.Manager
                     var sfx = DataStorage.Instance.GetDataOrNull<AudioClip>(bulletData.ActiveEffectSfxKey);
                     _audioMgr.Activate(sfx, AudioManager.TYPE_AUDIO.SFX);
                 }
-
             }
         }
-
-
-//        private IActor SearchTarget(IAttackable attackable)
-//        {
-////            _enemyActorList.Min(actor => { attackable.AttackUsableData.Range - Vector2.Distance(attackable.AttackPos, enemyActor.NowPosition); })
-//        }
 
         private void AppearEnemy(string key)
         {
