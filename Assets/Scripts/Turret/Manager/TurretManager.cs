@@ -106,7 +106,7 @@ namespace SDefence.Turret
             if (_dic.ContainsKey(orbitIndex))
             {
                 var entity = _dic[orbitIndex][index];
-                var assetData = entity.GetUpgradeData().Clone();
+                var assetData = entity.GetUpgradeAssetUsableData().Clone();
                 _dic[orbitIndex][index].Upgrade();
                 Refresh(orbitIndex, index);
                 return assetData;
@@ -114,23 +114,23 @@ namespace SDefence.Turret
             return null;
         }
 
-        public bool UpTech(int orbitIndex, int index, string key)
+        public bool UpTech(int orbitIndex, int index, string key, IAssetUsableData techAssetData)
         {
             if (_dic.ContainsKey(orbitIndex))
             {
                 var data = GetStorageData(key);
                 if (data != null)
                 {
-                    UpTech(orbitIndex, index, data);
+                    UpTech(orbitIndex, index, data, techAssetData);
                     return true;
                 }
             }
             return false;
         }
 
-        public void UpTech(int orbitIndex, int index, TurretData data)
+        public void UpTech(int orbitIndex, int index, TurretData data, IAssetUsableData techAssetData)
         {
-            _dic[orbitIndex][index].UpTech(data);
+            _dic[orbitIndex][index].UpTech(data, techAssetData);
             OnUpTechEntityPacketEvent(orbitIndex, index);
             Refresh(orbitIndex, index);
         }
@@ -251,7 +251,9 @@ namespace SDefence.Turret
         {
             var packet = new OpenDisassembleEntityPacket();
             //Asset
-            packet.Entity = _dic[orbitIndex][index];
+            packet.AssetEntity = _dic[orbitIndex][index].DisassembleAssetEntity;
+            packet.OrbitIndex = orbitIndex;
+            packet.Index = index; 
             _entityEvent?.Invoke(packet);
 
         }
@@ -260,12 +262,12 @@ namespace SDefence.Turret
         {
             _dic[orbitIndex][index].Initialize(GetDefaultData(), orbitIndex);
 
-            var packet = new DisassembleEntityPacket();
-            packet.NowEntity = _dic[orbitIndex][index];
-            packet.PastEntity = _dic[orbitIndex][index];
-            _entityEvent?.Invoke(packet);
-
             OnEntityPacketEvent(orbitIndex, index, _dic[orbitIndex][index]);
+
+            //var packet = new TurretEntityPacket();
+            //packet.nowData = _dic[orbitIndex][index];
+            //packet.pastData = _dic[orbitIndex][index];
+            //_entityEvent?.Invoke(packet);
         }
 
 

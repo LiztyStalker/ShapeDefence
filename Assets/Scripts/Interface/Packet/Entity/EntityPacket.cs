@@ -6,6 +6,7 @@ namespace SDefence.Packet
     using Entity;
     using Tech;
     using Asset;
+    using SDefence.Turret;
 
     public struct TechPacketElement
     {
@@ -69,13 +70,15 @@ namespace SDefence.Packet
 
     public class OpenDisassembleEntityPacket : IEntityPacket
     {
-        public IEntity Entity;
+        public AssetUsableEntity AssetEntity;
+        public int OrbitIndex;
+        public int Index;
     }
 
     public class DisassembleEntityPacket : IEntityPacket
     {
-        public IEntity PastEntity;
         public IEntity NowEntity;
+        public IEntity PastEntity;
     }
 
     public class OpenExpandTurretEntityPacket : IEntityPacket

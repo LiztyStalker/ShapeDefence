@@ -126,7 +126,7 @@ namespace SDefence.UI
                     _techBtn.gameObject.SetActive(false);
                 }
 
-                _upgradeBtn.SetAsset(entity.GetUpgradeData());
+                _upgradeBtn.SetAsset(entity.GetUpgradeAssetUsableData());
 
                 //_disassembleBtn.interactable = //Tech 0 = false
                 _upgradeBtn.interactable = pk.IsActiveUpgrade;

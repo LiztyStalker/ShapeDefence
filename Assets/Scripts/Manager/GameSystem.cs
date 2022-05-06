@@ -205,7 +205,7 @@ namespace SDefence.Manager
                             //Turret Orbit Expand
                             //_turretMgr.ExpandOrbit();
                         case TYPE_COMMAND_KEY.Turret:
-                            if (_turretMgr.UpTech(pk.ParentIndex, pk.Index, pk.Key))
+                            if (_turretMgr.UpTech(pk.ParentIndex, pk.Index, pk.Key, pk.AssetUsableData))
                             {
                                 _assetEntity.Subject(pk.AssetUsableData);
                                 _statistics.AddStatisticsData<UpTechTurretStatisticsData>();
@@ -238,6 +238,7 @@ namespace SDefence.Manager
                     break;
                 case DisassembleCommandPacket pk:
                     // Turret
+                    _assetEntity.Add(pk.AssetEntity);
                     _turretMgr.OnDisassembleTurretEntityPacket(pk.ParentIndex, pk.Index);
                     //AddStatisticsData - Turret
                     //Asset
@@ -372,7 +373,7 @@ namespace SDefence.Manager
                         //¾Æ·¡¿Í ÁßÃ¸
                         if (!pk.packets[i].IsActiveUpTech)
                         {
-                            var assetData = pk.packets[i].Entity.GetUpgradeData();
+                            var assetData = pk.packets[i].Entity.GetUpgradeAssetUsableData();
                             pk.packets[i].IsActiveUpgrade = (_assetEntity.Compare(assetData) <= 0);
                         }
                     }
@@ -388,7 +389,7 @@ namespace SDefence.Manager
                     //À§¿Í ÁßÃ¸
                     if (!pk.IsActiveUpTech)
                     {
-                        var assetData = pk.Entity.GetUpgradeData();
+                        var assetData = pk.Entity.GetUpgradeAssetUsableData();
                         pk.IsActiveUpgrade = (_assetEntity.Compare(assetData) <= 0);
                     }
                     break;

@@ -9,6 +9,7 @@ namespace SDefence.Turret.Entity
     using Attack;
     using Tech;
     using SDefence.Entity;
+    using Asset.Entity;
 
     public class TurretEntity : ISavable, IEntity, ITechable
     {
@@ -27,6 +28,8 @@ namespace SDefence.Turret.Entity
         #endregion
 
         private DurableUsableEntity _durableEntity;
+
+        private AssetUsableEntity _disassembleAssetEntity;
 
         public int _orbitIndex;
 
@@ -68,12 +71,15 @@ namespace SDefence.Turret.Entity
 
         public TechRawData TechRawData => _data.TechRawData;
 
+        public AssetUsableEntity DisassembleAssetEntity => _disassembleAssetEntity;
+
         public static TurretEntity Create() => new TurretEntity();
 
         private TurretEntity()
         {
             _upgradeData = UpgradeData.Create();
             _durableEntity = DurableUsableEntity.Create();
+            _disassembleAssetEntity = AssetUsableEntity.Create();
         }
 
         public void Initialize(TurretData data, int orbitIndex)
@@ -81,7 +87,13 @@ namespace SDefence.Turret.Entity
             _orbitIndex = orbitIndex;
             SetData(data);
             _durableEntity.Set(_data.DurableRawDataArray, _upgradeData.GetValue());
+            _disassembleAssetEntity.Clear();
+            _upgradeData.SetValue(0);
             _techLevel = 1;
+
+            _upgradeAssetData = null;
+            _recoveryData = null;
+            _attackData = null;
         }
 
         public void CleanUp()
@@ -101,12 +113,15 @@ namespace SDefence.Turret.Entity
 
         public void Upgrade()
         {
+            _disassembleAssetEntity.Add(GetUpgradeAssetUsableData());
+
             _upgradeData.IncreaseNumber();
             _upgradeAssetData = null;
             _attackData = null;
             _recoveryData = null;
 
             _durableEntity.Set(_data.DurableRawDataArray, _upgradeData.GetValue());
+
         }
         public bool IsMaxUpgrade() => _upgradeData.GetValue() == _data.MaxUpgradeCount;
 
@@ -136,17 +151,20 @@ namespace SDefence.Turret.Entity
         }
 #endif
 
-        public void UpTech(TurretData data)
+        public void UpTech(TurretData data, IAssetUsableData techAssetData)
         {
             SetData(data);
             ClearUpgrade();
             _techLevel++;
+
+            _disassembleAssetEntity.Add(techAssetData);
+
         }
 
         public DurableBattleEntity GetDurableBattleEntity() => _durableEntity.CreateDurableBattleEntity();
 
 
-        public IAssetUsableData GetUpgradeData()
+        public IAssetUsableData GetUpgradeAssetUsableData()
         {
             if(_upgradeAssetData == null)
             {

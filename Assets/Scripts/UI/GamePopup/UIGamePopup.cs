@@ -105,10 +105,10 @@ namespace SDefence.UI
             _uiTechPopup.Show(elements, orbitIndex, index);
         }
 
-        private void ShowDisassemblePopup(IEntity entity)
+        private void ShowDisassemblePopup(int orbitIndex, int index, AssetUsableEntity assetEntity)
         {
             Show();
-            _uiDisassemblePopup.Show(entity);
+            _uiDisassemblePopup.Show(orbitIndex, index, assetEntity);
         }
 
         public void ShowRewardOfflinePopup()
@@ -162,7 +162,7 @@ namespace SDefence.UI
             switch (packet)
             {
                 case OpenDisassembleEntityPacket pk:
-                    ShowDisassemblePopup(pk.Entity);
+                    ShowDisassemblePopup(pk.OrbitIndex, pk.Index, pk.AssetEntity);
                     break;
                 case OpenTechEntityPacket pk:
                     ShowTechPopup(pk.Elements, pk.OrbitIndex, pk.Index);

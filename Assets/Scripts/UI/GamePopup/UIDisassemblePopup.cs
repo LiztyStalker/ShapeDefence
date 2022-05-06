@@ -1,9 +1,9 @@
 namespace SDefence.UI
 {
     using Packet;
-    using Entity;
     using UnityEngine;
     using UnityEngine.UI;
+    using Asset.Entity;
 
     public class UIDisassemblePopup : MonoBehaviour
     {
@@ -23,6 +23,10 @@ namespace SDefence.UI
         [SerializeField]
         private Button _applyBtn;
 
+        private AssetUsableEntity _assetEntity;
+        private int _orbitIndex;
+        private int _index;
+
         public void Initialize()
         {
             _uiAsset.Initialize();
@@ -39,12 +43,14 @@ namespace SDefence.UI
             _applyBtn.onClick.AddListener(OnDisassembleEvent);
         }
 
-        public void Show(IEntity entity)
+        public void Show(int orbitIndex, int index, AssetUsableEntity entity)
         {
-            //Entity
             //Return IAssetUsableData
             //StarAssetUsableData
-
+            _orbitIndex = orbitIndex;
+            _index = index;
+            _assetEntity = entity;
+            _uiAsset.SetData(entity);
             gameObject.SetActive(true);
         }
 
@@ -72,6 +78,10 @@ namespace SDefence.UI
             //DisassembleCommandPacket - 50%
             //PerfectDisassembleCommandPacket - 100%
             var pk = new DisassembleCommandPacket();
+            pk.TypeCmdKey = TYPE_COMMAND_KEY.Turret;
+            pk.AssetEntity = _assetEntity;
+            pk.ParentIndex = _orbitIndex;
+            pk.Index = _index;
             _cmdEvent?.Invoke(pk);
             OnCloseEvent();
         }

@@ -86,7 +86,7 @@ namespace SDefence.Packet
         public TYPE_COMMAND_KEY TypeCmdKey;
         public int ParentIndex;
         public int Index;
-        public IAssetUsableData AssetUsableData;
+        public AssetUsableEntity AssetEntity;
     }
     public class RefreshCommandPacket : ICommandPacket 
     {
