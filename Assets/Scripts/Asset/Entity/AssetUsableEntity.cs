@@ -106,6 +106,14 @@ namespace SDefence.Asset.Entity
             OnAssetEntityEvent();
         }
 
+        public void Set(AssetUsableEntity assetEntity)
+        {
+            foreach (var value in assetEntity._dic.Values)
+            {
+                Set(value);
+            }
+        }
+
         public void Set(IAssetUsableData uData)
         {
             string key = GetKey(uData);

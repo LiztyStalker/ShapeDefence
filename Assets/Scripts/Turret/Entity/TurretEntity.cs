@@ -206,6 +206,7 @@ namespace SDefence.Turret.Entity
         {
             var data = SavableData.Create();
             data.AddData("Upgrade", _upgradeData.GetValue());
+            data.AddData(_disassembleAssetEntity.SavableKey(), _disassembleAssetEntity.GetSavableData());
             return data;
         }
 
@@ -213,6 +214,8 @@ namespace SDefence.Turret.Entity
         {
             var upgrade = data.GetValue<int>("Upgrade");
             _upgradeData.SetValue(upgrade);
+
+            _disassembleAssetEntity.Set(data.GetValue<AssetUsableEntity>(_disassembleAssetEntity.SavableKey()));
         }
         
         #endregion
