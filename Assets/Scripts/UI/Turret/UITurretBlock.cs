@@ -109,9 +109,7 @@ namespace SDefence.UI
                     str += "공격속도 " + entity.GetAttackUsableData().Delay + "s\n";
                     str += "사거리 " + entity.GetAttackUsableData().Range;
                     _texts[3].text = str;
-
                 }
-
 
 
                 if (!entity.IsMaxUpgradeAndTech())
@@ -126,9 +124,8 @@ namespace SDefence.UI
                     _techBtn.gameObject.SetActive(false);
                 }
 
+                _disassembleBtn.interactable = entity.TechLevel > 1;
                 _upgradeBtn.SetAsset(entity.GetUpgradeAssetUsableData());
-
-                //_disassembleBtn.interactable = //Tech 0 = false
                 _upgradeBtn.interactable = pk.IsActiveUpgrade;
                 _techBtn.interactable = pk.IsActiveUpTech;
 
