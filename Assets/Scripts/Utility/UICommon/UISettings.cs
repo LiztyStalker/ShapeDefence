@@ -1,5 +1,6 @@
 namespace Utility.UI
 {
+    using GooglePlayGames.BasicApi;
     using UnityEngine;
     using UnityEngine.UI;
     using UtilityManager;
@@ -199,10 +200,36 @@ namespace Utility.UI
             Debug.Log("OnSaveEvent");
         }
 
+        private void LoadGPGS()
+        {
+            _gpgsIDField.text = GPGSManager.Instance.GetGPGSID();
+            //로그인 되어있으면 로그아웃
+            //로그아웃 되어있으면 로그인
+            //로그인 되어있으면 클라우드 가능
+            //_gpgsBtn.interactable
+        }
+
         private void OnGPGSEvent() 
         {
             //GPGS LogIn
             Debug.Log("OnGPGSEvent");
+            GPGSManager.Instance.SetOnManuallyAutenticateListener(OnManuallyAutenticateEvent);
+            GPGSManager.Instance.ManuallyAutenticate();
+        }
+
+        private void OnManuallyAutenticateEvent(SignInStatus signInStatus)
+        {
+            switch (signInStatus)
+            {
+                case SignInStatus.Success:
+                    break;
+                case SignInStatus.Canceled:
+                case SignInStatus.InternalError:
+                    //Sys_GPGS_Error Sys_Yes Sys_No
+                    UICommon.Current.ShowPopup($"{signInStatus}\n구글 계정에 접속할 수 없습니다.\n재시도 하시겠습니까?", "예", "아니오", OnGPGSEvent);
+                    break;
+            }
+            LoadGPGS();
         }
 
         private void OnQnAEvent() 
@@ -261,6 +288,8 @@ namespace Utility.UI
             OnFrameEvent((float)PlayerPrefs.GetInt(SETTINGS_FRAME_KEY, 30));
 
             _langSheet.Load();
+
+            LoadGPGS();
         }
 
         private void Save()

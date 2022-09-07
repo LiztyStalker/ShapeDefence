@@ -349,8 +349,7 @@ namespace Utility.IO
         /// 데이터 불러오기
         /// </summary>
         public void LoadFileData_NotCrypto(string fileName, Action<float> processCallback, Action<TYPE_IO_RESULT, object> endCallback)
-        {
-            //파일 유무 판단
+        {            
             if (isFile(fileName))
             {
                 try
@@ -369,7 +368,11 @@ namespace Utility.IO
                     endCallback?.Invoke(TYPE_IO_RESULT.DataProcessingError, null);
                 }
             }
-            endCallback?.Invoke(TYPE_IO_RESULT.DataProcessingError, null);
+            else
+            {
+                //Not File - New Account
+                endCallback?.Invoke(TYPE_IO_RESULT.Success, null);
+            }
         }
 
         #endregion

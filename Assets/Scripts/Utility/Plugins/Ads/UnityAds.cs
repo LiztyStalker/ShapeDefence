@@ -33,7 +33,9 @@ namespace UnityEngine.Advertisements
 #if UNITY_EDITOR
             if(!Advertisement.isInitialized)
                 Advertisement.Initialize(_gameID, true, true, this);
-           
+#else
+            if(!Advertisement.isInitialized)
+                Advertisement.Initialize(_gameID, false, true, this);
 #endif
             LoadAds();
         }
@@ -65,16 +67,8 @@ namespace UnityEngine.Advertisements
 
         public void ShowAds()
         {
-            if (Advertisement.IsReady())
-            {
-                OnAdsActivateEvent(false);
-                Advertisement.Show(_adsID, this);
-            }
-            else
-            {
-                //광고 준비 되지 않음
-                OnAdsRewardedEvent(false);
-            }
+            OnAdsActivateEvent(false);
+            Advertisement.Show(_adsID, this);
         }
 
         public void OnUnityAdsAdLoaded(string placementId)

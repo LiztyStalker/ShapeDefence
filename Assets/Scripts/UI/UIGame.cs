@@ -156,6 +156,13 @@ namespace SDefence.UI
             _uiButtons.Initialize();
             _uiButtons.SetOnCommandPacketListener(OnCommandPacketEvent);
             _uiButtons.Show();
+
+
+            //Frame
+            var frames = GetComponentsInChildren<FrameUI>(true);
+            for (int i = 0; i < frames.Length; i++)
+                frames[i].Initialize();
+
         }
 
         public void CleanUp()
