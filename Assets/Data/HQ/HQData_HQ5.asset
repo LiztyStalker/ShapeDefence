@@ -48,4 +48,4 @@ MonoBehaviour:
   _techDataKey: 
   _techRawData:
     _techRawElements: []
-  _orbitCount: 8
+  _turretCount: 8

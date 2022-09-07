@@ -55,4 +55,4 @@ MonoBehaviour:
         _startValue: 200
         _increaseValue: 0
         _increaseRate: 0
-  _orbitCount: 2
+  _turretCount: 2

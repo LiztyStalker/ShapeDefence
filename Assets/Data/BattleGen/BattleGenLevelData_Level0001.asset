@@ -21,7 +21,7 @@ MonoBehaviour:
   _lobbyWaveData:
     _waveElementArray:
     - _enemyDataKey: Test
-      _appearCount: 5
+      _appearCount: 1
       _weight: 1
       _waveAppearDelay: 0
   _waveDataArray:

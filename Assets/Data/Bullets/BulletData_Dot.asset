@@ -26,7 +26,7 @@ MonoBehaviour:
     _startMovementValue: 1
     _increaseMovementValue: 0
     _increaseMovementRate: 0.01
-    _typeMovementAction: Direct
+    _typeMovementAction: Move
     _accuracy: 0
   _isRotate: 0
   _activeEffectDataKey: DotHit
